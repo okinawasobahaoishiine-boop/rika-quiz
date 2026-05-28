@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>理科一問一答</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body { margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans JP", sans-serif; }
+    button:disabled { opacity: .45; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+<script type="text/babel">
+const {useEffect,useMemo,useState}=React;
+
+const Q3Chem=[
+[1,"イオン","原子が電気を帯びたものを何というか。","イオン",["原子","分子","電子"],"原子が電子を失ったり受け取ったりして、電気を帯びたものをイオンという。"],
+[2,"イオン","＋の電気を帯びたイオンを何というか。","陽イオン",["陰イオン","電子","中性子"],"＋の電気を帯びたイオンは陽イオン。"],
+[3,"イオン","－の電気を帯びたイオンを何というか。","陰イオン",["陽イオン","陽子","原子核"],"－の電気を帯びたイオンは陰イオン。"],
+[4,"イオン","原子が電子を失うと、陽イオン・陰イオンのどちらになるか。","陽イオン",["陰イオン","電子","中性子"],"電子を失うと＋の電気を帯びた陽イオンになる。"],
+[5,"イオン","原子が電子を受け取ると、陽イオン・陰イオンのどちらになるか。","陰イオン",["陽イオン","陽子","原子核"],"電子を受け取ると－の電気を帯びた陰イオンになる。"],
+[6,"イオン","電流が流れる液体に共通する、電流を運ぶものは何か。","イオン",["電子","分子","原子核"],"水溶液中ではイオンが電流を運ぶ。"],
+[7,"電解質","水に溶かしたとき、その水溶液に電流が流れる物質を何というか。","電解質",["非電解質","イオン","電離"],"水溶液に電流が流れる物質を電解質という。"],
+[8,"電解質","水に溶かしたとき、その水溶液に電流が流れない物質を何というか。","非電解質",["電解質","絶縁体","中性"],"水溶液に電流が流れない物質を非電解質という。"],
+[9,"電解質","物質が水に溶けて、陽イオンと陰イオンに分かれることを何というか。","電離",["イオン化","中和","電気分解"],"水に溶けて陽イオンと陰イオンに分かれることは電離。"],
+[10,"酸・アルカリ","水に溶かすと、電離して水素イオンを生じる化合物を何というか。","酸",["アルカリ","塩","電解質"],"水素イオン H⁺ を生じる化合物を酸という。"],
+[11,"酸・アルカリ","水素イオンを表す化学式を書け。","H⁺",["OH⁻","H₂","O²⁻"],"水素イオンは H⁺。"],
+[12,"酸・アルカリ","酸が電離したとき、水素イオンと同時に生じるのは、陽イオン・陰イオンのどちらか。","陰イオン",["陽イオン","水酸化物イオン","電子"],"酸は H⁺ と陰イオンに分かれる。"],
+[13,"酸・アルカリ","水に溶かすと、電離して水酸化物イオンを生じる化合物を何というか。","アルカリ",["酸","塩","電解質"],"水酸化物イオン OH⁻ を生じる化合物をアルカリという。"],
+[14,"酸・アルカリ","水酸化物イオンを表す化学式を書け。","OH⁻",["H⁺","O₂","H₂O"],"水酸化物イオンは OH⁻。"],
+[15,"酸・アルカリ","アルカリが電離したとき、水酸化物イオンと同時に生じるのは、陽イオン・陰イオンのどちらか。","陽イオン",["陰イオン","水素イオン","電子"],"アルカリは陽イオンと OH⁻ に分かれる。"],
+[16,"酸・アルカリ","酸性の水溶液は、リトマス紙の色を何色から何色に変化させるか。","青色から赤色",["赤色から青色","緑色から黄色","緑色から青色"],"酸性は青色リトマス紙を赤色に変える。"],
+[17,"酸・アルカリ","アルカリ性の水溶液は、リトマス紙の色を何色から何色に変化させるか。","赤色から青色",["青色から赤色","緑色から青色","緑色から黄色"],"アルカリ性は赤色リトマス紙を青色に変える。"],
+[18,"酸・アルカリ","酸性の水溶液に緑色のBTB溶液を加えると何色になるか。","黄色",["青色","赤色","緑色"],"BTB溶液は酸性で黄色。"],
+[19,"酸・アルカリ","アルカリ性の水溶液に緑色のBTB溶液を加えると何色になるか。","青色",["黄色","赤色","緑色"],"BTB溶液はアルカリ性で青色。"],
+[20,"酸・アルカリ","中性の水溶液のpHの値はいくらか。","7",["0","1","14"],"中性は pH 7。"],
+[21,"酸・アルカリ","pHの値が7より小さいほど、酸性・アルカリ性のどちらが強いか。","酸性",["アルカリ性","中性","電解質"],"pHが7より小さいほど酸性が強い。"],
+[22,"酸・アルカリ","酸とアルカリが、たがいの性質を打ち消し合う化学変化を何というか。","中和",["電離","酸化","還元"],"酸とアルカリが互いの性質を打ち消し合う反応を中和という。"],
+[23,"酸・アルカリ","酸性の水溶液中の水素イオンとアルカリ性の水溶液中の水酸化物イオンが結びつくことでできる物質は何か。","水",["塩","水素","酸素"],"H⁺ と OH⁻ が結びつくと水ができる。"],
+[24,"酸・アルカリ","酸性の水溶液中の陰イオンとアルカリ性の水溶液中の陽イオンが結びつくことでできる物質を何というか。","塩",["水","酸","アルカリ"],"中和では、水と塩ができる。"],
+[25,"化学変化と電池","化学変化によって、物質のもつ化学エネルギーを電気エネルギーに変換する装置を何というか。","電池",["電気分解装置","発電機","モーター"],"化学エネルギーを電気エネルギーに変える装置が電池。"],
+[26,"化学変化と電池","2種類の金属を用いた電池では、よりイオンになりやすいほうの金属が、＋極・－極のどちらになるか。","－極",["＋極","陽極","陰極"],"よりイオンになりやすい金属は電子を出しやすく、－極になる。"],
+[27,"化学変化と電池","硫酸亜鉛水溶液に入れた亜鉛板と硫酸銅水溶液に入れた銅板を導線でつなぎ、水溶液どうしをセロハンでしきっている電池を何というか。","ダニエル電池",["ボルタ電池","燃料電池","乾電池"],"亜鉛板・銅板などを使う代表的な電池はダニエル電池。"],
+[28,"化学変化と電池","水素と酸素の化学変化を利用している電池を何というか。","燃料電池",["ダニエル電池","ボルタ電池","乾電池"],"水素と酸素の化学変化を利用する電池は燃料電池。"]
+];
+
+const Q2Chem=[
+[1,"化学変化と分解","もとの物質とは異なる別の物質ができる変化を何というか。","化学変化",["状態変化","物理変化","分解"],"もとの物質とは異なる別の物質ができる変化を化学変化という。"],
+[2,"化学変化と分解","1種類の物質が2種類以上の物質に分かれる化学変化を何というか。","分解",["化合","酸化","中和"],"1種類の物質が2種類以上の物質に分かれる化学変化を分解という。"],
+[3,"化学変化と分解","加熱したときに起こる分解を何というか。","熱分解",["電気分解","酸化","燃焼"],"加熱によって起こる分解を熱分解という。"],
+[4,"化学変化と分解","炭酸水素ナトリウムを加熱したとき，発生する気体は何か。","二酸化炭素",["水素","酸素","アンモニア"],"炭酸水素ナトリウムを加熱すると二酸化炭素が発生する。"],
+[5,"化学変化と分解","炭酸水素ナトリウムを加熱したとき，発生する液体は何か。","水",["エタノール","塩酸","石灰水"],"炭酸水素ナトリウムを加熱すると水が発生する。"],
+[6,"化学変化と分解","試験管内で炭酸水素ナトリウムを加熱したとき，試験管内に残る固体は何か。","炭酸ナトリウム",["炭酸水素ナトリウム","塩化ナトリウム","酸化銅"],"炭酸水素ナトリウムを加熱すると炭酸ナトリウムが残る。"],
+[7,"化学変化と分解","水の検出に用いる試験紙は何か。","塩化コバルト紙",["リトマス紙","ろ紙","BTB紙"],"水の検出には塩化コバルト紙を使う。"],
+[8,"化学変化と分解","アルカリ性の溶液に入れると，赤色に変化する薬品は何か。","フェノールフタレイン溶液",["BTB溶液","ベネジクト液","ヨウ素液"],"フェノールフタレイン溶液はアルカリ性で赤色になる。"],
+[9,"化学変化と分解","電流を流して，物質を分解することを何というか。","電気分解",["熱分解","電離","還元"],"電流を流して物質を分解することを電気分解という。"],
+[10,"化学変化と分解","水を電気分解したとき，陰極で発生する気体は何か。","水素",["酸素","二酸化炭素","窒素"],"水の電気分解では陰極に水素が発生する。"],
+[11,"原子・分子","物質をつくる，それ以上分けることのできない粒子を何というか。","原子",["分子","元素","イオン"],"物質をつくる基本的な粒子を原子という。"],
+[12,"原子・分子","原子は，種類ごとに質量が決まっているか。","決まっている",["決まっていない","変化する","測定できない"],"原子は種類ごとに質量が決まっている。"],
+[13,"原子・分子","原子の種類を何というか。","元素",["原子","分子","単体"],"原子の種類を元素という。"],
+[14,"原子・分子","元素を原子番号の順に並べた表を何というか。","周期表",["化学式","化学反応式","元素記号"],"元素を原子番号順に並べた表を周期表という。"],
+[15,"原子・分子","いくつかの原子が結びついてできた粒子を何というか。","分子",["原子","元素","単体"],"いくつかの原子が結びついてできた粒子を分子という。"],
+[16,"原子・分子","1種類の元素からできている物質を何というか。","単体",["化合物","混合物","分子"],"1種類の元素からできている物質を単体という。"],
+[17,"原子・分子","2種類以上の元素からできている物質を何というか。","化合物",["単体","混合物","分子"],"2種類以上の元素からできている物質を化合物という。"],
+[18,"原子・分子","物質を元素記号と数字を使って表したものを何というか。","化学式",["化学反応式","周期表","元素記号"],"物質を元素記号と数字で表したものを化学式という。"],
+[19,"原子・分子","化学変化を化学式で表した式を何というか。","化学反応式",["化学式","周期表","イオン式"],"化学変化を化学式で表した式を化学反応式という。"],
+[20,"原子・分子","2種類以上の物質が結びつくと，もとの物質とは性質が異なる別の物質ができる。できた物質を何というか。","化合物",["単体","混合物","元素"],"2種類以上の元素からできる物質を化合物という。"],
+[21,"酸化・還元","鉄と硫黄の混合物を加熱したとき，できる物質は何か。","硫化鉄",["酸化鉄","硫酸鉄","鉄粉"],"鉄と硫黄が結びつくと硫化鉄ができる。"],
+[22,"酸化・還元","物質が酸素と結びつくことを何というか。","酸化",["還元","燃焼","分解"],"物質が酸素と結びつくことを酸化という。"],
+[23,"酸化・還元","熱や光を出しながら激しく酸化が進むことを何というか。","燃焼",["酸化","還元","発熱反応"],"熱や光を出しながら激しく酸化が進むことを燃焼という。"],
+[24,"酸化・還元","酸化物から酸素をうばう化学変化を何というか。","還元",["酸化","燃焼","分解"],"酸化物から酸素をうばう化学変化を還元という。"],
+[25,"化学変化と質量","熱を発生する化学変化を何というか。","発熱反応",["吸熱反応","燃焼","酸化"],"熱を発生する化学変化を発熱反応という。"],
+[26,"化学変化と質量","周囲から熱を吸収する化学変化を何というか。","吸熱反応",["発熱反応","還元","分解"],"周囲から熱を吸収する化学変化を吸熱反応という。"],
+[27,"化学変化と質量","物質がもともともっているエネルギーを何というか。","化学エネルギー",["電気エネルギー","熱エネルギー","運動エネルギー"],"物質がもともともっているエネルギーを化学エネルギーという。"],
+[28,"化学変化と質量","化学変化の前後で物質全体の質量が変化しないことを何というか。","質量保存の法則",["定比例の法則","エネルギー保存の法則","質量一定の法則"],"化学変化の前後で物質全体の質量が変化しないことを質量保存の法則という。"],
+[29,"化学変化と質量","銅と酸素が結びついて酸化銅ができるとき，銅と酸素の質量の割合を最も簡単な整数の比で答えよ。","4：1",["1：4","2：1","3：2"],"銅と酸素が結びつく質量の比は 銅：酸素＝4：1。"],
+[30,"化学変化と質量","マグネシウムと酸素が結びついて酸化マグネシウムができるとき，マグネシウムと酸素の質量の割合を最も簡単な整数の比で答えよ。","3：2",["2：3","4：1","1：1"],"マグネシウムと酸素が結びつく質量の比は マグネシウム：酸素＝3：2。"]
+];
+
+const data=[...Q3Chem.map(x=>["中3","化学",...x]),...Q2Chem.map(x=>["中2","化学",...x])].map(([grade,field,no,unit,question,answer,wrongs,explanation])=>({grade,field,no,unit,question,answer,wrongs,explanation}));
+const grades=["全学年","中1","中2","中3"],fields=["全分野","生物","化学","物理","地学"],recordGrades=["中1","中2","中3"];
+const details={中1生物:"植物・動物・細胞",中1化学:"身のまわりの物質・気体・水溶液",中1物理:"光・音・力",中1地学:"火山・地震・地層",中2生物:"細胞・人体・神経",中2化学:"原子・分子・化学変化",中2物理:"電流・電力・磁界",中2地学:"天気・前線・気圧",中3生物:"遺伝・生態系・進化",中3化学:"イオン・酸アルカリ・電池",中3物理:"仕事・エネルギー",中3地学:"宇宙・太陽系・月"};
+const S="scienceQuizRecords",N="scienceQuizUserName",T="scienceQuizStreak";
+const sh=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b},k=q=>`${q.grade}-${q.field}-${q.no}`,mq=q=>({...q,choices:sh([q.answer,...q.wrongs])});
+const load=(key,d=[])=>{try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(d))}catch{return d}},save=(key,v)=>localStorage.setItem(key,JSON.stringify(v));
+const dk=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`,add=(s,n)=>{const d=new Date(`${s}T00:00:00`);d.setDate(d.getDate()+n);return dk(d)};
+const tm=s=>`${Math.floor(Math.max(0,s||0)/60)}:${String(Math.floor(Math.max(0,s||0)%60)).padStart(2,"0")}`,cls=p=>p<=50?"bg-red-100 text-red-700 border-red-200":p<=70?"bg-yellow-100 text-yellow-700 border-yellow-200":p<100?"bg-sky-100 text-sky-700 border-sky-200":"bg-yellow-300 text-yellow-900 border-yellow-400";
+const lab=(s,t)=>`${s}/${t}点${t&&s===t?" 💮":""}`,uns=g=>[`${g}生物`,`${g}化学`,`${g}物理`,`${g}地学`];
+const us=h=>Object.values(h.reduce((m,a)=>{const u=`${a.grade}${a.field}`;m[u]??={unit:u,score:0,total:0};m[u].total++;if(a.correct)m[u].score++;return m},{}));
+const gof=r=>(r?.unitScores?.[0]?.unit||"中3").slice(0,2),mg=(r,u)=>r.unitScores?.find(x=>x.unit===u)||(u==="中3化学"?{unit:u,score:r.score||0,total:r.total||0}:null);
+const rec=(rs,u)=>rs.map(r=>{const x=mg(r,u);return x&&{id:r.id,score:x.score,total:x.total,accuracy:Math.round(x.score/x.total*100),timeSeconds:r.timeSeconds}}).filter(Boolean).slice(0,5);
+const pr=(s,t)=>{const p=t?Math.round(s/t*100):0,a=p===100?["さすが！おめでとう！💮","完璧！！全部正解！🎆","すごい！パーフェクト！✨"]:p>=80?["おしい！かなりできてる！👏","すごい！あと少しで満点！✨","いい感じ！この調子！😊"]:p>=50?["よく頑張った！復習すれば伸びる！📚","半分以上できてる！あと一歩！🔥","できる問題は増えてるぞ！😊"]:["大丈夫！ここから伸びる！💪","まずは復習から！次はもっと取れる！📚","焦らなくてOK！できるようになる！🔥"];return a[Math.floor(Math.random()*a.length)]};
+function B({items,value,set}){return <div className="flex flex-wrap gap-2">{items.map(x=><button key={x} onClick={()=>set(x)} className={`rounded-xl px-4 py-2 border font-bold ${value===x?"bg-slate-900 text-white":"bg-white"}`}>{x}</button>)}</div>}
+function Row({records}){return <div className="grid grid-cols-5 gap-1">{records.map((r,i)=><div key={r.id} className={`rounded-xl border px-1 py-2 text-center text-xs font-bold ${cls(r.accuracy)}`}><div className="text-[10px] opacity-70">{i+1}回</div><div>{lab(r.score,r.total)}</div>{typeof r.timeSeconds==="number"&&<div className="text-[10px] mt-1">{tm(r.timeSeconds)}</div>}</div>)}</div>}
+function C({children}){return <div className="bg-white rounded-3xl shadow-lg border p-5 space-y-5">{children}</div>}
+function Btn({children,onClick,disabled,kind=""}){return <button onClick={onClick} disabled={disabled} className={`rounded-xl px-4 py-3 font-bold border ${kind==="main"?"bg-slate-900 text-white":"bg-white"} ${disabled?"opacity-40":""}`}>{children}</button>}
+
+function App(){
+ const [scr,setScr]=useState("home"),[name,setName]=useState(""),[grade,setGrade]=useState("中3"),[field,setField]=useState("化学"),[qs,setQs]=useState([]),[i,setI]=useState(0),[ans,setAns]=useState({}),[hist,setHist]=useState([]),[wrongs,setWrongs]=useState([]),[records,setRecords]=useState([]),[rg,setRg]=useState("中3"),[order,setOrder]=useState("number"),[back,setBack]=useState(false),[sec,setSec]=useState(0),[finalSec,setFinalSec]=useState(0),[start,setStart]=useState(null),[streak,setStreak]=useState({lastDate:"",current:0,best:0}),[result,setResult]=useState(null),[edit,setEdit]=useState(false);
+ useEffect(()=>{setRecords(load(S));setStreak(load(T,{lastDate:"",current:0,best:0}));setName(localStorage.getItem(N)||"")},[]);
+ useEffect(()=>{if(scr!=="quiz"||!start)return;const t=setInterval(()=>setSec(Math.floor((Date.now()-start)/1000)),250);return()=>clearInterval(t)},[scr,start]);
+ const filtered=useMemo(()=>data.filter(q=>(grade==="全学年"||q.grade===grade)&&(field==="全分野"||q.field===field)),[grade,field]),cur=qs[i],ck=cur?k(cur):"",picked=ans[ck]||"",answered=qs.filter(q=>ans[k(q)]).length,target=qs.length*10,unit=grade!=="全学年"&&field!=="全分野"?`${grade}${field}`:"",unitRecs=unit?rec(records,unit):[],fw=useMemo(()=>Array.from({length:20},(_,id)=>({id,left:`${Math.random()*100}%`,top:`${Math.random()*50}%`,delay:`${id*.08}s`})),[scr]);
+ const streakNext=()=>{const today=dk();if(streak.lastDate===today)return streak;const c=streak.lastDate===add(today,-1)?streak.current+1:1;return{lastDate:today,current:c,best:Math.max(streak.best,c)}};
+ const saveRes=(h,score,time)=>{const r={id:Date.now(),userName:name.trim()||"名前なし",score,total:qs.length,accuracy:Math.round(score/qs.length*100),timeSeconds:time,unitScores:us(h)},rs=[r,...records],st=streakNext();save(S,rs);save(T,st);setRecords(rs);setStreak(st)};
+ const begin=()=>{if(!filtered.length){setScr("soon");return}const ordered=order==="number"?[...filtered].sort((a,b)=>a.no-b.no):sh(filtered);setQs(ordered.map(mq));setI(0);setAns({});setHist([]);setWrongs([]);setResult(null);setBack(false);setSec(0);setFinalSec(0);setStart(null);setScr("ready")};
+ const finish=a=>{const h=qs.map(q=>{const s=a[k(q)];return{...q,selected:s||"未回答",correct:s===q.answer}}),score=h.filter(x=>x.correct).length,time=start?Math.floor((Date.now()-start)/1000):sec;setHist(h);setWrongs(h.filter(x=>!x.correct));setFinalSec(time);setStart(null);setResult({score,total:qs.length,praise:pr(score,qs.length)});saveRes(h,score,time);setScr("result")};
+ const choose=c=>{const n={...ans,[ck]:c};setAns(n);i+1<qs.length?(setI(i+1),setBack(false)):finish(n)},next=()=>i+1<qs.length?(setI(i+1),setBack(false)):finish(ans),prev=()=>{setBack(true);setI(Math.max(0,i-1))},home=()=>setScr("home");
+ const register=()=>{const n=name.trim();if(!n)return;localStorage.setItem(N,n);setName(n);setEdit(false)},review=()=>{const ordered=order==="number"?[...wrongs].sort((a,b)=>a.no-b.no):sh(wrongs);setQs(ordered.map(mq));setI(0);setAns({});setHist([]);setWrongs([]);setResult(null);setBack(false);setSec(0);setFinalSec(0);setStart(null);setScr("ready")};
+
+ if(scr==="home")return <Main><C><div className="text-center"><h1 className="text-3xl font-black">理科 一問一答</h1><p className="text-slate-500">4択でテンポよく復習</p></div><div><b>使用者名</b>{name&&!edit?<div className="border rounded-2xl p-3 flex justify-between"><b>{name}</b><Btn onClick={()=>setEdit(true)}>名前変更</Btn></div>:<div className="space-y-2"><input value={name} onChange={e=>setName(e.target.value)} placeholder="名前を入力" className="w-full rounded-2xl border px-4 py-3"/><Btn onClick={register} disabled={!name.trim()} kind="main">名前を登録</Btn></div>}</div><div><b>学年</b><B items={grades} value={grade} set={setGrade}/></div><div><b>分野</b><B items={fields} value={field} set={setField}/></div><Box><div className="text-sm text-slate-500">出題予定</div><div className="text-3xl font-black">{filtered.length}問</div></Box><div><b>出題順</b><div className="grid grid-cols-2 gap-2"><Btn kind={order==="number"?"main":""} onClick={()=>setOrder("number")}>問題番号順</Btn><Btn kind={order==="random"?"main":""} onClick={()=>setOrder("random")}>ランダム</Btn></div></div>{unit&&<Box><b>{unit}の記録</b><div className="text-xs text-slate-500">{details[unit]}</div>{unitRecs.length?<Row records={unitRecs}/>:<p className="text-sm text-slate-500">まだ記録はありません。</p>}</Box>}<Box><div className="text-sm text-slate-500">連続学習記録</div><div className="text-2xl font-black">🔥 {streak.current}日目</div><div className="text-xs text-slate-500">最長 {streak.best}日</div></Box><div className="grid grid-cols-2 gap-3"><Btn onClick={begin} kind="main">📘 スタート</Btn><Btn onClick={()=>setScr("records")}>📊 保存履歴</Btn></div></C></Main>;
+ if(scr==="soon")return <Main><C><div className="text-center space-y-4"><div className="text-5xl">🚧</div><h1 className="text-3xl font-bold">Coming Soon</h1><p>この学年・分野の問題はまだ追加されていません。</p><Btn onClick={home} kind="main">ホームへ戻る</Btn></div></C></Main>;
+ if(scr==="ready")return <Main><C><div className="text-center space-y-4"><h1 className="text-3xl font-bold">準備画面</h1><p>スタートを押すと始まります。</p><Box><div className="text-sm text-slate-500">問題数</div><div className="text-3xl font-black">{qs.length}問</div><div className="text-sm text-slate-500">目標時間：{tm(target)}</div></Box><div className="grid grid-cols-2 gap-3"><Btn onClick={()=>{setSec(0);setFinalSec(0);setStart(Date.now());setScr("quiz")}} kind="main">スタート</Btn><Btn onClick={home}>ホームへ戻る</Btn></div></div></C></Main>;
+ if(scr==="quiz")return <Main><C><div className="flex justify-between gap-4"><div><h1 className="text-2xl font-black">理科 一問一答</h1><p className="text-slate-500">{grade}・{field}</p></div><Btn onClick={home}>ホーム</Btn></div>{cur&&<><div className="flex justify-between text-sm"><div><span className="rounded-xl bg-slate-100 px-3 py-1">{cur.unit}</span> <span className="rounded-xl border px-3 py-1">第{cur.no}問</span></div><div className="text-right"><div>進行 {i+1}/{qs.length}</div><div>回答済み {answered}/{qs.length}</div><b className={sec>target?"text-red-600":"text-sky-600"}>{tm(sec)} / 目標 {tm(target)}</b></div></div><Box><p className="text-xl font-bold leading-relaxed">{cur.question}</p></Box><div className="grid grid-cols-1 sm:grid-cols-2 gap-3">{cur.choices.map(c=><Btn key={c} onClick={()=>choose(c)} kind={picked===c?"main":""}>{c}</Btn>)}</div><div className="grid grid-cols-2 gap-3"><Btn onClick={prev} disabled={i===0}>前に戻る</Btn>{(back||!picked||i+1>=qs.length)&&<Btn onClick={next} kind="main">{i+1>=qs.length?"採点する":"次に進む"}</Btn>}</div></>}</C></Main>;
+ if(scr==="result"){const u=hist[0]?`${hist[0].grade}${hist[0].field}`:unit,rs=rec(records,u);return <Main><C><div className="flex justify-between"><h1 className="text-2xl font-black">結果</h1><Btn onClick={home}>ホームへ戻る</Btn></div>{result?.score===result?.total&&result?.total>0&&<><div className="fixed inset-0 pointer-events-none overflow-hidden z-50">{fw.map(p=><div key={p.id} className="absolute text-4xl animate-bounce" style={{left:p.left,top:p.top,animationDelay:p.delay}}>🎆</div>)}</div><Box><div className="text-5xl">🎉🎆🎊</div><div className="text-3xl font-black text-orange-600">さすが！おめでとう！</div><div className="font-bold text-yellow-700">満点すごい！！完璧！！💮</div></Box></>}<Box><div className="text-4xl font-black">{result?.score??0}/{result?.total??0}</div><div>正答率 {result?.total?Math.round(result.score/result.total*100):0}%</div><div className="text-xl font-bold text-orange-600">{result?.praise}</div><b className={finalSec>target?"text-red-600":"text-sky-600"}>時間 {tm(finalSec)} / 目標 {tm(target)}</b><div className="text-xs text-slate-500">結果は自動保存済み</div></Box><Box><b>{u}の過去5回</b><div className="text-xs text-slate-500">{details[u]}</div>{rs.length?<Row records={rs}/>:<p>まだ保存履歴はありません。</p>}</Box><div className="space-y-3"><h2 className="text-lg font-bold">全問題の結果</h2>{hist.map((a,n)=><div key={`${k(a)}-${n}`} className={`rounded-2xl p-4 border ${a.correct?"bg-sky-50 border-sky-200":"bg-red-50 border-red-200"}`}><div className="text-sm text-slate-500">第{a.no}問 {a.unit}</div><b>{a.question}</b><div>選んだ答え：<b className={a.correct?"text-sky-700":"text-red-700"}>{a.selected}</b></div><div>正しい答え：<b className="text-green-700">{a.answer}</b></div>{!a.correct&&<p className="text-sm">{a.explanation}</p>}</div>)}</div><div className="grid grid-cols-2 gap-3"><Btn onClick={begin} kind="main">もう一度やる</Btn><Btn onClick={review} disabled={!wrongs.length}>間違えた問題だけ復習</Btn></div></C></Main>}
+ if(scr==="records"){const latest=records.filter(r=>gof(r)===rg).slice(0,5);return <Main><C><div className="flex justify-between"><div><h1 className="text-2xl font-black">保存履歴</h1><p className="text-sm text-slate-500">学年別・過去5回分</p></div><Btn onClick={home}>ホームへ戻る</Btn></div><div><b>表示する学年</b><div className="grid grid-cols-3 gap-2">{recordGrades.map(g=><Btn key={g} onClick={()=>setRg(g)} kind={rg===g?"main":""}>{g}</Btn>)}</div></div>{!latest.length?<Box>この学年の保存履歴はありません。</Box>:<div className="space-y-3"><Box><b>合計</b><Row records={latest}/></Box>{uns(rg).map(u=><Box key={u}><b>{u}</b><div className="text-xs text-slate-500">{details[u]}</div><div className="grid grid-cols-5 gap-1">{latest.map(r=>{const x=mg(r,u);return x?<div key={`${r.id}-${u}`} className={`rounded-xl border px-1 py-2 text-center text-xs font-bold ${cls(Math.round(x.score/x.total*100))}`}>{lab(x.score,x.total)}</div>:<div key={`${r.id}-${u}`} className="rounded-xl border px-1 py-2 text-center text-xs text-slate-300">—</div>})}</div></Box>)}</div>}<Box><div className="text-sm text-slate-500">連続学習記録</div><div className="text-2xl font-black">🔥 {streak.current}日目</div><div className="text-xs text-slate-500">最長 {streak.best}日</div></Box><Btn onClick={()=>{save(S,[]);setRecords([])}}>履歴を消す</Btn></C></Main>}
+ return null
+}
+function Main({children}){return <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">{children}</div>}
+function Box({children}){return <div className="bg-white border rounded-2xl p-4 text-center space-y-2">{children}</div>}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
