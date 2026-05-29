@@ -11,6 +11,20 @@
   <style>
     body { margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans JP", sans-serif; }
     button:disabled { opacity: .45; }
+  
+    @media (max-width: 640px) {
+      .quiz-card { padding: 12px !important; gap: 10px !important; }
+      .quiz-title { font-size: 20px !important; line-height: 1.15 !important; }
+      .quiz-sub { font-size: 12px !important; }
+      .quiz-info { font-size: 11px !important; gap: 6px !important; }
+      .quiz-badge { font-size: 11px !important; padding: 3px 8px !important; }
+      .quiz-question { padding: 12px !important; }
+      .quiz-question p { font-size: 17px !important; line-height: 1.45 !important; }
+      .quiz-choice-grid { gap: 8px !important; }
+      .quiz-choice { min-height: 44px !important; padding: 8px 12px !important; font-size: 14px !important; line-height: 1.35 !important; }
+      .quiz-nav { gap: 8px !important; }
+      .quiz-nav button { height: 42px !important; padding: 6px 10px !important; font-size: 14px !important; }
+    }
   </style>
 </head>
 <body>
