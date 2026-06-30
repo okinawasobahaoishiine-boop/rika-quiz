@@ -187,6 +187,110 @@
     .start-cta:not(:disabled):active { transform: translateY(0) scale(.99); }
     .start-cta:focus-visible { outline: 3px solid #38bdf8; outline-offset: 3px; }
     .start-cta:disabled::before { animation: none; }
+    .ui-guide {
+      background: linear-gradient(135deg, rgba(255,255,255,.9), rgba(255,251,235,.82)) !important;
+      border-color: rgba(146, 64, 14, .24) !important;
+    }
+    .step-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .step-pill {
+      min-height: 64px;
+      border-radius: 16px;
+      border: 1px solid rgba(146, 64, 14, .22);
+      background: rgba(255,255,255,.72);
+      padding: 10px;
+      text-align: left;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.65);
+    }
+    .step-pill.done {
+      color: #fff7ed;
+      border-color: rgba(251, 191, 36, .72);
+      background: linear-gradient(135deg, #172554, #4c1d95 55%, #78350f);
+    }
+    .step-pill.next {
+      border-color: rgba(245, 158, 11, .72);
+      background: #fffbeb;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, .14);
+    }
+    .step-label {
+      font-size: 11px;
+      font-weight: 900;
+      opacity: .75;
+    }
+    .step-value {
+      margin-top: 4px;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+    .ready-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .ready-stat {
+      border-radius: 16px;
+      border: 1px solid rgba(146, 64, 14, .22);
+      background: rgba(255,255,255,.74);
+      padding: 12px;
+      text-align: left;
+    }
+    .ready-stat b {
+      display: block;
+      color: #0f172a;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+    .motivation-card {
+      background: linear-gradient(135deg, rgba(15,23,42,.94), rgba(49,46,129,.9) 54%, rgba(120,53,15,.88)) !important;
+      color: #fff7ed;
+      border-color: rgba(251, 191, 36, .48) !important;
+      box-shadow: 0 18px 44px rgba(15,23,42,.22), inset 0 1px 0 rgba(255,255,255,.18);
+    }
+    .motivation-card .muted { color: rgba(255,247,237,.72); }
+    .mission-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr);
+      gap: 10px;
+    }
+    .quest-panel {
+      border-radius: 18px;
+      border: 1px solid rgba(251,191,36,.36);
+      background: rgba(255,255,255,.1);
+      padding: 12px;
+    }
+    .xp-track {
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+    .xp-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #38bdf8, #facc15);
+      box-shadow: 0 0 18px rgba(250,204,21,.48);
+    }
+    .badge-row {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .perfect-badge {
+      min-width: 76px;
+      border-radius: 14px;
+      border: 1px solid rgba(251,191,36,.4);
+      background: rgba(255,255,255,.12);
+      padding: 8px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 900;
+    }
     @keyframes startShine {
       0%, 58% { transform: translateX(-110%); }
       82%, 100% { transform: translateX(110%); }
@@ -202,6 +306,13 @@
       .home-hero { padding: 20px 12px; border-radius: 18px; }
       .home-hero h1 { font-size: 32px; margin-top: 8px; }
       .home-hero p { font-size: 13px; margin-top: 6px; }
+      .step-strip { grid-template-columns: 1fr; gap: 6px; }
+      .step-pill { min-height: 52px; padding: 8px 10px; }
+      .step-value { font-size: 13px; }
+      .ready-grid { grid-template-columns: 1fr; gap: 7px; }
+      .ready-stat { padding: 9px 10px; }
+      .mission-grid { grid-template-columns: 1fr; }
+      .perfect-badge { min-width: 70px; }
       .quiz-card { padding: 12px !important; gap: 10px !important; }
       .quiz-title { font-size: 18px !important; line-height: 1.1 !important; }
       .quiz-sub { font-size: 11px !important; }
@@ -1276,6 +1387,12 @@ function Btn({children,onClick,disabled,kind="",className=""}){const isStart=typ
 function LinkBtn({children,href}){return <a href={href} className="app-btn rounded-xl px-4 py-3 font-bold border border-amber-800/20 bg-white/90 text-center">{children}</a>}
 function HomeLinks({home}){return <div className="grid grid-cols-1 sm:grid-cols-3 gap-2"><LinkBtn href={okuponHomeUrl}>オクポンのホームページへ</LinkBtn><Btn onClick={home}>理科のホームへ</Btn><LinkBtn href={mathHomeUrl}>数学のホームへ</LinkBtn></div>}
 
+function StepGuide({quizType,solveMode,grade,field,level,descLevels,filtered}){const unitReady=quizType==="記述対策"?grade&&field&&descLevels.length:grade&&field&&level;const unitText=quizType==="記述対策"?(unitReady?`${grade}・${field}・${descLevels.length}小単元`:"単元を選択"):(unitReady?`${grade}・${field}・${level}`:"単元を選択");return <Box className="ui-guide"><div className="flex items-center justify-between gap-2"><div><b>今日の流れ</b><div className="text-xs text-slate-500">上から順番に選んで、最後にスタートします。</div></div><div className={`rounded-full px-3 py-1 text-xs font-black ${filtered.length?"bg-amber-100 text-amber-900":"bg-slate-100 text-slate-400"}`}>{filtered.length}問</div></div><div className="step-strip"><div className={`step-pill ${quizType?"done":""}`}><div className="step-label">1. 問題タイプ</div><div className="step-value">{quizType==="記述対策"?"記述":quizType==="練習問題"?"練習":"一問一答"}</div></div><div className={`step-pill ${unitReady?"done":"next"}`}><div className="step-label">2. 学年・単元</div><div className="step-value">{unitText}</div></div><div className={`step-pill ${unitReady?"next":""}`}><div className="step-label">3. 解き方</div><div className="step-value">{solveMode}</div></div></div></Box>}
+
+function ReadyInfo({qs,quizType,solveMode,grade,field,level,descLevels,target,bestPerfect}){const label=quizType==="記述対策"?`${grade||"中1"}・${field||"未選択"}・${descLevels.length}小単元`:quizType==="練習問題"?`${grade||"中1"}・${field||"未選択"}・${level||"未選択"}`:`${grade}・${field}・${level}`;return <Box className="ui-guide"><div><div className="text-sm text-slate-500">準備完了</div><div className="text-2xl font-black text-amber-900">{quizType==="記述対策"?"理科 記述":quizType==="練習問題"?"理科 練習":"理科 一問一答"}</div><div className="text-xs text-slate-500">{label}</div></div><div className="ready-grid"><div className="ready-stat"><span className="text-xs text-slate-500">問題数</span><b>{qs.length}問</b></div><div className="ready-stat"><span className="text-xs text-slate-500">モード</span><b>{solveMode}</b></div><div className="ready-stat"><span className="text-xs text-slate-500">目標時間</span><b>{tm(target)}</b></div><div className="ready-stat"><span className="text-xs text-slate-500">全問正解ベスト</span><b>{bestPerfect?tm(bestPerfect):"まだなし"}</b></div></div></Box>}
+
+function HomeMotivation({records,streak,userGrade,setQuizType,setSolveMode,setGrade,setField,setLevel,setDescLevels}){const radarRecords=scoped(records,"全学年",3),stats=fieldStats(radarRecords,"全学年"),active=stats.filter(x=>x.total),weak=active.length?[...active].sort((a,b)=>a.accuracy-b.accuracy)[0]:null,best=active.length?[...active].sort((a,b)=>b.accuracy-a.accuracy)[0]:null,total=records.reduce((s,r)=>s+(Number(r.total)||0),0),perfects=records.filter(r=>r.total&&r.score===r.total).length,levelNo=1+Math.floor(total/50),xp=total%50,badges=[...new Set(records.flatMap(r=>(r.unitScores||[]).filter(x=>x.total&&x.score===x.total).map(x=>x.unit)))].slice(0,8),questGrade=recordGrades.includes(userGrade)?userGrade:"中1",questField=weak?.field||"生物",mission=weak?`${questField}を3問だけ確認しよう`:"まずは好きな単元を3問だけ進めよう";const startQuest=()=>{setQuizType("一問一答");setSolveMode("練習モード");setGrade(questGrade);setField(questField);setLevel("A");setDescLevels([]);setTimeout(()=>document.getElementById("questions")?.scrollIntoView({behavior:"smooth",block:"start"}),0)};return <Box className="motivation-card"><div className="mission-grid"><div className="space-y-3"><div><div className="text-xs font-black muted">TODAY'S MISSION</div><div className="text-2xl font-black">{mission}</div><div className="text-sm muted">小さく始めると、ちゃんと続きます。</div></div><div className="quest-panel"><div className="text-xs font-black muted">弱点クエスト</div><div className="text-lg font-black">{questGrade}・{questField}・A問題</div><div className="text-xs muted">{weak?`最近の正答率 ${weak.accuracy}%。ここを上げるとレーダーが伸びます。`:"履歴がたまるとおすすめが自動で出ます。"}</div><button onClick={startQuest} className="mt-3 w-full rounded-xl border border-amber-300/70 bg-amber-300 px-4 py-3 font-black text-slate-950">おすすめを選択する</button></div><div><div className="mb-1 flex justify-between text-xs font-black muted"><span>Lv.{levelNo} 学習EXP</span><span>{xp}/50問</span></div><div className="xp-track"><div className="xp-fill" style={{width:`${Math.max(6,xp/50*100)}%`}}></div></div></div></div><div className="space-y-3"><div className="quest-panel text-center"><div className="text-xs font-black muted">レーダー</div><div className="grid grid-cols-2 gap-2 mt-2 text-xs font-black">{stats.map(x=><div key={x.field} className="rounded-xl bg-white/10 p-2"><div>{x.field}</div><div className="text-lg">{x.total?`${x.accuracy}%`:"-"}</div></div>)}</div>{best&&<div className="mt-2 text-xs muted">得意 {best.field} / 弱点 {weak.field}</div>}</div><div><div className="mb-2 text-xs font-black muted">満点バッジ</div>{badges.length?<div className="badge-row">{badges.map(u=><div key={u} className="perfect-badge"><div className="text-xl">◇</div><div>{u.replace(/^中[123]/,"")}</div></div>)}</div>:<div className="rounded-xl bg-white/10 p-3 text-sm muted">満点を取るとここにバッジが並びます。</div>}</div><div className="rounded-xl bg-white/10 p-3 text-xs muted">満点 {perfects}回 / 連続 {streak.current}日</div></div></div></Box>}
+
 function App(){
  const savedName=()=>localStorage.getItem(N)||"",savedGrade=()=>localStorage.getItem(G)||"",savedProfile=()=>localStorage.getItem(P)==="1"&&!!savedName()&&!!savedGrade();
  const [scr,setScr]=useState("home"),[name,setName]=useState(savedName),[userGrade,setUserGrade]=useState(savedGrade),[profileSaved,setProfileSaved]=useState(savedProfile),[quizType,setQuizType]=useState("一問一答"),[solveMode,setSolveMode]=useState("テストモード"),[descLevels,setDescLevels]=useState([]),[grade,setGrade]=useState(""),[field,setField]=useState(""),[level,setLevel]=useState(""),[qs,setQs]=useState([]),[i,setI]=useState(0),[ans,setAns]=useState({}),[hist,setHist]=useState([]),[wrongs,setWrongs]=useState([]),[records,setRecords]=useState([]),[bestTimes,setBestTimes]=useState({}),[rg,setRg]=useState("全学年"),[order,setOrder]=useState("number"),[back,setBack]=useState(false),[sec,setSec]=useState(0),[finalSec,setFinalSec]=useState(0),[start,setStart]=useState(null),[streak,setStreak]=useState({lastDate:"",current:0,best:0}),[result,setResult]=useState(null),[reviewMode,setReviewMode]=useState(false);
@@ -1293,9 +1410,9 @@ function App(){
  const register=()=>{const n=name.trim();if(!n||!userGrade)return;localStorage.setItem(N,n);localStorage.setItem(G,userGrade);localStorage.setItem(P,"1");setName(n);setUserGrade(userGrade);setProfileSaved(true);setScr("home")},review=()=>{const ordered=order==="number"?[...wrongs].sort((a,b)=>a.no-b.no):sh(wrongs);setQs(ordered.map(mq));setI(0);setAns({});setHist([]);setWrongs([]);setResult(null);setBack(false);setSec(0);setFinalSec(0);setStart(null);setReviewMode(true);setScr("ready")};
 
  if(scr==="profile"||!profileSaved)return <Main><C><div className="text-center space-y-2"><div className="text-5xl">🐱</div><h1 className="text-3xl font-black">はじめに設定</h1><p className="text-slate-500">名前と伝達事項を見る学年を登録してください。</p></div><div className="space-y-2"><b>表示名</b><input value={name} onChange={e=>setName(e.target.value)} placeholder="本名ではなくニックネームを入力" className="w-full rounded-2xl border px-4 py-3"/></div><div><b>伝達事項を見る学年</b><B items={recordGrades} value={userGrade} set={setUserGrade}/></div><Btn onClick={register} disabled={!name.trim()||!userGrade} kind="main">設定を保存</Btn>{profileSaved&&<Box><b>保存履歴の管理</b><p className="text-xs text-slate-500">履歴を消す前に確認画面が出ます。</p><Btn onClick={clearRecords}>履歴を消す</Btn></Box>}</C></Main>;
- if(scr==="home")return <Main><C><div className="home-hero text-center"><div className="home-kicker">SCIENCE QUIZ</div><h1 className="font-black">理科ホーム</h1><p>問題を見て、今日やるところを選んでください。</p></div><Box><div className="text-5xl">🐱</div><div className="text-xl font-black">{name}さん、{greeting}</div><div className="text-sm text-slate-500">今日の理科も、できるところから進めよう。</div></Box><Toc edit={()=>setScr("profile")} records={()=>setScr("records")} home={home}/><div id="notices" className="scroll-mt-4"><Notices grade={userGrade}/></div><Catalog quizType={quizType} setQuizType={setQuizType} solveMode={solveMode} setSolveMode={setSolveMode} grade={grade} setGrade={setGrade} field={field} setField={setField} level={level} setLevel={setLevel} descLevels={descLevels} setDescLevels={setDescLevels} unit={unit} unitRecs={unitRecs} order={order} setOrder={setOrder} begin={begin}/><Box><div className="text-sm text-slate-500">選択中</div><div className={`text-xl font-black ${(quizType==="記述対策"?grade&&field&&descLevels.length:grade&&field&&level)?"text-amber-800":"text-slate-400"}`}>{quizType==="記述対策"?(grade&&field&&descLevels.length?`${grade}・${field}・記述・${solveMode}`:"まだ選択していません"):(grade&&field&&level?`${grade}・${field}・${level}・${solveMode}`:"まだ選択していません")}</div><div className={`text-3xl font-black ${filtered.length?"text-slate-950":"text-slate-300"}`}>{filtered.length}問</div></Box><div id="records" className="scroll-mt-4"><Box><div className="text-sm text-slate-500">連続学習記録</div><div className="text-2xl font-black">🔥 {streak.current}日目</div><div className="text-xs text-slate-500">最長 {streak.best}日</div></Box></div><div className="grid grid-cols-1 gap-3"><Btn onClick={()=>setScr("records")}>📊 保存履歴</Btn></div><Btn onClick={()=>setScr("profile")}>名前・伝達事項の学年を編集</Btn></C></Main>;
+ if(scr==="home")return <Main><C><div className="home-hero text-center"><div className="home-kicker">SCIENCE QUIZ</div><h1 className="font-black">理科ホーム</h1><p>問題を見て、今日やるところを選んでください。</p></div><Box><div className="text-5xl">🐱</div><div className="text-xl font-black">{name}さん、{greeting}</div><div className="text-sm text-slate-500">今日の理科も、できるところから進めよう。</div></Box><HomeMotivation records={records} streak={streak} userGrade={userGrade} setQuizType={setQuizType} setSolveMode={setSolveMode} setGrade={setGrade} setField={setField} setLevel={setLevel} setDescLevels={setDescLevels}/><Toc edit={()=>setScr("profile")} records={()=>setScr("records")} home={home}/><div id="notices" className="scroll-mt-4"><Notices grade={userGrade}/></div><StepGuide quizType={quizType} solveMode={solveMode} grade={grade} field={field} level={level} descLevels={descLevels} filtered={filtered}/><Catalog quizType={quizType} setQuizType={setQuizType} solveMode={solveMode} setSolveMode={setSolveMode} grade={grade} setGrade={setGrade} field={field} setField={setField} level={level} setLevel={setLevel} descLevels={descLevels} setDescLevels={setDescLevels} unit={unit} unitRecs={unitRecs} order={order} setOrder={setOrder} begin={begin}/><Box><div className="text-sm text-slate-500">選択中</div><div className={`text-xl font-black ${(quizType==="記述対策"?grade&&field&&descLevels.length:grade&&field&&level)?"text-amber-800":"text-slate-400"}`}>{quizType==="記述対策"?(grade&&field&&descLevels.length?`${grade}・${field}・記述・${solveMode}`:"まだ選択していません"):(grade&&field&&level?`${grade}・${field}・${level}・${solveMode}`:"まだ選択していません")}</div><div className={`text-3xl font-black ${filtered.length?"text-slate-950":"text-slate-300"}`}>{filtered.length}問</div></Box><div id="records" className="scroll-mt-4"><Box><div className="text-sm text-slate-500">連続学習記録</div><div className="text-2xl font-black">🔥 {streak.current}日目</div><div className="text-xs text-slate-500">最長 {streak.best}日</div></Box></div><div className="grid grid-cols-1 gap-3"><Btn onClick={()=>setScr("records")}>📊 保存履歴</Btn></div><Btn onClick={()=>setScr("profile")}>名前・伝達事項の学年を編集</Btn></C></Main>;
  if(scr==="soon")return <Main><C><div className="text-center space-y-4"><div className="text-5xl">🚧</div><h1 className="text-3xl font-bold">Coming Soon</h1><p>この学年・分野・問題タイプはまだ追加されていません。</p><HomeLinks home={home}/></div></C></Main>;
- if(scr==="ready")return <Main><C><div className="text-center space-y-4"><h1 className="text-3xl font-bold">準備画面</h1><p>スタートを押すと始まります。</p><Box><div className="text-sm text-slate-500">問題数</div><div className="text-3xl font-black">{qs.length}問</div><div className="text-sm text-slate-500">目標時間：{tm(target)} / 全問正解ベスト：{bestPerfect?tm(bestPerfect):"まだなし"}</div></Box><div className="grid grid-cols-1 gap-3"><Btn onClick={()=>{setSec(0);setFinalSec(0);setStart(Date.now());setScr("quiz")}} kind="main">スタート</Btn><HomeLinks home={home}/></div></div></C></Main>;
+ if(scr==="ready")return <Main><C><div className="text-center space-y-4"><h1 className="text-3xl font-bold">準備画面</h1><p className="text-sm text-slate-500">内容を確認して、スタートを押してください。</p><ReadyInfo qs={qs} quizType={quizType} solveMode={solveMode} grade={grade} field={field} level={level} descLevels={descLevels} target={target} bestPerfect={bestPerfect}/><div className="grid grid-cols-1 gap-3"><Btn onClick={()=>{setSec(0);setFinalSec(0);setStart(Date.now());setScr("quiz")}} kind="main">スタート</Btn><HomeLinks home={home}/></div></div></C></Main>;
  if(scr==="quiz")return <Main><C><div className="flex items-start justify-between gap-3"><div><h1 className="quiz-title text-2xl font-black">{quizType==="記述対策"?"理科 記述":quizType==="練習問題"?"理科 練習":"理科 一問一答"}</h1><p className="quiz-sub text-slate-500">{quizType==="記述対策"?`${grade||"中1"}・${field||"未選択"}・記述・${solveMode}・${descLevels.join(" / ")}`:quizType==="練習問題"?`${grade||"中1"}・${field||"未選択"}・練習・${solveMode}・${level||"未選択"}`:`${grade}・${field}・${level}問題・${solveMode}`}</p></div><Btn onClick={()=>{setStart(null);home()}} className="quiz-home">理科ホームへ</Btn></div>{cur&&<><div className="quiz-info flex justify-between text-sm"><div><span className="quiz-badge rounded-xl bg-slate-100 px-3 py-1">{cur.unit}</span> <span className="quiz-badge rounded-xl border px-3 py-1">第{cur.no}問</span></div><div className="text-right"><div>進行 {i+1}/{qs.length}</div><div>回答済み {answered}/{qs.length}</div><b className={sec>target?"text-red-600":"text-sky-600"}>{tm(sec)} / 目標 {tm(target)}</b><div className="text-xs font-bold text-amber-700">全問正解ベスト {bestPerfect?tm(bestPerfect):"まだなし"}</div></div></div><Box className="quiz-question"><p className="text-xl font-bold leading-relaxed">{cur.question}</p></Box><div className="quiz-choice-grid grid grid-cols-1 sm:grid-cols-2 gap-3">{cur.choices.map(c=><Btn key={c} onClick={()=>choose(c)} kind={picked===c?"main":""} className="quiz-choice">{c}</Btn>)}</div>{solveMode==="練習モード"&&picked&&<Box><div className={`text-2xl font-black ${picked===cur.answer?"text-sky-700":"text-red-700"}`}>{picked===cur.answer?"正解！":"ここを確認しよう"}</div><div className="text-sm">正しい答え：<b className="text-green-700">{cur.answer}</b></div><p className="text-sm text-slate-700">{cur.explanation}</p></Box>}<div className="quiz-nav grid grid-cols-2 gap-3"><Btn onClick={prev} disabled={i===0}>前に戻る</Btn>{(back||!picked||i+1>=qs.length)&&<Btn onClick={next} kind="main">{i+1>=qs.length?"採点する":"次に進む"}</Btn>}</div></>}</C></Main>;
  if(scr==="result"){const u=hist[0]?`${hist[0].grade}${hist[0].field}${hist[0].level||"A"}`:unit,rs=rec(records,u);return <Main><C><div className="space-y-3"><h1 className="text-2xl font-black">結果</h1><HomeLinks home={home}/></div>{result?.score===result?.total&&result?.total>0&&<><div className="fixed inset-0 pointer-events-none overflow-hidden z-50">{fw.map(p=><div key={p.id} className="absolute text-4xl animate-bounce" style={{left:p.left,top:p.top,animationDelay:p.delay}}>🎆</div>)}</div><Box><div className="text-5xl">🎉🎆🎊</div><div className="text-3xl font-black text-orange-600">さすが！おめでとう！</div><div className="font-bold text-yellow-700">満点すごい！！完璧！！💮</div></Box></>}<Box><div className="text-4xl font-black">{result?.score??0}/{result?.total??0}</div><div>正答率 {result?.total?Math.round(result.score/result.total*100):0}%</div><div className="text-xl font-bold text-orange-600">{result?.praise}</div><b className={finalSec>target?"text-red-600":"text-sky-600"}>時間 {tm(finalSec)} / 目標 {tm(target)}</b><div className="text-xs font-bold text-amber-700">全問正解ベスト {bestPerfect?tm(bestPerfect):"まだなし"}</div><div className="text-xs text-slate-500">{result?.saved===false?"復習モードのため保存履歴には反映されません":"結果は自動保存済み"}</div></Box><Box><b>{u}の過去5回</b><div className="text-xs text-slate-500">{det(u)}</div>{rs.length?<Row records={rs}/>:<p>まだ保存履歴はありません。</p>}</Box><div className="space-y-3"><h2 className="text-lg font-bold">全問題の結果</h2>{hist.map((a,n)=><div key={`${k(a)}-${n}`} className={`rounded-2xl p-4 border ${a.correct?"bg-sky-50 border-sky-200":"bg-red-50 border-red-200"}`}><div className="text-sm text-slate-500">第{a.no}問 {a.unit}</div><b>{a.question}</b><div>選んだ答え：<b className={a.correct?"text-sky-700":"text-red-700"}>{a.selected}</b></div><div>正しい答え：<b className="text-green-700">{a.answer}</b></div>{!a.correct&&<p className="text-sm">{a.explanation}</p>}</div>)}</div><div className="grid grid-cols-2 gap-3"><Btn onClick={begin} kind="main">もう一度やる</Btn><Btn onClick={review} disabled={!wrongs.length}>間違えた問題だけ復習</Btn></div></C></Main>}
  if(scr==="records"){const latest=scoped(records,rg,10),radarRecords=scoped(records,rg,3);return <Main><C><div className="space-y-3"><div><h1 className="text-2xl font-black">保存履歴</h1><p className="text-sm text-slate-500">レーダーは過去3回分、履歴は10回分まで表示</p></div><HomeLinks home={home}/></div><div><b>表示する学年</b><div className="grid grid-cols-4 gap-2">{analysisGrades.map(g=><Btn key={g} onClick={()=>setRg(g)} kind={rg===g?"main":""}>{g}</Btn>)}</div></div><Radar items={fieldStats(radarRecords,rg)} grade={rg}/>{!latest.length?<Box>この範囲の保存履歴はありません。</Box>:<div className="space-y-3"><Box><b>合計</b><Row records={latest}/></Box>{rg!=="全学年"&&uns(rg).map(u=><Box key={u}><b>{u}</b><div className="text-xs text-slate-500">{det(u)}</div><div className="grid grid-cols-5 gap-1">{latest.map(r=>{const x=mg(r,u);return x?<div key={`${r.id}-${u}`} className={`rounded-xl border px-1 py-2 text-center text-xs font-bold ${cls(Math.round(x.score/x.total*100))}`}>{lab(x.score,x.total)}</div>:<div key={`${r.id}-${u}`} className="rounded-xl border px-1 py-2 text-center text-xs text-slate-300">—</div>})}</div></Box>)}</div>}<Box><div className="text-sm text-slate-500">連続学習記録</div><div className="text-2xl font-black">🔥 {streak.current}日目</div><div className="text-xs text-slate-500">最長 {streak.best}日</div></Box></C></Main>}
