@@ -408,8 +408,12 @@ const Q1BioB=[
 [30,"無脊椎動物","昆虫類は，何というところから体内に空気をとり入れるか。","気門",["えら","肺","口"],"昆虫類は気門から空気を取り入れる。"]
 ];
 
-const physics1WrongPool=["光源","光の直進","光の反射","入射角","反射角","（光の）反射の法則","乱反射","像","光の屈折","屈折角","全反射","焦点","焦点距離","実像","虚像","音源（発音体）","波","振幅","振動数","Hz","重力","弾性力（弾性の力）","摩擦力（摩擦の力）","垂直抗力","磁力（磁石の力）","フックの法則","重さ","質量","N","つり合っている。","対称（の位置）","2分の1","直進する。","入射角＞屈折角","入射角＜屈折角","白色","短くなる。","光軸と平行に進む。","逆向き","同じ向き","大きい。","振動すること。","聞こえにくくなる。","遅い。","多い。","（約）1N","2倍","比例（の関係）","力の大きさ","力の向き","作用点（力のはたらく点）","等しい。","逆（反対）向き。"];
-const toPhysicsRows=(items,unit)=>items.map(({no,question,answer})=>{const choices=physics1WrongPool.filter(x=>x!==answer);return[no,unit,question,answer,[0,1,2].map(i=>choices[(no*3+i)%choices.length]),`正解は「${answer}」。`]});
+const makeGroupedRows=(items,unit,groupEnds=[items.length])=>items.map(({no,question,answer})=>{
+ const groupIndex=groupEnds.findIndex(end=>no<=end),start=groupIndex>0?groupEnds[groupIndex-1]+1:1,end=groupEnds[groupIndex]||items.length;
+ const choices=[...new Set(items.filter(x=>x.no>=start&&x.no<=end&&x.answer!==answer).map(x=>x.answer))];
+ return[no,unit,question,answer,[0,1,2].map(i=>choices[(no*3+i)%choices.length]),`正解は「${answer}」。`];
+});
+const toPhysicsRows=(items,unit,groupEnds)=>makeGroupedRows(items,unit,groupEnds);
 const Q1PhysA=toPhysicsRows([
 {no:1,question:"自ら光を出すものを何というか。",answer:"光源"},
 {no:2,question:"光源から出た光がまっすぐに進むことを何というか。",answer:"光の直進"},
@@ -441,7 +445,7 @@ const Q1PhysA=toPhysicsRows([
 {no:28,question:"物体そのものの量を何というか。",answer:"質量"},
 {no:29,question:"重さの単位をアルファベットで書け。",answer:"N"},
 {no:30,question:"1つの物体に2力を加えても動かないとき，2力はどうなっているというか。",answer:"つり合っている。"}
-],"身近な物理現象A");
+],"身近な物理現象A",[11,15,20,30]);
 const Q1PhysB=toPhysicsRows([
 {no:1,question:"鏡にうつる物体の像は，鏡の面に対して物体とどのような位置にあるか。",answer:"対称（の位置）"},
 {no:2,question:"全身をうつすのに必要な鏡の縦の長さは，身長の何分の1の長さか。",answer:"2分の1"},
@@ -473,10 +477,10 @@ const Q1PhysB=toPhysicsRows([
 {no:28,question:"力を矢印で表すとき，矢印の始点は何に一致させるか。",answer:"作用点（力のはたらく点）"},
 {no:29,question:"2力がつり合っているとき，2力の大きさはどのような関係か。",answer:"等しい。"},
 {no:30,question:"2力がつり合っているとき，2力の向きはどのような関係か。",answer:"逆（反対）向き。"}
-],"身近な物理現象B");
+],"身近な物理現象B",[7,14,22,30]);
 
 // Added question sets from checked source files.
-const toQuestionRows=(items,unit)=>items.map(({no,question,answer})=>{const choices=[...new Set(items.map(x=>x.answer).filter(x=>x!==answer))];return[no,unit,question,answer,[0,1,2].map(i=>choices[(no*3+i)%choices.length]),`正解は「${answer}」。`]});
+const toQuestionRows=(items,unit,groupEnds)=>makeGroupedRows(items,unit,groupEnds);
 const Q1ChemA=toQuestionRows([
 {no:1,question:"金属以外の物質を何というか。",answer:"非金属"},
 {no:2,question:"金属をみがくと出る特有のかがやきを何というか。",answer:"金属光沢"},
@@ -508,7 +512,7 @@ const Q1ChemA=toQuestionRows([
 {no:28,question:"液体が，液面だけでなく内部からも気体に変化することを何というか。",answer:"沸騰"},
 {no:29,question:"気体を冷やして再び液体として取り出す方法は何か。",answer:"蒸留"},
 {no:30,question:"蒸留によって混合物から純粋な物質をとり出すことができるのは，混合物中のそれぞれの物質の何が違うからか。",answer:"沸点"}
-],"身のまわりの物質・気体・水溶液A");
+],"身のまわりの物質・気体・水溶液A",[5,13,23,30]);
 const Q1ChemB=toQuestionRows([
 {no:1,question:"有機物の砂糖が燃えると，何ができるか。2つ答えよ。",answer:"二酸化炭素、水"},
 {no:2,question:"金属が電気を通す性質を何というか。",answer:"電気伝導性"},
@@ -540,7 +544,7 @@ const Q1ChemB=toQuestionRows([
 {no:28,question:"固体・液体・気体のうち，粒子がばらばらになって自由にとび回っているのはどれか。",answer:"気体"},
 {no:29,question:"融点や沸点は，物質の質量や体積が変化するとどうなるか。",answer:"変化しない"},
 {no:30,question:"沸点の違う液体の混合物を加熱したとき，先に気体となって出てくるのは，沸点が，高い物質・低い物質のどちらか。",answer:"低い物質"}
-],"身のまわりの物質・気体・水溶液B");
+],"身のまわりの物質・気体・水溶液B",[5,16,20,30]);
 const Q1GeoA=toQuestionRows([
 {no:1,question:"地下で岩石が熱でどろどろに溶けたものは。",answer:"マグマ"},
 {no:2,question:"火山が噴き出したものをまとめて何というか。",answer:"火山噴出物"},
@@ -572,7 +576,7 @@ const Q1GeoA=toQuestionRows([
 {no:28,question:"塩酸で気体が出る岩石。",answer:"石灰岩"},
 {no:29,question:"地層ができた環境を示す化石。",answer:"示相化石"},
 {no:30,question:"地層の年代を示す化石。",answer:"示準化石"}
-],"火山・地震・地層A");
+],"火山・地震・地層A",[8,19,25,30]);
 const Q1GeoB=toQuestionRows([
 {no:1,question:"マグマが地表に流れ出たもの。",answer:"溶岩"},
 {no:2,question:"火山噴出物のうち，主成分が水蒸気である気体を何というか。",answer:"火山ガス"},
@@ -604,7 +608,7 @@ const Q1GeoB=toQuestionRows([
 {no:28,question:"地層の堆積した当時の環境が，あたたかくて浅い海であったことがわかる化石は，サンゴ・シジミのどちらか。",answer:"サンゴ"},
 {no:29,question:"三葉虫が栄えた時代はいつか。",answer:"古生代"},
 {no:30,question:"中生代の示準化石。",answer:"アンモナイト"}
-],"火山・地震・地層B");
+],"火山・地震・地層B",[12,21,30]);
 const Q2BioA=toQuestionRows([
 {no:1,question:"ふつう，1つの細胞に1個ある丸い形をした粒を何というか。",answer:"核"},
 {no:2,question:"細胞質の最も外側にあるうすい膜を何というか。",answer:"細胞膜"},
@@ -636,7 +640,7 @@ const Q2BioA=toQuestionRows([
 {no:28,question:"感覚器官からの刺激の信号を脳や脊髄に伝える神経を何というか。",answer:"感覚神経"},
 {no:29,question:"脳や脊髄からの命令の信号を運動器官に伝える神経を何というか。",answer:"運動神経"},
 {no:30,question:"「熱いものにふれて思わず手を引っこめた」反応のように，刺激を受けて無意識に起こる反応を何というか。",answer:"反射"}
-],"生物の体のつくりとはたらきA");
+],"生物の体のつくりとはたらきA",[6,13,24,30]);
 const Q2BioB=toQuestionRows([
 {no:1,question:"核・葉緑体・液胞・細胞膜・細胞壁のうち，動物の細胞にもあるものを2つ選べ。",answer:"核，細胞膜"},
 {no:2,question:"ヒトは，単細胞生物・多細胞生物のどちらか。",answer:"多細胞生物"},
@@ -668,7 +672,7 @@ const Q2BioB=toQuestionRows([
 {no:28,question:"目のつくりの中で，光の刺激を受けとる細胞がある部分はどこか。",answer:"網膜"},
 {no:29,question:"感覚器官から伝わってきた刺激の信号に対して，どのように反応するかを決定する器官はどこか。2つ答えよ。",answer:"脳，脊髄"},
 {no:30,question:"意識して起こす反応・反射のうち，刺激を受けてから反応するまでの時間が短いのはどちらか。",answer:"反射"}
-],"生物の体のつくりとはたらきB");
+],"生物の体のつくりとはたらきB",[7,12,24,30]);
 const Q2PhysA=toQuestionRows([
 {no:1,question:"電流が流れる道すじを何というか。",answer:"回路（電気回路）"},
 {no:2,question:"電流が1本の道すじで流れる回路を何というか。",answer:"直列回路"},
@@ -700,7 +704,7 @@ const Q2PhysA=toQuestionRows([
 {no:28,question:"向きが一定の電流を何というか。",answer:"直流"},
 {no:29,question:"向きが周期的に変わる電流を何というか。",answer:"交流"},
 {no:30,question:"交流の1秒間あたりの周期（電流の向きの変化）の回数を何というか。",answer:"周波数"}
-],"電流とその利用A");
+],"電流とその利用A",[9,13,21,30]);
 const Q2PhysB=toQuestionRows([
 {no:1,question:"電流は，電源の＋極から－極・－極から＋極のどちらに流れるか。",answer:"＋極から－極"},
 {no:2,question:"1Aは何mAか。",answer:"1000mA"},
@@ -730,7 +734,7 @@ const Q2PhysB=toQuestionRows([
 {no:26,question:"誘導電流の大きさは，磁界の変化が大きいほどどうなるか。",answer:"大きくなる。"},
 {no:27,question:"コイルの中の磁石を連続的に回転させて電磁誘導を起こし，誘導電流を得る装置を何というか。",answer:"発電機"},
 {no:28,question:"家庭のコンセントに供給される電流は，直流・交流のどちらか。",answer:"交流"}
-],"電流とその利用B");
+],"電流とその利用B",[11,15,20,28]);
 const Q2GeoA=toQuestionRows([
 {no:1,question:"上昇する空気の流れを何というか。",answer:"上昇気流"},
 {no:2,question:"下降する空気の流れを何というか。",answer:"下降気流"},
@@ -761,7 +765,7 @@ const Q2GeoA=toQuestionRows([
 {no:27,question:"冬に，北のユーラシア大陸上で発達する気団は何か。",answer:"シベリア気団"},
 {no:28,question:"夏に，日本の南の太平洋上で発達する気団は何か。",answer:"小笠原気団"},
 {no:29,question:"冬の日本付近の気圧配置を何というか。",answer:"西高東低"}
-],"天気とその変化A");
+],"天気とその変化A",[5,11,15,23,29]);
 const Q2GeoB=toQuestionRows([
 {no:1,question:"雲ができるのは，空気が「上昇するとき」・「下降するとき」のどちらか。",answer:"上昇するとき"},
 {no:2,question:"1気圧は約何hPaか。",answer:"（約）1013hPa"},
@@ -792,7 +796,7 @@ const Q2GeoB=toQuestionRows([
 {no:27,question:"初夏に，2つの気団の勢力がつり合ってできる停滞前線を何というか。",answer:"梅雨前線"},
 {no:28,question:"春と秋によく見られる，移動している高気圧を何というか。",answer:"移動性高気圧"},
 {no:29,question:"熱帯低気圧のうち，最大風速が秒速17.2m以上のものを何というか。",answer:"台風"}
-],"天気とその変化B");
+],"天気とその変化B",[5,14,20,29]);
 
 const Q3ChemB=[
 [1, "イオンと電気分解", "陽子1個がもつ＋の電気の量と電子1個がもつ－の電気の量は，「等しい」・「異なる」のどちらか。", "等しい", ["異なる", "2倍", "1/2倍"], "正解は「等しい」。"],
@@ -1357,7 +1361,42 @@ const gradeNotices={中1:"中1への伝達事項はここに表示されます�
 const okuponHomeUrl="https://okuponsoba.github.io/okupon-homepage/#apps",mathHomeUrl="https://okuponsoba.github.io/math/";
 const details={中1生物:"植物・動物・細胞",中1記述対策:"説明問題を四択で練習",中1化学:"身のまわりの物質・気体・水溶液",中1物理:"光・音・力",中1地学:"火山・地震・地層",中2生物:"細胞・人体・神経",中2化学:"原子・分子・化学変化",中2物理:"電流・電力・磁界",中2地学:"天気・前線・気圧",中3生物:"遺伝・生態系・進化",中3化学:"イオン・酸アルカリ・電池",中3物理:"仕事・エネルギー",中3地学:"宇宙・太陽系・月"};
 const S="scienceQuizRecords",N="scienceQuizUserName",G="scienceQuizUserGrade",P="scienceQuizProfileSaved",T="scienceQuizStreak",BT="scienceQuizBestPerfectTimes";
-const sh=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b},k=q=>`${q.grade}-${q.field}-${q.level||"A"}-${q.no}`,mq=q=>({...q,choices:sh([q.answer,...q.wrongs])});
+const confusables=[
+ ["セキツイ動物","無セキツイ動物"],["脊椎動物","無脊椎動物"],["外骨格","内骨格"],["節足動物","軟体動物"],["ハチュウ類","両生類","鳥類","ホニュウ類","魚類"],["卵生","胎生"],
+ ["裸子植物","被子植物"],["単子葉類","双子葉類"],["シダ植物","コケ植物"],["ひげ根","主根と側根"],["胚珠","子房"],["花粉","やく"],["めしべ","おしべ"],["受粉","受精"],
+ ["有機物","無機物"],["有機物","無機物","単体","化合物"],["溶質","溶媒","溶液"],["飽和水溶液","水溶液"],["融点","沸点"],["蒸発","沸騰"],["状態変化","化学変化"],["酸化","還元"],["発熱反応","吸熱反応"],
+ ["二酸化炭素","酸素","水素","窒素","アンモニア"],["石灰水","BTB溶液","フェノールフタレイン溶液"],["酸性","中性","アルカリ性"],["陽極","陰極"],["陽イオン","陰イオン"],["原子","分子","電子","イオン"],
+ ["光源","光源でない物体"],["反射","屈折"],["入射角","反射角","屈折角"],["実像","虚像"],["凸レンズ","凹レンズ"],["焦点","焦点距離"],["音源","振幅","振動数"],["重力","弾性力","垂直抗力","摩擦力"],["つり合う","つり合わない"],["直列回路","並列回路"],["電流","電圧","抵抗"],["導体","不導体"],["直流","交流"],["N極","S極"],
+ ["火成岩","堆積岩"],["火山岩","深成岩"],["マグマ","溶岩"],["地震","震源","震央"],["初期微動","主要動"],["P波","S波"],["寒冷前線","温暖前線","停滞前線","閉塞前線","梅雨前線"],["高気圧","低気圧"],["上昇気流","下降気流"],["飽和水蒸気量","湿度"],["陸風","海風"],["シベリア気団","小笠原気団","オホーツク海気団","揚子江気団"],["恒星","惑星","衛星"],["公転","自転"]
+];
+const sh=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b},k=q=>`${q.grade}-${q.field}-${q.level||"A"}-${q.no}`;
+const uniqChoices=(items,answer)=>[...new Set(items.filter(x=>x&&x!==answer))];
+const sameChoiceKind=(candidate,answer,question="")=>{
+ const c=String(candidate||"").trim(),a=String(answer||"").trim();
+ const suffix=String(question).includes("\u4f55\u985e")&&a.endsWith("\u985e")?"\u985e":"";
+ return !suffix||c.endsWith(suffix);
+};
+const relatedTerms=answer=>{
+ const terms=[];
+ confusables.forEach(g=>{if(g.includes(answer))terms.push(...g.filter(x=>x!==answer))});
+ const pairs=[["大きい","小さい"],["高い","低い"],["多い","少ない"],["速い","遅い"],["広い","せまい"],["上がる","下がる"],["上昇","下降"],["増える","減る"],["膨張","収縮"],["明るい","暗い"],["厚い","薄い"],["強い","弱い"],["正","負"],["＋極","－極"],["プラス極","マイナス極"],["開く","閉じる"],["固体","液体"],["液体","気体"]];
+ pairs.forEach(([a,b])=>{if(answer===a)terms.push(b);if(answer===b)terms.push(a)});
+ return uniqChoices(terms,answer);
+};
+const smartWrongs=q=>{
+ const all=[...data,...practiceData],same=x=>x!==q&&x.answer!==q.answer;
+ const matching=x=>same(x)&&sameChoiceKind(x.answer,q.answer,q.question);
+ const ownWrongs=uniqChoices(q.wrongs||[],q.answer).filter(x=>sameChoiceKind(x,q.answer,q.question));
+ const pools=[
+  relatedTerms(q.answer).filter(x=>sameChoiceKind(x,q.answer,q.question)),
+  ownWrongs,
+  all.filter(x=>matching(x)&&x.grade===q.grade&&x.field===q.field&&x.unit===q.unit).map(x=>x.answer)
+ ];
+ const picked=[];
+ for(const pool of pools){for(const x of sh(uniqChoices(pool,q.answer))){if(!picked.includes(x))picked.push(x);if(picked.length>=3)return picked}}
+ return picked;
+};
+const mq=q=>({...q,choices:sh([q.answer,...smartWrongs(q)])});
 const load=(key,d=[])=>{try{const raw=localStorage.getItem(key);if(!raw)return d;const v=JSON.parse(raw);return v??d}catch{return d}},save=(key,v)=>localStorage.setItem(key,JSON.stringify(v));
 const asArray=v=>Array.isArray(v)?v:[],asStreak=v=>v&&typeof v==="object"?{lastDate:v.lastDate||"",current:Number(v.current)||0,best:Number(v.best)||0}:{lastDate:"",current:0,best:0};
 const dk=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`,add=(s,n)=>{const d=new Date(`${s}T00:00:00`);d.setDate(d.getDate()+n);return dk(d)};
@@ -1367,6 +1406,16 @@ const tm=s=>`${Math.floor(Math.max(0,s||0)/60)}:${String(Math.floor(Math.max(0,s
 const lab=(s,t)=>`${s}/${t}点${t&&s===t?" 💮":""}`,fieldNames=["生物","化学","物理","地学"],descriptiveGrades=["中1","中2","中3"],descriptiveFieldsByGrade={中1:["生物"],中2:["生物","化学","物理","地学"],中3:["生物","化学","物理","地学"]},descriptiveCategoriesByGrade={中1:{生物:["生物の観察","花のつくり","裸子植物と被子植物","植物の分類","動物の分類"]},中2:{生物:["消化と吸収","呼吸、血液とその循環","動物の行動のしくみ","だ液のはたらき","光合成で出入りする物質","呼吸","生物と細胞","光合成が行われる場所"],化学:["炭酸水素ナトリウムの分解","酸化銀の分解","水の電気分解","鉄と硫黄の反応","マグネシウムの燃焼","酸化銅の炭素による還元"],物理:["電流と回路","電流がつくる磁界","発電機のしくみ","直流と交流"],地学:["空気中の水蒸気を調べる実験","気圧、飽和水蒸気量と湿度","前線","大気の動きと日本の天気"]},中3:{生物:["細胞分裂と生物の成長","生物の生殖","自然のなかの生物","自然環境の調査と保全"],化学:["電池","イオンへのなりやすさと電池","いろいろな電池"],物理:["力のはたらき方","仕事と力学的エネルギー"],地学:["太陽","太陽の1日の動き","星の1年の動き","月と金星の見え方","科学技術と人間"]}},practiceGrades=["中1"],practiceFieldsByGrade={中1:["生物"]},practiceCategoriesByGrade={中1:{生物:["身近な生物の観察","花のつくり","裸子植物と被子植物","植物の分類","シダ植物とコケ植物","動物の分類"]}},descriptiveFieldsFor=g=>descriptiveFieldsByGrade[g]||[],descriptiveCategoriesFor=(g,f)=>(descriptiveCategoriesByGrade[g]&&descriptiveCategoriesByGrade[g][f])||[],practiceFieldsFor=g=>practiceFieldsByGrade[g]||[],practiceCategoriesFor=(g,f)=>(practiceCategoriesByGrade[g]&&practiceCategoriesByGrade[g][f])||[],uns=g=>fieldNames.flatMap(f=>[`${g}${f}A`,`${g}${f}B`]);
 const det=u=>details[String(u).replace(/[AB]$/,"")]||"";
 const us=h=>Object.values(h.reduce((m,a)=>{const u=`${a.grade}${a.field}${a.level||"A"}`;m[u]??={unit:u,score:0,total:0};m[u].total++;if(a.correct)m[u].score++;return m},{}));
+const oneAnswerData=()=>data.filter(q=>q.level==="A"||q.level==="B");
+const dailyFive=(records,userGrade)=>{
+ const pool=oneAnswerData(),grade=recordGrades.includes(userGrade)?userGrade:"中1",used=new Set(),picked=[];
+ const addFrom=list=>{for(const q of sh(list)){const id=k(q);if(!used.has(id)){used.add(id);picked.push(q)}if(picked.length>=5)break}};
+ const weakUnits=records.flatMap(r=>r.unitScores||[]).filter(x=>x.total).map(x=>({...x,accuracy:Math.round((Number(x.score)||0)/(Number(x.total)||1)*100)})).sort((a,b)=>a.accuracy-b.accuracy);
+ weakUnits.forEach(x=>addFrom(pool.filter(q=>`${q.grade}${q.field}${q.level||"A"}`===x.unit)));
+ addFrom(pool.filter(q=>q.grade===grade));
+ addFrom(pool);
+ return picked.slice(0,5);
+};
 const gof=r=>(r?.unitScores?.[0]?.unit||"中3").slice(0,2),mg=(r,u)=>r.unitScores?.find(x=>x.unit===u)||((u==="中3化学A"||u==="中3化学")?{unit:u,score:r.score||0,total:r.total||0}:null);
 const rec=(rs,u)=>rs.map(r=>{const x=mg(r,u);return x&&{id:r.id,date:r.date,score:x.score,total:x.total,accuracy:Math.round(x.score/x.total*100),timeSeconds:r.timeSeconds}}).filter(Boolean).slice(0,10);
 const inGrade=(r,g)=>g==="全学年"||gof(r)===g,scoped=(rs,g,n)=>rs.filter(r=>inGrade(r,g)).slice(0,n);
@@ -1395,15 +1444,15 @@ function HomeLinks({home}){return <div className="home-links grid grid-cols-3 ga
 
 function StepGuide({quizType,solveMode,grade,field,level,descLevels,filtered}){const unitReady=quizType==="記述対策"?grade&&field&&descLevels.length:grade&&field&&level;const unitText=quizType==="記述対策"?(unitReady?`${grade}・${field}・${descLevels.length}小単元`:"単元を選択"):(unitReady?`${grade}・${field}・${level}`:"単元を選択");return <Box className="ui-guide"><div className="flex items-center justify-between gap-2"><div><b>今日の流れ</b><div className="text-xs text-slate-500">上から順番に選んで、最後にスタートします。</div></div><div className={`rounded-full px-3 py-1 text-xs font-black ${filtered.length?"bg-amber-100 text-amber-900":"bg-slate-100 text-slate-400"}`}>{filtered.length}問</div></div><div className="step-strip"><div className={`step-pill ${quizType?"done":""}`}><div className="step-label">1. 問題タイプ</div><div className="step-value">{quizType==="記述対策"?"記述":quizType==="練習問題"?"練習":"一問一答"}</div></div><div className={`step-pill ${unitReady?"done":"next"}`}><div className="step-label">2. 学年・単元</div><div className="step-value">{unitText}</div></div><div className={`step-pill ${unitReady?"next":""}`}><div className="step-label">3. 解き方</div><div className="step-value">{solveMode}</div></div></div></Box>}
 
-function ReadyInfo({qs,quizType,solveMode,grade,field,level,descLevels,target,bestPerfect}){const label=quizType==="記述対策"?`${grade||"中1"}・${field||"未選択"}・${descLevels.length}小単元`:quizType==="練習問題"?`${grade||"中1"}・${field||"未選択"}・${level||"未選択"}`:`${grade}・${field}・${level}`;return <Box className="ui-guide"><div><div className="text-sm text-slate-500">準備完了</div><div className="text-2xl font-black text-amber-900">{quizType==="記述対策"?"理科 記述":quizType==="練習問題"?"理科 練習":"理科 一問一答"}</div><div className="text-xs text-slate-500">{label}</div></div><div className="ready-grid"><div className="ready-stat"><span className="text-xs text-slate-500">問題数</span><b>{qs.length}問</b></div><div className="ready-stat"><span className="text-xs text-slate-500">モード</span><b>{solveMode}</b></div><div className="ready-stat"><span className="text-xs text-slate-500">目標時間</span><b>{tm(target)}</b></div><div className="ready-stat"><span className="text-xs text-slate-500">全問正解ベスト</span><b>{bestPerfect?tm(bestPerfect):"まだなし"}</b></div></div></Box>}
+function ReadyInfo({qs,quizType,solveMode,grade,field,level,descLevels,target,bestPerfect,dailyMode}){const label=dailyMode?"弱点優先・5問・練習モード":quizType==="記述対策"?`${grade||"中1"}・${field||"未選択"}・${descLevels.length}小単元`:quizType==="練習問題"?`${grade||"中1"}・${field||"未選択"}・${level||"未選択"}`:`${grade}・${field}・${level}`;return <Box className="ui-guide"><div><div className="text-sm text-slate-500">準備完了</div><div className="text-2xl font-black text-amber-900">{dailyMode?"今日の5問":quizType==="記述対策"?"理科 記述":quizType==="練習問題"?"理科 練習":"理科 一問一答"}</div><div className="text-xs text-slate-500">{label}</div></div><div className="ready-grid"><div className="ready-stat"><span className="text-xs text-slate-500">問題数</span><b>{qs.length}問</b></div><div className="ready-stat"><span className="text-xs text-slate-500">モード</span><b>{solveMode}</b></div><div className="ready-stat"><span className="text-xs text-slate-500">目標時間</span><b>{tm(target)}</b></div><div className="ready-stat"><span className="text-xs text-slate-500">全問正解ベスト</span><b>{dailyMode?"対象外":bestPerfect?tm(bestPerfect):"まだなし"}</b></div></div></Box>}
 
 function HomeMiniRadar({items}){const size=168,c=84,r=54,n=items.length||1,point=v=>items.map((x,i)=>{const a=-Math.PI/2+i*2*Math.PI/n,d=r*v(x,i);return`${c+Math.cos(a)*d},${c+Math.sin(a)*d}`}).join(" "),data=point(x=>x.total?x.accuracy/100:0);return <svg viewBox={`0 0 ${size} ${size}`} className="mx-auto mt-2 w-full max-w-[190px]"><polygon points={point(()=>1)} fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.45)"/><polygon points={point(()=>.75)} fill="none" stroke="rgba(255,255,255,.22)"/><polygon points={point(()=>.5)} fill="none" stroke="rgba(255,255,255,.22)"/><polygon points={point(()=>.25)} fill="none" stroke="rgba(255,255,255,.18)"/>{items.map((x,i)=>{const a=-Math.PI/2+i*2*Math.PI/n,ex=c+Math.cos(a)*r,ey=c+Math.sin(a)*r,lx=c+Math.cos(a)*(r+18),ly=c+Math.sin(a)*(r+18);return <g key={x.field}><line x1={c} y1={c} x2={ex} y2={ey} stroke="rgba(255,255,255,.24)"/><text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle" className="fill-amber-50 text-[10px] font-black">{x.field}</text></g>})}<polygon points={data} fill="rgba(56,189,248,.32)" stroke="#7dd3fc" strokeWidth="3"/>{items.map((x,i)=>{const a=-Math.PI/2+i*2*Math.PI/n,d=r*(x.total?x.accuracy/100:0);return <circle key={x.field} cx={c+Math.cos(a)*d} cy={c+Math.sin(a)*d} r="3.5" fill="#facc15"/>})}<text x={c} y={c+4} textAnchor="middle" className="fill-amber-50/70 text-[10px] font-black">100%</text></svg>}
 
-function HomeMotivation({records,streak,userGrade,setQuizType,setSolveMode,setGrade,setField,setLevel,setDescLevels}){const radarRecords=scoped(records,"全学年",3),stats=fieldStats(radarRecords,"全学年"),active=stats.filter(x=>x.total),weak=active.length?[...active].sort((a,b)=>a.accuracy-b.accuracy)[0]:null,best=active.length?[...active].sort((a,b)=>b.accuracy-a.accuracy)[0]:null,total=records.reduce((s,r)=>s+(Number(r.total)||0),0),perfects=records.filter(r=>r.total&&r.score===r.total).length,levelNo=1+Math.floor(total/50),xp=total%50,badges=[...new Set(records.flatMap(r=>(r.unitScores||[]).filter(x=>x.total&&x.score===x.total).map(x=>x.unit)))].slice(0,8),questGrade=recordGrades.includes(userGrade)?userGrade:"中1",questField=weak?.field||"生物",mission=weak?`${questField}を3問だけ確認しよう`:"まずは好きな単元を3問だけ進めよう";const startQuest=()=>{setQuizType("一問一答");setSolveMode("練習モード");setGrade(questGrade);setField(questField);setLevel("A");setDescLevels([]);setTimeout(()=>document.getElementById("questions")?.scrollIntoView({behavior:"smooth",block:"start"}),0)};return <Box className="motivation-card"><div className="mission-grid"><div className="space-y-3"><div><div className="text-xs font-black muted">TODAY'S MISSION</div><div className="text-2xl font-black">{mission}</div><div className="text-sm muted">小さく始めると、ちゃんと続きます。</div></div><div className="quest-panel"><div className="text-xs font-black muted">弱点クエスト</div><div className="text-lg font-black">{questGrade}・{questField}・A問題</div><div className="text-xs muted">{weak?`最近の正答率 ${weak.accuracy}%。ここを上げるとレーダーが伸びます。`:"履歴がたまるとおすすめが自動で出ます。"}</div><button onClick={startQuest} className="mt-3 w-full rounded-xl border border-amber-300/70 bg-amber-300 px-4 py-3 font-black text-slate-950">おすすめを選択する</button></div><div><div className="mb-1 flex justify-between text-xs font-black muted"><span>Lv.{levelNo} 学習EXP</span><span>{xp}/50問</span></div><div className="xp-track"><div className="xp-fill" style={{width:`${Math.max(6,xp/50*100)}%`}}></div></div></div></div><div className="space-y-3"><div className="quest-panel text-center"><div className="text-xs font-black muted">レーダー</div><HomeMiniRadar items={stats}/>{best&&<div className="mt-2 text-xs muted">得意 {best.field} / 弱点 {weak.field}</div>}</div><div><div className="mb-2 text-xs font-black muted">満点バッジ</div>{badges.length?<div className="badge-row">{badges.map(u=><div key={u} className="perfect-badge"><div className="text-xl">◇</div><div>{u.replace(/^中[123]/,"")}</div></div>)}</div>:<div className="rounded-xl bg-white/10 p-3 text-sm muted">満点を取るとここにバッジが並びます。</div>}</div><div className="rounded-xl bg-white/10 p-3 text-xs muted">満点 {perfects}回 / 連続 {streak.current}日</div></div></div></Box>}
+function HomeMotivation({records,streak,userGrade,startDaily,setQuizType,setSolveMode,setGrade,setField,setLevel,setDescLevels}){const radarRecords=scoped(records,"全学年",3),stats=fieldStats(radarRecords,"全学年"),active=stats.filter(x=>x.total),weak=active.length?[...active].sort((a,b)=>a.accuracy-b.accuracy)[0]:null,best=active.length?[...active].sort((a,b)=>b.accuracy-a.accuracy)[0]:null,total=records.reduce((s,r)=>s+(Number(r.total)||0),0),perfects=records.filter(r=>r.total&&r.score===r.total).length,levelNo=1+Math.floor(total/50),xp=total%50,badges=[...new Set(records.flatMap(r=>(r.unitScores||[]).filter(x=>x.total&&x.score===x.total).map(x=>x.unit)))].slice(0,8),questGrade=recordGrades.includes(userGrade)?userGrade:"中1",questField=weak?.field||"生物",mission=weak?`${questField}を3問だけ確認しよう`:"まずは好きな単元を3問だけ進めよう";const startQuest=()=>{setQuizType("一問一答");setSolveMode("練習モード");setGrade(questGrade);setField(questField);setLevel("A");setDescLevels([]);setTimeout(()=>document.getElementById("questions")?.scrollIntoView({behavior:"smooth",block:"start"}),0)};return <Box className="motivation-card"><div className="mission-grid"><div className="space-y-3"><div><div className="text-xs font-black muted">TODAY'S MISSION</div><div className="text-2xl font-black">{mission}</div><div className="text-sm muted">小さく始めると、ちゃんと続きます。</div></div><div className="quest-panel"><div className="text-xs font-black muted">今日の5問</div><div className="text-lg font-black">弱点から5分だけ復習</div><div className="text-xs muted">間違えやすい単元を優先して、足りない分はランダムで出します。</div><button onClick={startDaily} className="mt-3 w-full rounded-xl border border-sky-200 bg-sky-200 px-4 py-3 font-black text-slate-950">今日の5問を始める</button></div><div className="quest-panel"><div className="text-xs font-black muted">弱点クエスト</div><div className="text-lg font-black">{questGrade}・{questField}・A問題</div><div className="text-xs muted">{weak?`最近の正答率 ${weak.accuracy}%。ここを上げるとレーダーが伸びます。`:"履歴がたまるとおすすめが自動で出ます。"}</div><button onClick={startQuest} className="mt-3 w-full rounded-xl border border-amber-300/70 bg-amber-300 px-4 py-3 font-black text-slate-950">おすすめを選択する</button></div><div><div className="mb-1 flex justify-between text-xs font-black muted"><span>Lv.{levelNo} 学習EXP</span><span>{xp}/50問</span></div><div className="xp-track"><div className="xp-fill" style={{width:`${Math.max(6,xp/50*100)}%`}}></div></div></div></div><div className="space-y-3"><div className="quest-panel text-center"><div className="text-xs font-black muted">レーダー</div><HomeMiniRadar items={stats}/>{best&&<div className="mt-2 text-xs muted">得意 {best.field} / 弱点 {weak.field}</div>}</div><div><div className="mb-2 text-xs font-black muted">満点バッジ</div>{badges.length?<div className="badge-row">{badges.map(u=><div key={u} className="perfect-badge"><div className="text-xl">◇</div><div>{u.replace(/^中[123]/,"")}</div></div>)}</div>:<div className="rounded-xl bg-white/10 p-3 text-sm muted">満点を取るとここにバッジが並びます。</div>}</div><div className="rounded-xl bg-white/10 p-3 text-xs muted">満点 {perfects}回 / 連続 {streak.current}日</div></div></div></Box>}
 
 function App(){
  const savedName=()=>localStorage.getItem(N)||"",savedGrade=()=>localStorage.getItem(G)||"",savedProfile=()=>localStorage.getItem(P)==="1"&&!!savedName()&&!!savedGrade();
- const [scr,setScr]=useState("home"),[name,setName]=useState(savedName),[userGrade,setUserGrade]=useState(savedGrade),[profileSaved,setProfileSaved]=useState(savedProfile),[quizType,setQuizType]=useState("一問一答"),[solveMode,setSolveMode]=useState("テストモード"),[descLevels,setDescLevels]=useState([]),[grade,setGrade]=useState(""),[field,setField]=useState(""),[level,setLevel]=useState(""),[qs,setQs]=useState([]),[i,setI]=useState(0),[ans,setAns]=useState({}),[hist,setHist]=useState([]),[wrongs,setWrongs]=useState([]),[records,setRecords]=useState([]),[bestTimes,setBestTimes]=useState({}),[rg,setRg]=useState("全学年"),[order,setOrder]=useState("number"),[back,setBack]=useState(false),[sec,setSec]=useState(0),[finalSec,setFinalSec]=useState(0),[start,setStart]=useState(null),[streak,setStreak]=useState({lastDate:"",current:0,best:0}),[result,setResult]=useState(null),[reviewMode,setReviewMode]=useState(false);
+ const [scr,setScr]=useState("home"),[name,setName]=useState(savedName),[userGrade,setUserGrade]=useState(savedGrade),[profileSaved,setProfileSaved]=useState(savedProfile),[quizType,setQuizType]=useState("一問一答"),[solveMode,setSolveMode]=useState("テストモード"),[descLevels,setDescLevels]=useState([]),[grade,setGrade]=useState(""),[field,setField]=useState(""),[level,setLevel]=useState(""),[qs,setQs]=useState([]),[i,setI]=useState(0),[ans,setAns]=useState({}),[hist,setHist]=useState([]),[wrongs,setWrongs]=useState([]),[records,setRecords]=useState([]),[bestTimes,setBestTimes]=useState({}),[rg,setRg]=useState("全学年"),[order,setOrder]=useState("number"),[back,setBack]=useState(false),[sec,setSec]=useState(0),[finalSec,setFinalSec]=useState(0),[start,setStart]=useState(null),[streak,setStreak]=useState({lastDate:"",current:0,best:0}),[result,setResult]=useState(null),[reviewMode,setReviewMode]=useState(false),[dailyMode,setDailyMode]=useState(false);
  useEffect(()=>{setRecords(asArray(load(S)));setBestTimes(load(BT,{}));setStreak(asStreak(load(T,{lastDate:"",current:0,best:0})));setName(localStorage.getItem(N)||"");setUserGrade(localStorage.getItem(G)||"")},[]);
  useEffect(()=>{if(scr!=="quiz"||!start)return;const t=setInterval(()=>setSec(Math.floor((Date.now()-start)/1000)),250);return()=>clearInterval(t)},[scr,start]);
  const filtered=useMemo(()=>quizType==="記述対策"?data.filter(q=>q.grade===(grade||"中1")&&q.field===field&&descLevels.includes(q.level)):quizType==="練習問題"?practiceData.filter(q=>q.grade===(grade||"中1")&&q.field===field&&q.level===level):data.filter(q=>(grade==="全学年"||q.grade===grade)&&(field==="全分野"||q.field===field)&&q.level===level),[quizType,descLevels,grade,field,level]),cur=qs[i],ck=cur?k(cur):"",picked=ans[ck]||"",answered=qs.filter(q=>ans[k(q)]).length,target=qs.length*10,unit=grade&&field&&level&&grade!=="全学年"&&field!=="全分野"?`${grade}${field}${level}`:"",unitRecs=unit?rec(records,unit):[],bestKey=grade&&field&&level?`${grade}-${field}-${level}`:"",bestPerfect=bestKey?Number(bestTimes[bestKey])||0:0,fw=useMemo(()=>Array.from({length:20},(_,id)=>({id,left:`${Math.random()*100}%`,top:`${Math.random()*50}%`,delay:`${id*.08}s`})),[scr]);
@@ -1411,18 +1460,29 @@ function App(){
  const streakNext=()=>{const today=dk();if(streak.lastDate===today)return streak;const c=streak.lastDate===add(today,-1)?streak.current+1:1;return{lastDate:today,current:c,best:Math.max(streak.best,c)}};
  const savePerfectBest=(score,time)=>{if(quizType!=="一問一答"||solveMode!=="テストモード"||!bestKey||score!==qs.length||!qs.length)return;const old=Number(bestTimes[bestKey])||0;if(old&&old<=time)return;const next={...bestTimes,[bestKey]:time};save(BT,next);setBestTimes(next)};
  const saveRes=(h,score,time)=>{const r={id:Date.now(),date:dk(),userName:name.trim()||"名前なし",score,total:qs.length,accuracy:Math.round(score/qs.length*100),timeSeconds:time,unitScores:us(h)},rs=[r,...records],st=streakNext();save(S,rs);save(T,st);setRecords(rs);setStreak(st);savePerfectBest(score,time)};
- const begin=()=>{if(!filtered.length){setScr("soon");return}const ordered=order==="number"?[...filtered].sort((a,b)=>a.no-b.no):sh(filtered);setQs(ordered.map(mq));setI(0);setAns({});setHist([]);setWrongs([]);setResult(null);setBack(false);setSec(0);setFinalSec(0);setStart(null);setReviewMode(false);setScr("ready")};
+ const begin=()=>{if(!filtered.length){setScr("soon");return}const ordered=order==="number"?[...filtered].sort((a,b)=>a.no-b.no):sh(filtered);setQs(ordered.map(mq));setI(0);setAns({});setHist([]);setWrongs([]);setResult(null);setBack(false);setSec(0);setFinalSec(0);setStart(null);setReviewMode(false);setDailyMode(false);setScr("ready")};
+ const startDaily=()=>{const daily=dailyFive(records,userGrade);if(!daily.length){setScr("soon");return}setQuizType("一問一答");setSolveMode("練習モード");setGrade(recordGrades.includes(userGrade)?userGrade:"全学年");setField("今日の5問");setLevel("");setDescLevels([]);setQs(daily.map(mq));setI(0);setAns({});setHist([]);setWrongs([]);setResult(null);setBack(false);setSec(0);setFinalSec(0);setStart(null);setReviewMode(false);setDailyMode(true);setScr("ready")};
  const finish=a=>{const h=qs.map(q=>{const s=a[k(q)];return{...q,selected:s||"未回答",correct:s===q.answer}}),score=h.filter(x=>x.correct).length,time=start?Math.floor((Date.now()-start)/1000):sec;setHist(h);setWrongs(h.filter(x=>!x.correct));setFinalSec(time);setStart(null);setResult({score,total:qs.length,praise:pr(score,qs.length),saved:!reviewMode});if(!reviewMode)saveRes(h,score,time);setScr("result")};
  const choose=c=>{const n={...ans,[ck]:c};setAns(n);if(solveMode==="練習モード"){setBack(true);return}i+1<qs.length?(setI(i+1),setBack(false)):finish(n)},next=()=>i+1<qs.length?(setI(i+1),setBack(false)):finish(ans),prev=()=>{setBack(true);setI(Math.max(0,i-1))},home=()=>setScr("home");
  const clearRecords=()=>{if(!confirm("保存履歴をすべて消します。元に戻せません。消してもよいですか？"))return;save(S,[]);setRecords([]);alert("保存履歴を消しました。")};
- const register=()=>{const n=name.trim();if(!n||!userGrade)return;localStorage.setItem(N,n);localStorage.setItem(G,userGrade);localStorage.setItem(P,"1");setName(n);setUserGrade(userGrade);setProfileSaved(true);setScr("home")},review=()=>{const ordered=order==="number"?[...wrongs].sort((a,b)=>a.no-b.no):sh(wrongs);setQs(ordered.map(mq));setI(0);setAns({});setHist([]);setWrongs([]);setResult(null);setBack(false);setSec(0);setFinalSec(0);setStart(null);setReviewMode(true);setScr("ready")};
+ const register=()=>{const n=name.trim();if(!n||!userGrade)return;localStorage.setItem(N,n);localStorage.setItem(G,userGrade);localStorage.setItem(P,"1");setName(n);setUserGrade(userGrade);setProfileSaved(true);setScr("home")},review=()=>{const ordered=order==="number"?[...wrongs].sort((a,b)=>a.no-b.no):sh(wrongs);setQs(ordered.map(mq));setI(0);setAns({});setHist([]);setWrongs([]);setResult(null);setBack(false);setSec(0);setFinalSec(0);setStart(null);setReviewMode(true);setDailyMode(dailyMode);setScr("ready")};
 
  if(scr==="profile"||!profileSaved)return <Main><C><div className="text-center space-y-2"><div className="text-5xl">🐱</div><h1 className="text-3xl font-black">はじめに設定</h1><p className="text-slate-500">名前と伝達事項を見る学年を登録してください。</p></div><div className="space-y-2"><b>表示名</b><input value={name} onChange={e=>setName(e.target.value)} placeholder="本名ではなくニックネームを入力" className="w-full rounded-2xl border px-4 py-3"/></div><div><b>伝達事項を見る学年</b><B items={recordGrades} value={userGrade} set={setUserGrade}/></div><Btn onClick={register} disabled={!name.trim()||!userGrade} kind="main">設定を保存</Btn>{profileSaved&&<Box><b>保存履歴の管理</b><p className="text-xs text-slate-500">履歴を消す前に確認画面が出ます。</p><Btn onClick={clearRecords}>履歴を消す</Btn></Box>}</C></Main>;
- if(scr==="home")return <Main><C><div className="home-hero text-center"><div className="home-kicker">SCIENCE QUIZ</div><h1 className="font-black">理科ホーム</h1><p>問題を見て、今日やるところを選んでください。</p></div><Box><div className="text-5xl">🐱</div><div className="text-xl font-black">{name}さん、{greeting}</div><div className="text-sm text-slate-500">今日の理科も、できるところから進めよう。</div></Box><HomeMotivation records={records} streak={streak} userGrade={userGrade} setQuizType={setQuizType} setSolveMode={setSolveMode} setGrade={setGrade} setField={setField} setLevel={setLevel} setDescLevels={setDescLevels}/><Toc edit={()=>setScr("profile")} records={()=>setScr("records")} home={home}/><div id="notices" className="scroll-mt-4"><Notices grade={userGrade}/></div><StepGuide quizType={quizType} solveMode={solveMode} grade={grade} field={field} level={level} descLevels={descLevels} filtered={filtered}/><Catalog quizType={quizType} setQuizType={setQuizType} solveMode={solveMode} setSolveMode={setSolveMode} grade={grade} setGrade={setGrade} field={field} setField={setField} level={level} setLevel={setLevel} descLevels={descLevels} setDescLevels={setDescLevels} unit={unit} unitRecs={unitRecs} order={order} setOrder={setOrder} begin={begin}/><Box><div className="text-sm text-slate-500">選択中</div><div className={`text-xl font-black ${(quizType==="記述対策"?grade&&field&&descLevels.length:grade&&field&&level)?"text-amber-800":"text-slate-400"}`}>{quizType==="記述対策"?(grade&&field&&descLevels.length?`${grade}・${field}・記述・${solveMode}`:"まだ選択していません"):(grade&&field&&level?`${grade}・${field}・${level}・${solveMode}`:"まだ選択していません")}</div><div className={`text-3xl font-black ${filtered.length?"text-slate-950":"text-slate-300"}`}>{filtered.length}問</div></Box><div id="records" className="scroll-mt-4"><Box><div className="text-sm text-slate-500">連続学習記録</div><div className="text-2xl font-black">🔥 {streak.current}日目</div><div className="text-xs text-slate-500">最長 {streak.best}日</div></Box></div><div className="grid grid-cols-1 gap-3"><Btn onClick={()=>setScr("records")}>📊 保存履歴</Btn></div><Btn onClick={()=>setScr("profile")}>名前・伝達事項の学年を編集</Btn></C></Main>;
+ if(scr==="home")return <Main><C><div className="home-hero text-center"><div className="home-kicker">SCIENCE QUIZ</div><h1 className="font-black">理科ホーム</h1><p>問題を見て、今日やるところを選んでください。</p></div><Box><div className="text-5xl">🐱</div><div className="text-xl font-black">{name}さん、{greeting}</div><div className="text-sm text-slate-500">今日の理科も、できるところから進めよう。</div></Box><HomeMotivation records={records} streak={streak} userGrade={userGrade} startDaily={startDaily} setQuizType={setQuizType} setSolveMode={setSolveMode} setGrade={setGrade} setField={setField} setLevel={setLevel} setDescLevels={setDescLevels}/><Toc edit={()=>setScr("profile")} records={()=>setScr("records")} home={home}/><div id="notices" className="scroll-mt-4"><Notices grade={userGrade}/></div><StepGuide quizType={quizType} solveMode={solveMode} grade={grade} field={field} level={level} descLevels={descLevels} filtered={filtered}/><Catalog quizType={quizType} setQuizType={setQuizType} solveMode={solveMode} setSolveMode={setSolveMode} grade={grade} setGrade={setGrade} field={field} setField={setField} level={level} setLevel={setLevel} descLevels={descLevels} setDescLevels={setDescLevels} unit={unit} unitRecs={unitRecs} order={order} setOrder={setOrder} begin={begin}/><Box><div className="text-sm text-slate-500">選択中</div><div className={`text-xl font-black ${(quizType==="記述対策"?grade&&field&&descLevels.length:grade&&field&&level)?"text-amber-800":"text-slate-400"}`}>{quizType==="記述対策"?(grade&&field&&descLevels.length?`${grade}・${field}・記述・${solveMode}`:"まだ選択していません"):(grade&&field&&level?`${grade}・${field}・${level}・${solveMode}`:"まだ選択していません")}</div><div className={`text-3xl font-black ${filtered.length?"text-slate-950":"text-slate-300"}`}>{filtered.length}問</div></Box><div id="records" className="scroll-mt-4"><Box><div className="text-sm text-slate-500">連続学習記録</div><div className="text-2xl font-black">🔥 {streak.current}日目</div><div className="text-xs text-slate-500">最長 {streak.best}日</div></Box></div><div className="grid grid-cols-1 gap-3"><Btn onClick={()=>setScr("records")}>📊 保存履歴</Btn></div><Btn onClick={()=>setScr("profile")}>名前・伝達事項の学年を編集</Btn></C></Main>;
  if(scr==="soon")return <Main><C><div className="text-center space-y-4"><div className="text-5xl">🚧</div><h1 className="text-3xl font-bold">Coming Soon</h1><p>この学年・分野・問題タイプはまだ追加されていません。</p><HomeLinks home={home}/></div></C></Main>;
- if(scr==="ready")return <Main><C><div className="text-center space-y-4"><h1 className="text-3xl font-bold">準備画面</h1><p className="text-sm text-slate-500">内容を確認して、スタートを押してください。</p><ReadyInfo qs={qs} quizType={quizType} solveMode={solveMode} grade={grade} field={field} level={level} descLevels={descLevels} target={target} bestPerfect={bestPerfect}/><div className="grid grid-cols-1 gap-3"><Btn onClick={()=>{setSec(0);setFinalSec(0);setStart(Date.now());setScr("quiz")}} kind="main">スタート</Btn><HomeLinks home={home}/></div></div></C></Main>;
- if(scr==="quiz")return <Main><C><div className="flex items-start justify-between gap-3"><div><h1 className="quiz-title text-2xl font-black">{quizType==="記述対策"?"理科 記述":quizType==="練習問題"?"理科 練習":"理科 一問一答"}</h1><p className="quiz-sub text-slate-500">{quizType==="記述対策"?`${grade||"中1"}・${field||"未選択"}・記述・${solveMode}・${descLevels.join(" / ")}`:quizType==="練習問題"?`${grade||"中1"}・${field||"未選択"}・練習・${solveMode}・${level||"未選択"}`:`${grade}・${field}・${level}問題・${solveMode}`}</p></div><Btn onClick={()=>{setStart(null);home()}} className="quiz-home">理科ホームへ</Btn></div>{cur&&<><div className="quiz-info flex justify-between text-sm"><div><span className="quiz-badge rounded-xl bg-slate-100 px-3 py-1">{cur.unit}</span> <span className="quiz-badge rounded-xl border px-3 py-1">第{cur.no}問</span></div><div className="text-right"><div>進行 {i+1}/{qs.length}</div><div>回答済み {answered}/{qs.length}</div><b className={sec>target?"text-red-600":"text-sky-600"}>{tm(sec)} / 目標 {tm(target)}</b><div className="text-xs font-bold text-amber-700">全問正解ベスト {bestPerfect?tm(bestPerfect):"まだなし"}</div></div></div><Box className="quiz-question"><p className="text-xl font-bold leading-relaxed">{cur.question}</p></Box><div className="quiz-choice-grid grid grid-cols-1 sm:grid-cols-2 gap-3">{cur.choices.map(c=><Btn key={c} onClick={()=>choose(c)} kind={picked===c?"main":""} className="quiz-choice">{c}</Btn>)}</div>{solveMode==="練習モード"&&picked&&<Box><div className={`text-2xl font-black ${picked===cur.answer?"text-sky-700":"text-red-700"}`}>{picked===cur.answer?"正解！":"ここを確認しよう"}</div><div className="text-sm">正しい答え：<b className="text-green-700">{cur.answer}</b></div><p className="text-sm text-slate-700">{cur.explanation}</p></Box>}<div className="quiz-nav grid grid-cols-2 gap-3"><Btn onClick={prev} disabled={i===0}>前に戻る</Btn>{(back||!picked||i+1>=qs.length)&&<Btn onClick={next} kind="main">{i+1>=qs.length?"採点する":"次に進む"}</Btn>}</div></>}</C></Main>;
- if(scr==="result"){const u=hist[0]?`${hist[0].grade}${hist[0].field}${hist[0].level||"A"}`:unit,rs=rec(records,u);return <Main><C><div className="space-y-3"><h1 className="text-2xl font-black">結果</h1><HomeLinks home={home}/></div>{result?.score===result?.total&&result?.total>0&&<><div className="fixed inset-0 pointer-events-none overflow-hidden z-50">{fw.map(p=><div key={p.id} className="absolute text-4xl animate-bounce" style={{left:p.left,top:p.top,animationDelay:p.delay}}>🎆</div>)}</div><Box><div className="text-5xl">🎉🎆🎊</div><div className="text-3xl font-black text-orange-600">さすが！おめでとう！</div><div className="font-bold text-yellow-700">満点すごい！！完璧！！💮</div></Box></>}<Box><div className="text-4xl font-black">{result?.score??0}/{result?.total??0}</div><div>正答率 {result?.total?Math.round(result.score/result.total*100):0}%</div><div className="text-xl font-bold text-orange-600">{result?.praise}</div><b className={finalSec>target?"text-red-600":"text-sky-600"}>時間 {tm(finalSec)} / 目標 {tm(target)}</b><div className="text-xs font-bold text-amber-700">全問正解ベスト {bestPerfect?tm(bestPerfect):"まだなし"}</div><div className="text-xs text-slate-500">{result?.saved===false?"復習モードのため保存履歴には反映されません":"結果は自動保存済み"}</div></Box><Box><b>{u}の過去5回</b><div className="text-xs text-slate-500">{det(u)}</div>{rs.length?<Row records={rs}/>:<p>まだ保存履歴はありません。</p>}</Box><div className="space-y-3"><h2 className="text-lg font-bold">全問題の結果</h2>{hist.map((a,n)=><div key={`${k(a)}-${n}`} className={`rounded-2xl p-4 border ${a.correct?"bg-sky-50 border-sky-200":"bg-red-50 border-red-200"}`}><div className="text-sm text-slate-500">第{a.no}問 {a.unit}</div><b>{a.question}</b><div>選んだ答え：<b className={a.correct?"text-sky-700":"text-red-700"}>{a.selected}</b></div><div>正しい答え：<b className="text-green-700">{a.answer}</b></div>{!a.correct&&<p className="text-sm">{a.explanation}</p>}</div>)}</div><div className="grid grid-cols-2 gap-3"><Btn onClick={begin} kind="main">もう一度やる</Btn><Btn onClick={review} disabled={!wrongs.length}>間違えた問題だけ復習</Btn></div></C></Main>}
+ if(scr==="ready")return <Main><C><div className="text-center space-y-4"><h1 className="text-3xl font-bold">準備画面</h1><p className="text-sm text-slate-500">内容を確認して、スタートを押してください。</p><ReadyInfo qs={qs} quizType={quizType} solveMode={solveMode} grade={grade} field={field} level={level} descLevels={descLevels} target={target} bestPerfect={bestPerfect} dailyMode={dailyMode}/><div className="grid grid-cols-1 gap-3"><Btn onClick={()=>{setSec(0);setFinalSec(0);setStart(Date.now());setScr("quiz")}} kind="main">スタート</Btn><HomeLinks home={home}/></div></div></C></Main>;
+ if(scr==="quiz")return <Main><C><div className="flex items-start justify-between gap-3"><div><h1 className="quiz-title text-2xl font-black">{dailyMode?"今日の5問":quizType==="記述対策"?"理科 記述":quizType==="練習問題"?"理科 練習":"理科 一問一答"}</h1><p className="quiz-sub text-slate-500">{dailyMode?"弱点優先・5問・練習モード":quizType==="記述対策"?`${grade||"中1"}・${field||"未選択"}・記述・${solveMode}・${descLevels.join(" / ")}`:quizType==="練習問題"?`${grade||"中1"}・${field||"未選択"}・練習・${solveMode}・${level||"未選択"}`:`${grade}・${field}・${level}問題・${solveMode}`}</p></div><Btn onClick={()=>{setStart(null);home()}} className="quiz-home">理科ホームへ</Btn></div>{cur&&<><div className="quiz-info flex justify-between text-sm"><div><span className="quiz-badge rounded-xl bg-slate-100 px-3 py-1">{cur.unit}</span> <span className="quiz-badge rounded-xl border px-3 py-1">第{cur.no}問</span></div><div className="text-right"><div>進行 {i+1}/{qs.length}</div><div>回答済み {answered}/{qs.length}</div><b className={sec>target?"text-red-600":"text-sky-600"}>{tm(sec)} / 目標 {tm(target)}</b><div className="text-xs font-bold text-amber-700">全問正解ベスト {dailyMode?"対象外":bestPerfect?tm(bestPerfect):"まだなし"}</div></div></div><Box className="quiz-question"><p className="text-xl font-bold leading-relaxed">{cur.question}</p></Box><div className="quiz-choice-grid grid grid-cols-1 sm:grid-cols-2 gap-3">{cur.choices.map(c=><Btn key={c} onClick={()=>choose(c)} kind={picked===c?"main":""} className="quiz-choice">{c}</Btn>)}</div>{solveMode==="練習モード"&&picked&&<Box><div className={`text-2xl font-black ${picked===cur.answer?"text-sky-700":"text-red-700"}`}>{picked===cur.answer?"正解！":"ここを確認しよう"}</div><div className="text-sm">正しい答え：<b className="text-green-700">{cur.answer}</b></div><p className="text-sm text-slate-700">{cur.explanation}</p></Box>}<div className="quiz-nav grid grid-cols-2 gap-3"><Btn onClick={prev} disabled={i===0}>前に戻る</Btn>{(back||!picked||i+1>=qs.length)&&<Btn onClick={next} kind="main">{i+1>=qs.length?"採点する":"次に進む"}</Btn>}</div></>}</C></Main>;
+ if(scr==="result"){
+  const u=hist[0]?`${hist[0].grade}${hist[0].field}${hist[0].level||"A"}`:unit,rs=rec(records,u);
+  return <Main><C>
+   <div className="space-y-3"><h1 className="text-2xl font-black">{dailyMode?"今日の5問 結果":"結果"}</h1><HomeLinks home={home}/></div>
+   {result?.score===result?.total&&result?.total>0&&<><div className="fixed inset-0 pointer-events-none overflow-hidden z-50">{fw.map(p=><div key={p.id} className="absolute text-4xl animate-bounce" style={{left:p.left,top:p.top,animationDelay:p.delay}}>🎆</div>)}</div><Box><div className="text-5xl">🎉🎆🎊</div><div className="text-3xl font-black text-orange-600">さすが！おめでとう！</div><div className="font-bold text-yellow-700">満点すごい！！完璧！！💮</div></Box></>}
+   <Box><div className="text-4xl font-black">{result?.score??0}/{result?.total??0}</div><div>正答率 {result?.total?Math.round(result.score/result.total*100):0}%</div><div className="text-xl font-bold text-orange-600">{result?.praise}</div><b className={finalSec>target?"text-red-600":"text-sky-600"}>時間 {tm(finalSec)} / 目標 {tm(target)}</b><div className="text-xs font-bold text-amber-700">全問正解ベスト {dailyMode?"対象外":bestPerfect?tm(bestPerfect):"まだなし"}</div><div className="text-xs text-slate-500">{result?.saved===false?"復習モードのため保存履歴には反映されません":"結果は自動保存済み"}</div></Box>
+   <Box><b>{dailyMode?"今回出た単元の記録":`${u}の過去5回`}</b><div className="text-xs text-slate-500">{dailyMode?"今日の5問は各単元の履歴にも反映されます。":det(u)}</div>{rs.length?<Row records={rs}/>:<p>まだ保存履歴はありません。</p>}</Box>
+   <div className="space-y-3"><h2 className="text-lg font-bold">全問題の結果</h2>{hist.map((a,n)=><div key={`${k(a)}-${n}`} className={`rounded-2xl p-4 border ${a.correct?"bg-sky-50 border-sky-200":"bg-red-50 border-red-200"}`}><div className="text-sm text-slate-500">第{a.no}問 {a.unit}</div><b>{a.question}</b><div>選んだ答え：<b className={a.correct?"text-sky-700":"text-red-700"}>{a.selected}</b></div><div>正しい答え：<b className="text-green-700">{a.answer}</b></div>{!a.correct&&<p className="text-sm">{a.explanation}</p>}</div>)}</div>
+   <div className="grid grid-cols-2 gap-3"><Btn onClick={dailyMode?startDaily:begin} kind="main">もう一度やる</Btn><Btn onClick={review} disabled={!wrongs.length}>間違えた問題だけ復習</Btn></div>
+  </C></Main>
+ }
  if(scr==="records"){const latest=scoped(records,rg,10),radarRecords=scoped(records,rg,3);return <Main><C><div className="space-y-3"><div><h1 className="text-2xl font-black">保存履歴</h1><p className="text-sm text-slate-500">レーダーは過去3回分、履歴は10回分まで表示</p></div><HomeLinks home={home}/></div><div><b>表示する学年</b><div className="grid grid-cols-4 gap-2">{analysisGrades.map(g=><Btn key={g} onClick={()=>setRg(g)} kind={rg===g?"main":""}>{g}</Btn>)}</div></div><Radar items={fieldStats(radarRecords,rg)} grade={rg}/>{!latest.length?<Box>この範囲の保存履歴はありません。</Box>:<div className="space-y-3"><Box><b>合計</b><Row records={latest}/></Box>{rg!=="全学年"&&uns(rg).map(u=><Box key={u}><b>{u}</b><div className="text-xs text-slate-500">{det(u)}</div><div className="grid grid-cols-5 gap-1">{latest.map(r=>{const x=mg(r,u);return x?<div key={`${r.id}-${u}`} className={`rounded-xl border px-1 py-2 text-center text-xs font-bold ${cls(Math.round(x.score/x.total*100))}`}>{lab(x.score,x.total)}</div>:<div key={`${r.id}-${u}`} className="rounded-xl border px-1 py-2 text-center text-xs text-slate-300">—</div>})}</div></Box>)}</div>}<Box><div className="text-sm text-slate-500">連続学習記録</div><div className="text-2xl font-black">🔥 {streak.current}日目</div><div className="text-xs text-slate-500">最長 {streak.best}日</div></Box></C></Main>}
  return null
 }
