@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>理科 学習管理</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root { color-scheme: light; --ink:#17212b; --muted:#66727d; --line:#d6dfe5; --paper:#fff; --base:#eef2f4; --navy:#162a38; --teal:#007b7a; --blue:#2563a6; --gold:#b7791f; --red:#b64949; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-width:320px; background:var(--base); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",sans-serif; }
+    button,input,select { font:inherit; }
+    button { cursor:pointer; }
+    .hidden { display:none !important; }
+    .shell { width:min(1180px,calc(100% - 28px)); margin:0 auto; }
+    .topbar { color:#f8fbfc; background:var(--navy); border-bottom:3px solid #2e9f9e; }
+    .topbar .shell { min-height:76px; display:flex; align-items:center; justify-content:space-between; gap:18px; }
+    .brand small,.eyebrow { display:block; color:#a9d6d4; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    .brand h1 { margin:3px 0 0; font-size:22px; letter-spacing:0; }
+    .account { display:flex; align-items:center; gap:10px; min-width:0; }
+    .account-name { max-width:260px; color:#d9e3e7; font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .page { padding:24px 0 42px; }
+    .login-wrap { width:min(460px,calc(100% - 28px)); margin:88px auto; }
+    .login-head { margin-bottom:22px; }
+    .login-head h1 { margin:6px 0 8px; font-size:28px; }
+    .login-head p { margin:0; color:var(--muted); line-height:1.7; }
+    .login-box,.panel,.stat { background:var(--paper); border:1px solid var(--line); border-radius:8px; box-shadow:0 1px 2px rgba(12,25,35,.05); }
+    .login-box { padding:22px; }
+    .field { display:grid; gap:7px; margin-bottom:16px; font-size:13px; font-weight:700; }
+    input,select { min-height:42px; width:100%; padding:0 11px; color:var(--ink); background:#fff; border:1px solid #becbd2; border-radius:5px; outline:none; }
+    input:focus,select:focus { border-color:var(--teal); box-shadow:0 0 0 3px rgba(0,123,122,.12); }
+    .btn { min-height:40px; padding:0 14px; color:#17212b; background:#fff; border:1px solid #b8c4cb; border-radius:5px; font-weight:800; }
+    .btn:hover { background:#f2f6f7; }
+    .btn.primary { color:#fff; background:var(--teal); border-color:var(--teal); }
+    .btn.primary:hover { background:#006b6a; }
+    .btn.ghost { color:#d9e7ea; background:transparent; border-color:#6f8b95; }
+    .btn:disabled { cursor:wait; opacity:.62; }
+    .full { width:100%; }
+    .form-note,.empty-note,.status { margin:12px 0 0; color:var(--muted); font-size:12px; line-height:1.6; }
+    .error { color:#9b2c2c; }
+    .dashboard-head { display:flex; align-items:end; justify-content:space-between; gap:16px; margin-bottom:17px; }
+    .dashboard-head h2 { margin:3px 0 0; font-size:24px; }
+    .updated { color:var(--muted); font-size:12px; }
+    .summary-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:16px; }
+    .stat { min-height:105px; padding:16px; }
+    .stat-label { color:var(--muted); font-size:12px; font-weight:700; }
+    .stat-value { margin-top:9px; font-size:26px; font-weight:850; line-height:1; }
+    .stat-sub { margin-top:6px; color:var(--muted); font-size:11px; }
+    .controls { display:grid; grid-template-columns:170px minmax(180px,1fr) auto; gap:10px; padding:12px; margin-bottom:16px; }
+    .controls .btn { white-space:nowrap; }
+    .content-grid { display:grid; grid-template-columns:minmax(280px,.8fr) minmax(0,1.7fr); gap:16px; align-items:start; }
+    .panel { overflow:hidden; }
+    .panel-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:15px 16px; border-bottom:1px solid var(--line); }
+    .panel-head h3 { margin:0; font-size:15px; }
+    .panel-body { padding:15px 16px; }
+    .field-row { display:grid; grid-template-columns:58px 1fr 45px; align-items:center; gap:10px; margin:12px 0; font-size:13px; }
+    .meter { height:9px; overflow:hidden; background:#e5ebee; border-radius:20px; }
+    .meter > i { display:block; height:100%; background:var(--teal); border-radius:20px; }
+    .field-row em { color:var(--muted); font-size:11px; font-style:normal; text-align:right; }
+    .legend { color:var(--muted); font-size:11px; }
+    .table-wrap { overflow:auto; }
+    table { width:100%; min-width:650px; border-collapse:collapse; }
+    th,td { padding:12px 14px; border-bottom:1px solid #e4ebee; text-align:left; font-size:13px; white-space:nowrap; }
+    th { color:#627078; background:#f7f9fa; font-size:11px; letter-spacing:.04em; }
+    tbody tr { cursor:pointer; }
+    tbody tr:hover { background:#f1f8f8; }
+    .student-name { font-weight:800; }
+    .code { color:#7b878e; font-size:11px; }
+    .score-good { color:#08716f; font-weight:850; }
+    .score-watch { color:#9a620d; font-weight:850; }
+    .score-low { color:#ad3b3b; font-weight:850; }
+    .tag { display:inline-block; padding:3px 7px; color:#315162; background:#e9f0f2; border-radius:4px; font-size:11px; font-weight:800; }
+    dialog { width:min(720px,calc(100% - 28px)); max-height:calc(100dvh - 32px); padding:0; color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:8px; box-shadow:0 22px 58px rgba(8,20,28,.34); }
+    dialog::backdrop { background:rgba(11,24,33,.54); }
+    .dialog-head { display:flex; justify-content:space-between; align-items:center; gap:14px; padding:16px 18px; color:#fff; background:var(--navy); }
+    .dialog-head h3 { margin:0; font-size:18px; }
+    .dialog-body { padding:18px; overflow:auto; }
+    .detail-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:20px; }
+    .detail-stat { padding:11px; background:#f3f7f8; border-left:3px solid var(--teal); }
+    .detail-stat b { display:block; margin-top:5px; font-size:16px; }
+    .history-list { margin:0; padding:0; list-style:none; border-top:1px solid var(--line); }
+    .history-list li { display:grid; grid-template-columns:105px 1fr auto; gap:12px; align-items:center; padding:11px 0; border-bottom:1px solid var(--line); font-size:13px; }
+    .history-list small { color:var(--muted); }
+    .history-score { font-weight:850; }
+    @media (max-width:800px) {
+      .topbar .shell { min-height:64px; }
+      .brand h1 { font-size:18px; }
+      .account-name { display:none; }
+      .page { padding-top:16px; }
+      .dashboard-head { align-items:start; flex-direction:column; }
+      .summary-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .stat { min-height:90px; padding:13px; }
+      .stat-value { font-size:22px; }
+      .controls { grid-template-columns:1fr 1fr; }
+      .controls input { grid-column:1/-1; }
+      .controls .btn { grid-column:1/-1; }
+      .content-grid { grid-template-columns:1fr; }
+      .detail-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .history-list li { grid-template-columns:1fr auto; gap:5px 12px; }
+      .history-list li small { grid-column:1/-1; grid-row:2; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell">
+      <div class="brand"><small>OKUPON SCIENCE</small><h1>理科 学習管理</h1></div>
+      <div id="account" class="account hidden"><span id="accountName" class="account-name"></span><button id="signOut" class="btn ghost" type="button">ログアウト</button></div>
+    </div>
+  </header>
+
+  <main id="loginView" class="login-wrap">
+    <div class="login-head"><span class="eyebrow">Teacher only</span><h1>先生用ページ</h1><p>学習の進み具合と分野ごとの様子を確認できます。先生用に登録したメールアドレスでログインしてください。</p></div>
+    <form id="loginForm" class="login-box">
+      <label class="field">メールアドレス<input id="email" type="email" autocomplete="email" required /></label>
+      <label class="field">パスワード<input id="password" type="password" autocomplete="current-password" required /></label>
+      <button id="signIn" class="btn primary full" type="submit">先生用ページに入る</button>
+      <p id="loginMessage" class="form-note">このページは先生として登録されたアカウントだけが学習記録を閲覧できます。</p>
+    </form>
+  </main>
+
+  <main id="dashboardView" class="page hidden">
+    <div class="shell">
+      <section class="dashboard-head">
+        <div><span class="eyebrow" style="color:#007b7a">Class overview</span><h2>学習の進み具合</h2></div>
+        <span id="updatedAt" class="updated">読み込み中</span>
+      </section>
+
+      <section class="summary-grid" aria-label="クラスの概要">
+        <article class="stat"><div class="stat-label">学習した生徒</div><div id="studentCount" class="stat-value">-</div><div class="stat-sub">登録プロフィール数</div></article>
+        <article class="stat"><div class="stat-label">学習記録</div><div id="recordCount" class="stat-value">-</div><div class="stat-sub">表示中の条件で集計</div></article>
+        <article class="stat"><div class="stat-label">全体の正答率</div><div id="accuracy" class="stat-value">-</div><div class="stat-sub">解き直しを含む記録</div></article>
+        <article class="stat"><div class="stat-label">今日学習した生徒</div><div id="todayCount" class="stat-value">-</div><div class="stat-sub">端末の時刻を基準に集計</div></article>
+      </section>
+
+      <section class="panel controls" aria-label="表示条件">
+        <select id="gradeFilter" aria-label="学年で絞り込む"><option value="all">全学年</option><option value="中1">中1</option><option value="中2">中2</option><option value="中3">中3</option></select>
+        <input id="search" type="search" placeholder="ニックネームで検索" aria-label="ニックネームで検索" />
+        <button id="refresh" class="btn" type="button">更新</button>
+      </section>
+
+      <section id="loadMessage" class="status hidden" aria-live="polite"></section>
+
+      <section class="content-grid">
+        <article class="panel">
+          <div class="panel-head"><h3>分野別の正答率</h3><span class="legend">解答した問題のみ</span></div>
+          <div id="fieldStats" class="panel-body"></div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><h3>生徒別の学習状況</h3><span id="shownCount" class="legend"></span></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>生徒</th><th>学年</th><th>最終学習日</th><th>記録</th><th>解答数</th><th>正答率</th></tr></thead>
+              <tbody id="studentRows"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <dialog id="studentDialog">
+    <div class="dialog-head"><div><h3 id="detailName"></h3><small id="detailMeta"></small></div><button id="closeDialog" class="btn ghost" type="button">閉じる</button></div>
+    <div id="detailBody" class="dialog-body"></div>
+  </dialog>
+
+  <script>
+    const SUPABASE_URL = "https://kjlmgrnrhzfwcpuytxdm.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_8vQ2_xzJyaIP96JedzK06w_HRBV6Es1";
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false } });
+    const fields = ["生物", "化学", "物理", "地学"];
+    const state = { profiles: [], records: [], session: null, loading: false };
+    const $ = id => document.getElementById(id);
+    const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, char => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "'":"&#39;", "\"":"&quot;" })[char]);
+    const day = value => value ? new Intl.DateTimeFormat("ja-JP", { year:"numeric", month:"numeric", day:"numeric" }).format(new Date(value)) : "-";
+    const todayKey = new Date().toLocaleDateString("sv-SE", { timeZone:"Asia/Tokyo" });
+    const recordType = value => ({ one_answer:"一問一答", descriptive:"記述", practice:"練習問題", daily:"今日の5問" })[value] || "学習";
+    const pct = (correct, total) => total ? Math.round((correct / total) * 100) : 0;
+    const scoreClass = value => value >= 80 ? "score-good" : value >= 60 ? "score-watch" : "score-low";
+
+    function recordsFor(studentId) { return state.records.filter(record => record.student_id === studentId); }
+    function studentStat(studentId) {
+      const list = recordsFor(studentId);
+      const total = list.reduce((sum, record) => sum + Number(record.total_count || 0), 0);
+      const correct = list.reduce((sum, record) => sum + Number(record.correct_count || 0), 0);
+      const last = list.reduce((latest, record) => !latest || new Date(record.completed_at) > new Date(latest) ? record.completed_at : latest, "");
+      return { list, total, correct, accuracy:pct(correct, total), last };
+    }
+    function visibleProfiles() {
+      const grade = $("gradeFilter").value;
+      const term = $("search").value.trim().toLocaleLowerCase();
+      return state.profiles.filter(profile => (grade === "all" || profile.school_grade === grade) && (!term || profile.display_name.toLocaleLowerCase().includes(term)));
+    }
+    function renderFieldStats(records) {
+      const html = fields.map(field => {
+        const list = records.filter(record => record.field === field);
+        const total = list.reduce((sum, record) => sum + Number(record.total_count || 0), 0);
+        const correct = list.reduce((sum, record) => sum + Number(record.correct_count || 0), 0);
+        const rate = pct(correct, total);
+        return `<div class="field-row"><b>${field}</b><div class="meter"><i style="width:${rate}%"></i></div><em>${total ? rate + "%" : "-"}</em></div>`;
+      }).join("");
+      $("fieldStats").innerHTML = html;
+    }
+    function renderDashboard() {
+      const profiles = visibleProfiles();
+      const ids = new Set(profiles.map(profile => profile.id));
+      const records = state.records.filter(record => ids.has(record.student_id));
+      const totals = records.reduce((sum, record) => ({ total:sum.total + Number(record.total_count || 0), correct:sum.correct + Number(record.correct_count || 0) }), { total:0, correct:0 });
+      const todayStudents = new Set(records.filter(record => String(record.completed_at).slice(0, 10) === todayKey).map(record => record.student_id));
+      $("studentCount").textContent = profiles.length;
+      $("recordCount").textContent = records.length;
+      $("accuracy").textContent = totals.total ? `${pct(totals.correct, totals.total)}%` : "-";
+      $("todayCount").textContent = todayStudents.size;
+      $("shownCount").textContent = `${profiles.length}人を表示`;
+      renderFieldStats(records);
+      const rows = profiles.map(profile => ({ profile, stat:studentStat(profile.id) })).sort((a,b) => new Date(b.stat.last || 0) - new Date(a.stat.last || 0));
+      $("studentRows").innerHTML = rows.length ? rows.map(({ profile, stat }) => `<tr data-student-id="${escapeHtml(profile.id)}"><td><div class="student-name">${escapeHtml(profile.display_name || "名前なし")}</div><div class="code">${escapeHtml(profile.student_code || "")}</div></td><td><span class="tag">${escapeHtml(profile.school_grade)}</span></td><td>${day(stat.last)}</td><td>${stat.list.length}</td><td>${stat.total}</td><td class="${scoreClass(stat.accuracy)}">${stat.total ? stat.accuracy + "%" : "-"}</td></tr>`).join("") : `<tr><td colspan="6" class="empty-note">条件に合う生徒はまだいません。</td></tr>`;
+      document.querySelectorAll("[data-student-id]").forEach(row => row.addEventListener("click", () => openStudent(row.dataset.studentId)));
+    }
+    function openStudent(studentId) {
+      const profile = state.profiles.find(item => item.id === studentId);
+      if (!profile) return;
+      const stat = studentStat(studentId);
+      const recent = [...stat.list].sort((a,b) => new Date(b.completed_at) - new Date(a.completed_at)).slice(0, 30);
+      const fieldHtml = fields.map(field => {
+        const list = stat.list.filter(record => record.field === field);
+        const total = list.reduce((sum, record) => sum + Number(record.total_count || 0), 0);
+        const correct = list.reduce((sum, record) => sum + Number(record.correct_count || 0), 0);
+        return `<div class="field-row"><b>${field}</b><div class="meter"><i style="width:${pct(correct,total)}%"></i></div><em>${total ? pct(correct,total) + "%" : "-"}</em></div>`;
+      }).join("");
+      $("detailName").textContent = profile.display_name || "名前なし";
+      $("detailMeta").textContent = `${profile.school_grade} / ${profile.student_code || ""}`;
+      $("detailBody").innerHTML = `<section class="detail-stats"><div class="detail-stat">最終学習日<b>${day(stat.last)}</b></div><div class="detail-stat">学習記録<b>${stat.list.length}回</b></div><div class="detail-stat">解答数<b>${stat.total}問</b></div><div class="detail-stat">正答率<b class="${scoreClass(stat.accuracy)}">${stat.total ? stat.accuracy + "%" : "-"}</b></div></section><section><h4>分野別の正答率</h4>${fieldHtml}</section><section><h4>最近の学習記録</h4><ul class="history-list">${recent.length ? recent.map(record => `<li><small>${day(record.completed_at)} / ${escapeHtml(recordType(record.activity_type))} / ${escapeHtml(record.quiz_mode === "practice" ? "練習モード" : "テストモード")}</small><span>${escapeHtml(record.unit || "学習記録")}</span><span class="history-score ${scoreClass(pct(record.correct_count,record.total_count))}">${record.correct_count}/${record.total_count}</span></li>`).join("") : "<li>まだ学習記録はありません。</li>"}</ul></section>`;
+      $("studentDialog").showModal();
+    }
+    function message(text, error = false) { const node = $("loadMessage"); node.textContent = text; node.classList.remove("hidden"); node.classList.toggle("error", error); }
+    async function loadData() {
+      if (state.loading) return;
+      state.loading = true;
+      message("学習記録を読み込んでいます。");
+      $("refresh").disabled = true;
+      try {
+        const [{ data: profiles, error: profileError }, { data: records, error: recordError }] = await Promise.all([
+          db.from("student_profiles").select("id, student_code, display_name, school_grade, created_at, updated_at").order("display_name"),
+          db.from("learning_records").select("id, student_id, completed_at, activity_type, quiz_mode, grade, field, unit, total_count, correct_count, elapsed_seconds, is_retry").order("completed_at", { ascending:false }).limit(5000)
+        ]);
+        if (profileError || recordError) { message("読み込みに失敗しました。時間をおいて更新してください。", true); return; }
+        state.profiles = profiles || [];
+        state.records = records || [];
+        $("updatedAt").textContent = `最終更新 ${new Intl.DateTimeFormat("ja-JP", { hour:"2-digit", minute:"2-digit" }).format(new Date())}`;
+        message(state.profiles.length ? "" : "まだ学習記録がありません。生徒が問題を解くとここに表示されます。");
+        if (state.profiles.length) $("loadMessage").classList.add("hidden");
+        renderDashboard();
+      } catch (_error) {
+        message("読み込みに失敗しました。時間をおいて更新してください。", true);
+      } finally {
+        state.loading = false;
+        $("refresh").disabled = false;
+      }
+    }
+    async function showForSession(session) {
+      state.session = session;
+      if (!session) { $("account").classList.add("hidden"); $("dashboardView").classList.add("hidden"); $("loginView").classList.remove("hidden"); return; }
+      const { data: permitted, error } = await db.rpc("is_science_teacher");
+      if (error || !permitted) {
+        await db.auth.signOut();
+        $("loginMessage").textContent = "このアカウントは先生用として登録されていません。管理者に登録を依頼してください。";
+        $("loginMessage").classList.add("error");
+        return;
+      }
+      $("accountName").textContent = session.user.email || "先生アカウント";
+      $("account").classList.remove("hidden"); $("loginView").classList.add("hidden"); $("dashboardView").classList.remove("hidden");
+      await loadData();
+    }
+    $("loginForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      const button = $("signIn"); button.disabled = true;
+      $("loginMessage").classList.remove("error"); $("loginMessage").textContent = "ログインしています。";
+      const { data, error } = await db.auth.signInWithPassword({ email:$("email").value.trim(), password:$("password").value });
+      button.disabled = false;
+      if (error) { $("loginMessage").textContent = "メールアドレスまたはパスワードを確認してください。"; $("loginMessage").classList.add("error"); return; }
+      await showForSession(data.session);
+    });
+    $("signOut").addEventListener("click", () => db.auth.signOut());
+    $("refresh").addEventListener("click", loadData);
+    $("gradeFilter").addEventListener("change", renderDashboard);
+    $("search").addEventListener("input", renderDashboard);
+    $("closeDialog").addEventListener("click", () => $("studentDialog").close());
+    db.auth.onAuthStateChange((_event, session) => { window.setTimeout(() => showForSession(session), 0); });
+    db.auth.getSession().then(({ data }) => showForSession(data.session));
+    window.setInterval(() => { if (state.session && document.visibilityState === "visible") void loadData(); }, 30000);
+    document.addEventListener("visibilitychange", () => { if (state.session && document.visibilityState === "visible") void loadData(); });
+  </script>
+</body>
+</html>

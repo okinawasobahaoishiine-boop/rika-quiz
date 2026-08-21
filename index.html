@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
   <style>
     html {
@@ -816,11 +817,11 @@ const Q3ChemB=[
 [15, "酸・アルカリと中和", "塩酸と水酸化ナトリウム水溶液の中和によってできる塩は何か。", "塩化ナトリウム", ["水", "塩化銅", "水酸化ナトリウム"], "正解は「塩化ナトリウム」。"],
 [16, "酸・アルカリと中和", "うすい塩酸に水酸化ナトリウム水溶液を加えていったとき，減少していくイオンは何か。", "水素イオン", ["水酸化物イオン", "塩化物イオン", "ナトリウムイオン"], "正解は「水素イオン」。"],
 [17, "酸・アルカリと中和", "水酸化ナトリウム水溶液にうすい塩酸を加えていったとき，減少していくイオンは何か。", "水酸化物イオン", ["水素イオン", "塩化物イオン", "銅イオン"], "正解は「水酸化物イオン」。"],
-[18, "化学変化と電池", "硫酸銅水溶液に亜鉛片を入れると，反応するか，反応しないか。", "反応する。", ["反応しない。", "増加する。", "減少する。"], "正解は「反応する。」。"],
+[18, "化学変化と電池", "硫酸銅水溶液に亜鉛片を入れると，どのような変化が起こるか。", "亜鉛がとけ出し、銅が付着する。", ["亜鉛が付着し、銅がとけ出す。", "亜鉛も銅も変化しない。", "亜鉛と銅が混ざって同じ金属になる。"], "亜鉛の方が銅よりイオンになりやすいため、亜鉛がとけて銅が付着する。"],
 [19, "化学変化と電池", "銅・亜鉛のうち，よりイオンになりやすいのはどちらか。", "亜鉛", ["銅", "マグネシウム", "銀"], "正解は「亜鉛」。"],
-[20, "化学変化と電池", "硫酸銅水溶液にマグネシウム片を入れると，反応するか，反応しないか。", "反応する。", ["反応しない。", "増加する。", "減少する。"], "正解は「反応する。」。"],
+[20, "化学変化と電池", "硫酸銅水溶液にマグネシウム片を入れると，どのような変化が起こるか。", "マグネシウムがとけ出し、銅が付着する。", ["マグネシウムが付着し、銅がとけ出す。", "マグネシウムも銅も変化しない。", "マグネシウムと銅が混ざって同じ金属になる。"], "マグネシウムの方が銅よりイオンになりやすいため、マグネシウムがとけて銅が付着する。"],
 [21, "化学変化と電池", "銅・マグネシウムのうち，よりイオンになりやすいのはどちらか。", "マグネシウム", ["銅", "亜鉛", "銀"], "正解は「マグネシウム」。"],
-[22, "化学変化と電池", "硫酸亜鉛水溶液にマグネシウム片を入れると，反応するか，反応しないか。", "反応する。", ["反応しない。", "増加する。", "減少する。"], "正解は「反応する。」。"],
+[22, "化学変化と電池", "硫酸亜鉛水溶液にマグネシウム片を入れると，どのような変化が起こるか。", "マグネシウムがとけ出し、亜鉛が付着する。", ["マグネシウムが付着し、亜鉛がとけ出す。", "マグネシウムも亜鉛も変化しない。", "マグネシウムと亜鉛が混ざって同じ金属になる。"], "マグネシウムの方が亜鉛よりイオンになりやすいため、マグネシウムがとけて亜鉛が付着する。"],
 [23, "化学変化と電池", "亜鉛・マグネシウムのうち，よりイオンになりやすいのはどちらか。", "マグネシウム", ["銅", "亜鉛", "銀"], "正解は「マグネシウム」。"],
 [24, "化学変化と電池", "銅と亜鉛を電極とした電池では，＋極になるのはどちらか。", "銅", ["亜鉛", "マグネシウム", "鉄"], "正解は「銅」。"],
 [25, "化学変化と電池", "マグネシウムと銅を電極とした電池では，＋極になるのはどちらか。", "銅", ["亜鉛", "マグネシウム", "鉄"], "正解は「銅」。"],
@@ -1131,8 +1132,8 @@ const Q2Descriptive=[
 [10,"化学","炭酸水素ナトリウムの分解","炭酸水素ナトリウムを加熱したときの化学変化を表す化学反応式として正しいものはどれか。","2NaHCO₃ → Na₂CO₃ + CO₂ + H₂O",["NaHCO₃ → Na₂CO₃ + H₂","2NaHCO₃ → 2Na + H₂O + O₂","Na₂CO₃ + CO₂ + H₂O → 2NaHCO₃"],"正解は「2NaHCO₃ → Na₂CO₃ + CO₂ + H₂O」。"],
 [11,"化学","酸化銀の分解","酸化銀を加熱したときの化学変化を表す化学反応式として正しいものはどれか。","2Ag₂O → 4Ag + O₂",["Ag₂O → Ag + CO₂","2Ag + O₂ → 2Ag₂O","Ag₂O → 2Ag + H₂"],"正解は「2Ag₂O → 4Ag + O₂」。"],
 [12,"化学","水の電気分解","水を電気分解したときの化学変化を表す化学反応式として正しいものはどれか。","2H₂O → 2H₂ + O₂",["H₂O → H₂ + CO₂","2H₂ + O₂ → 2H₂O","H₂O → NaOH + H₂"],"正解は「2H₂O → 2H₂ + O₂」。"],
-[13,"化学","鉄と硫黄の反応","鉄粉と硫黄の混合物を加熱したとき、反応が始まった後は加熱をやめても反応が進む理由として正しいものはどれか。","そのまま進む。",["反応がすぐ止まる。","水素が発生する。","質量が0になる。"],"正解は「そのまま進む」。"],
-[14,"化学","鉄と硫黄の反応","反応後の物質に磁石を近づけたとき、鉄が硫黄と完全に反応してできた物質が磁石に引きつけられない理由として正しいものはどれか。","物質Xは磁石に引きつけられるが、物質Yは磁石に引きつけられない。",["物質Xも物質Yも磁石に強く引きつけられる。","物質Xも物質Yも水にとける。","物質Yは鉄そのものだから磁石に引きつけられる。"],"正解は「物質Xは磁石に引きつけられるが、物質Yは磁石に引きつけられない。」。"],
+[13,"化学","鉄と硫黄の反応","鉄粉と硫黄の混合物を加熱したとき、反応が始まった後は加熱をやめても反応が進む理由として正しいものはどれか。","鉄と硫黄の化学変化で熱が発生し、その熱で反応が続くため。",["鉄と硫黄の化学変化で熱が吸収され、反応が続くため。","鉄粉だけが水素に変化して熱を出すため。","硫黄が反応せずに燃え続けるため。"],"正解は「鉄と硫黄の化学変化で熱が発生し、その熱で反応が続くため。」。"],
+[14,"化学","鉄と硫黄の反応","反応後の物質に磁石を近づけたとき、鉄が硫黄と完全に反応してできた物質が磁石に引きつけられない理由として正しいものはどれか。","鉄と硫黄が化合して、鉄とは性質の異なる硫化鉄になったから。",["硫化鉄の中に鉄がそのまま残っているから。","硫黄だけが磁石に強く引きつけられるから。","磁石が反応後だけ力を失うから。"],"正解は「鉄と硫黄が化合して、鉄とは性質の異なる硫化鉄になったから。」。"],
 [15,"化学","鉄と硫黄の反応","反応前の混合物と反応後の物質にうすい塩酸を加えたとき、発生する気体の違いとして正しいものはどれか。","物質Xからはにおいのない気体、物質Yからはにおいのある気体が発生する。",["物質Xからも物質Yからも同じにおいの気体が発生する。","物質Xからは水、物質Yからは酸素が発生する。","どちらからも気体は発生しない。"],"正解は「物質Xからはにおいのない気体、物質Yからはにおいのある気体が発生する。」。"],
 [16,"化学","鉄と硫黄の反応","鉄と硫黄が反応したときの化学反応式として正しいものはどれか。","Fe + S → FeS",["Fe + S → Fe₂S","FeS → Fe + S","Fe + O₂ → FeS"],"正解は「Fe + S → FeS」。"],
 [17,"化学","マグネシウムの燃焼","マグネシウムリボンを燃焼させるとき、強い光を出しながら燃えてできる物質として正しいものはどれか。","酸化マグネシウムの白い粉。",["硫化マグネシウムの黒い粉。","水酸化マグネシウムの液体。","二酸化炭素の気体。"],"正解は「酸化マグネシウムの白い粉。」。"],
@@ -1142,15 +1143,15 @@ const Q2Descriptive=[
 [21,"化学","酸化銅の炭素による還元","酸化銅と炭素の混合物を加熱してできた物質の色と金属光沢として正しいものはどれか。","光る（金属光沢が出る）。",["黒くにごる。","白い粉になる。","赤色の液体になる。"],"正解は「光る（金属光沢が出る）。」"],
 [22,"化学","酸化銅の炭素による還元","酸化銅と炭素の混合物を加熱したとき、銅ができる反応の説明として正しいものはどれか。","酸化物が酸素をうばわれる化学変化。",["酸素と結びつく化学変化。","水にとける化学変化。","塩酸と中和する化学変化。"],"正解は「酸化物が酸素をうばわれる化学変化。」。"],
 [23,"化学","酸化銅の炭素による還元","酸化銅と炭素の反応を表す化学反応式として正しいものはどれか。","2CuO + C → 2Cu + CO₂",["Cu + C → CuO + CO₂","2Cu + CO₂ → 2CuO + C","CuO + O₂ → Cu + CO₂"],"正解は「2CuO + C → 2Cu + CO₂」。"],
-[24,"地学","空気中の水蒸気を調べる実験","金属製のコップを冷やすと外側に水滴がついた。このことからわかることとして正しいものはどれか。","金属は、熱を伝えやすいから。",["金属は水蒸気をつくらないから。","金属は空気をあたためるから。","金属は水を吸収するから。"],"正解は「金属は、熱を伝えやすいから。」。"],
-[25,"地学","空気中の水蒸気を調べる実験","コップの表面に水滴がついたことから、空気中の水蒸気についてわかることとして正しいものはどれか。","コップの表面に水滴がついたこと。",["コップの中の水がすべて蒸発したこと。","空気中に水蒸気がまったくないこと。","金属が水を発生させたこと。"],"正解は「コップの表面に水滴がついたこと。」。"],
+[24,"地学","空気中の水蒸気を調べる実験","金属製のコップを冷やすと外側に水滴がついた。このことからわかることとして正しいものはどれか。","空気中の水蒸気が冷やされて水滴になった。",["コップの中の水が外側にしみ出した。","金属が新しく水をつくり出した。","空気中には水蒸気が含まれていない。"],"正解は「空気中の水蒸気が冷やされて水滴になった。」。"],
+[25,"地学","空気中の水蒸気を調べる実験","コップの表面に水滴がついたことから、空気中の水蒸気についてわかることとして正しいものはどれか。","空気中には水蒸気が含まれている。",["空気中には水蒸気がまったく含まれていない。","水蒸気は冷やしても水滴にならない。","水滴はコップの中からしか生じない。"],"正解は「空気中には水蒸気が含まれている。」。"],
 [26,"地学","空気中の水蒸気を調べる実験","露点に達した後も冷やし続けたとき、温度と水滴のようすとして正しいものはどれか。","温度は低くなり、露点は変わらない。",["温度は高くなり、露点も高くなる。","温度も露点も変わらない。","露点だけが低くなり続ける。"],"正解は「温度は低くなり、露点は変わらない。」。"],
 [27,"地学","気圧、飽和水蒸気量と湿度","標高が高いところほど気圧が低くなる理由として正しいものはどれか。","その高さに相当する分だけの気圧の重さが減るから。",["空気の重さがなくなるから。","水蒸気がすべて液体になるから。","地球の自転が止まるから。"],"正解は「その高さに相当する分だけの気圧の重さが減るから。」。"],
 [28,"地学","気圧、飽和水蒸気量と湿度","気温が低いほど水蒸気を多く含めなくなる理由として正しいものはどれか。","気温が低いほど飽和水蒸気量が小さいので、空気Aのほうが湿度が高い。",["気温が低いほど飽和水蒸気量が大きいので、空気Bのほうが湿度が高い。","気温と飽和水蒸気量には関係がない。","湿度は気圧だけで決まる。"],"正解は「気温が低いほど飽和水蒸気量が小さいので、空気Aのほうが湿度が高い。」。"],
 [29,"地学","気圧、飽和水蒸気量と湿度","露点に達したときに雲や水滴ができる理由として正しいものはどれか。","空気が冷えて水蒸気が水滴に変わるため。",["太陽の光によって、地面があたためられたため。","空気が乾燥して水が消えるため。","風が完全に止まるため。"],"正解は「空気が冷えて水蒸気が水滴に変わるため。」。"],
-[30,"地学","気圧、飽和水蒸気量と湿度","湿った空気が上昇すると雲ができやすい理由として正しいものはどれか。","上空の方が気圧が低いから。",["上空ほど気温が高いから。","上空では水蒸気がふえないから。","地上の方が気圧が低いから。"],"正解は「上空の方が気圧が低いから。」。"],
-[31,"地学","気圧、飽和水蒸気量と湿度","空気が上空で膨張して温度が下がる理由として正しいものはどれか。","空気が膨張して気温が下がり、やがて露点に達して水蒸気が水滴になるため。",["空気が縮んで温度が上がるため。","水滴が水蒸気に戻るため。","気圧が上がって水が沸騰するため。"],"正解は「空気が膨張して気温が下がり、やがて露点に達して水蒸気が水滴になるため。」。"],
-[32,"地学","気圧、飽和水蒸気量と湿度","低い高さで雲ができるのはどのようなときか。","露点が高いので、低い高さで雲ができる。",["露点が低いので、高い高さで雲ができる。","露点がないので雲ができない。","気圧が高いほど必ず雲が消える。"],"正解は「露点が高いので、低い高さで雲ができる。」。"],
+[30,"地学","気圧、飽和水蒸気量と湿度","湿った空気が上昇すると雲ができやすい理由として正しいものはどれか。","空気が膨張して温度が下がり、露点に達して水滴ができるから。",["空気が圧縮されて温度が上がり、水滴が消えるから。","上空で水蒸気が増え続けるから。","地上の方が気圧が低く、空気が冷えるから。"],"正解は「空気が膨張して温度が下がり、露点に達して水滴ができるから。」。"],
+[31,"地学","気圧、飽和水蒸気量と湿度","空気が上空で膨張して温度が下がる理由として正しいものはどれか。","上空ほど気圧が低く、空気が膨張するから。",["上空ほど気圧が高く、空気が圧縮されるから。","水滴が水蒸気に戻るから。","気圧が上がって水が沸騰するから。"],"正解は「上空ほど気圧が低く、空気が膨張するから。」。"],
+[32,"地学","気圧、飽和水蒸気量と湿度","低い高さで雲ができるのはどのようなときか。","露点が高く、上昇した空気が低い高さで露点に達するとき。",["露点が低く、上昇した空気がすぐ露点に達するとき。","露点に達していないのに水滴ができるとき。","気圧が高いほど必ず雲が消えるとき。"],"正解は「露点が高く、上昇した空気が低い高さで露点に達するとき。」。"],
 [33,"地学","気圧、飽和水蒸気量と湿度","霧が発生するのはどのようなときか。","地表付近で空気が冷やされて、露点に達したとき。",["上空の空気だけがあたためられたとき。","空気が完全に乾燥したとき。","気圧が0になったとき。"],"正解は「地表付近で空気が冷やされて、露点に達したとき。」。"],
 [34,"地学","前線","気団とは何か。","気温や湿度がほぼ一様な空気のかたまり。",["雨だけが集まったもの。","雲が地面に接したもの。","海水が移動する流れ。"],"正解は「気温や湿度がほぼ一様な空気のかたまり。」。"],
 [35,"地学","前線","性質の異なる気団が接したとき、境の面が地表面と交わるところを何というか。","前線",["気団の中心","高気圧の中心","等圧線の間隔"],"正解は「前線」。"],
@@ -1159,11 +1160,11 @@ const Q2Descriptive=[
 [38,"地学","前線","暖気におおわれると気温はどうなるか。","暖気におおわれるため、気温が上がる。",["気温が下がる。","気温や湿度は必ず0になる。","気温は変わらない。"],"正解は「暖気におおわれるため、気温が上がる。」。"],
 [39,"地学","前線","寒冷前線が通過すると雨の降り方はどうなるか。","強い雨を短時間降らせる。",["弱い雨が長時間降る。","雨はまったく降らない。","雪だけが長時間降る。"],"正解は「強い雨を短時間降らせる。」。"],
 [40,"地学","前線","閉そく前線はどのようにしてできるか。","寒冷前線が温暖前線に追いついたときにできる。",["寒気と暖気の勢力がつり合ったときにできる。","寒気だけが強いときにできる。","暖気だけが強いときにできる。"],"正解は「寒冷前線が温暖前線に追いついたときにできる。」。"],
-[41,"地学","大気の動きと日本の天気","偏西風の影響で、高気圧や低気圧が西から東に移動するのはなぜか。","偏西風の影響で、高気圧や低気圧が西から東に移動するから。",["東から西へ移動するから。","南から北へだけ移動するから。","まったく移動しないから。"],"正解は「偏西風の影響で、高気圧や低気圧が西から東に移動するから。」。"],
+[41,"地学","大気の動きと日本の天気","偏西風の影響で、高気圧や低気圧が西から東に移動するのはなぜか。","中緯度では西から東へ吹く偏西風の影響を受けるから。",["中緯度では東から西へ吹く偏西風の影響を受けるから。","高気圧や低気圧が自力で南北にだけ動くから。","高気圧や低気圧はまったく移動しないから。"],"正解は「中緯度では西から東へ吹く偏西風の影響を受けるから。」。"],
 [42,"地学","大気の動きと日本の天気","冬に日本付近の気圧配置が西高東低になる理由として正しいものはどれか。","ユーラシア大陸の上の気圧が高く、太平洋上の気圧が低くなるから。",["ユーラシア大陸の上の気圧が低く、太平洋上の気圧が高くなるから。","日本付近では高気圧と低気圧が交互に通過するから。","南東の季節風が強くなるから。"],"正解は「ユーラシア大陸の上の気圧が高く、太平洋上の気圧が低くなるから。」。"],
 [43,"地学","大気の動きと日本の天気","春や秋に日本付近で天気が周期的に変化する理由として正しいものはどれか。","日本付近を、移動性高気圧と低気圧が交互に通過するから。",["日本付近に停滞前線が動かずに残るから。","冬型の気圧配置がずっと続くから。","台風だけが毎日通過するから。"],"正解は「日本付近を、移動性高気圧と低気圧が交互に通過するから。」。"],
 [44,"地学","大気の動きと日本の天気","梅雨のころに雨やくもりの日が多くなる理由として正しいものはどれか。","日本付近に前線が停滞しやすくなるから。",["太平洋高気圧の勢力が弱まるから。","偏西風がなくなるから。","気温が毎日0℃になるから。"],"正解は「日本付近に前線が停滞しやすくなるから。」。"],
-[45,"地学","大気の動きと日本の天気","冬の日本海側に雪や雨が多い理由として正しいものはどれか。","日本海側は雪や雨、太平洋側は乾燥した晴れの天気になることが多い。",["日本海側も太平洋側も乾燥した晴れになる。","太平洋側だけ雪が多くなる。","日本海側は一年中晴れる。"],"正解は「日本海側は雪や雨、太平洋側は乾燥した晴れの天気になることが多い。」。"],
+[45,"地学","大気の動きと日本の天気","冬の日本海側に雪や雨が多い理由として正しいものはどれか。","大陸からの冷たく乾いた季節風が日本海で水蒸気を含み、山地で上昇して雪や雨になるから。",["太平洋からの暖かい風だけが日本海側に吹き続けるから。","日本海の水蒸気が冬だけ完全になくなるから。","山地を越える前に雲がすべて消えるから。"],"正解は「大陸からの冷たく乾いた季節風が日本海で水蒸気を含み、山地で上昇して雪や雨になるから。」。"],
 [46,"物理","電流と回路","電圧計で電源の電圧を測るとき、はじめに300V端子につなぎ、針のふれが小さかった場合に行う操作として正しいものはどれか。","15Vや3Vの端子につなぎかえる。",["300V端子のまま電流を大きくする。","電圧計を回路に直列につなぎかえる。","電源を必ず切って測定をやめる。"],"正解は「15Vや3Vの端子につなぎかえる。」。"],
 [47,"物理","電流と回路","水の温度上昇を調べる実験で、ビーカーにふたをする理由として正しいものはどれか。","水の温度が、電熱線からの熱以外で変化しないようにするため。",["水の温度を電熱線と関係なく上げるため。","水を電気分解するため。","電熱線に電流が流れないようにするため。"],"正解は「水の温度が、電熱線からの熱以外で変化しないようにするため。」。"],
 [48,"物理","電流と回路","電熱線で発生した熱量よりも水が受け取った熱量が小さくなる理由として正しいものはどれか。","発生した熱の一部が外ににげたから。",["発生した熱がすべて水に移ったから。","水が熱をまったく受け取らないから。","電流が必ず0になるから。"],"正解は「発生した熱の一部が外ににげたから。」。"],
@@ -1171,7 +1172,7 @@ const Q2Descriptive=[
 [50,"物理","電流がつくる磁界","磁界が強いところを磁力線で表すと、磁力線のようすはどうなるか。","磁力線の間隔がせまい。",["磁力線の間隔が広い。","磁力線が必ず直線になる。","磁力線が消える。"],"正解は「磁力線の間隔がせまい。」。"],
 [51,"物理","電流がつくる磁界","電流が流れている導線が磁界から力を受ける向きを逆にする方法として正しいものはどれか。","U字形磁石のN極とS極を入れかえる。",["導線の長さを0にする。","電流を流さないようにする。","磁石を導線から遠ざけるだけにする。"],"正解は「U字形磁石のN極とS極を入れかえる。」。"],
 [52,"物理","電流がつくる磁界","導線にはたらく力の向きを逆にする方法として正しいものはどれか。","回路内の電流の向きを逆にするか、磁界の向きを逆にする。",["電流と磁界の向きをどちらも変えない。","導線を短くするだけにする。","電池を外して電流を0にする。"],"正解は「回路内の電流の向きを逆にするか、磁界の向きを逆にする。」。"],
-[53,"物理","発電機のしくみ","コイルに誘導電流を発生させる方法として正しいものはどれか。","コイルの上側に棒磁石のS極をすばやく近づける。",["棒磁石をコイルのそばで完全に静止させる。","コイルから棒磁石を十分遠ざけたままにする。","コイルの導線を水にとかす。"],"正解は「コイルの上側に棒磁石のS極をすばやく近づける。」。"],
+[53,"物理","発電機のしくみ","コイルに誘導電流を発生させる方法として正しいものはどれか。","コイルの上側に棒磁石のS極をすばやく近づける。",["棒磁石をコイルのそばで完全に静止させる。","コイルから棒磁石を十分遠ざけたままにする。","棒磁石とコイルを同じ速さで動かし、間隔を変えない。"],"正解は「コイルの上側に棒磁石のS極をすばやく近づける。」。"],
 [54,"物理","発電機のしくみ","コイルと棒磁石の間に動きがないと誘導電流が流れない理由として正しいものはどれか。","コイルの内部の磁界が変化しないから。",["コイルの内部の磁界が大きく変化するから。","コイルの抵抗が必ず0になるから。","棒磁石が電流を吸収するから。"],"正解は「コイルの内部の磁界が変化しないから。」。"],
 [55,"物理","発電機のしくみ","コイルや磁石を速く動かしたとき、誘導電流の大きさはどうなるか。","大きくなる。",["小さくなる。","変化しない。","必ず0になる。"],"正解は「大きくなる。」。"],
 [56,"物理","直流と交流","直流の特徴として正しいものはどれか。","向きと大きさが変化しない。",["向きと大きさが周期的に変化する。","向きだけが毎秒必ず逆になる。","大きさだけが必ず0になる。"],"正解は「向きと大きさが変化しない。」。"],
@@ -1225,7 +1226,7 @@ const Q3Descriptive=[
 [4,"化学","イオンへのなりやすさと電池","うすい硫酸に銅板と亜鉛板を入れて電池をつくったとき、銅板と亜鉛板ではどのような変化が起こるか。","銅板では気体の水素が発生し、亜鉛板では亜鉛がとけ出す。",["銅板では亜鉛が付着し、亜鉛板では水素が吸収される。","銅板では酸素が発生し、亜鉛板では何も変化しない。","銅板と亜鉛板の両方で塩素が発生する。"],"正解は「銅板では気体の水素が発生し、亜鉛板では亜鉛がとけ出す。」。"],
 [5,"化学","イオンへのなりやすさと電池","電池を使うとき、銅板で水素イオンはどのように変化するか。","水素イオンが銅板から電子を受け取って、水素原子になる。",["水素イオンが銅板に電子を渡して、酸素原子になる。","水素イオンが亜鉛板から陽子を受け取って、水になる。","水素イオンが塩化物イオンと結びついて、銅になる。"],"正解は「水素イオンが銅板から電子を受け取って、水素原子になる。」。"],
 [6,"化学","いろいろな電池","ダニエル電池でセロハン膜や素焼きの板を使う理由は何か。","2種類の水溶液が混ざらないようにし、イオンだけを通過させる。",["2種類の金属板を直接ふれさせ、電子を通過させる。","水溶液の温度を高く保ち、気体だけを通過させる。","水溶液を完全に分け、イオンも通さないようにする。"],"正解は「2種類の水溶液が混ざらないようにし、イオンだけを通過させる。」。"],
-[7,"化学","いろいろな電池","ボルタ電池を長く使うと電圧が下がる。しばらく休ませると電圧が回復する理由は何か。","下がっていた電圧が回復し、くり返し使うことができるため。",["金属板が新しく作られ、電池の質量が増えるため。","水溶液が非電解質に変化し、電流が流れなくなるため。","電子が消えて、電圧が0に固定されるため。"],"正解は「下がっていた電圧が回復し、くり返し使うことができるため。」。"],
+[7,"化学","いろいろな電池","ボルタ電池を長く使うと電圧が下がる。しばらく休ませると電圧が回復する理由は何か。","銅板に付着した水素の気泡がはがれ、硫酸と銅板がふれやすくなるため。",["亜鉛板が新しくつくられるため。","硫酸が非電解質に変化するため。","電子がすべて消えてから新しく生まれるため。"],"正解は「銅板に付着した水素の気泡がはがれ、硫酸と銅板がふれやすくなるため。」。"],
 [8,"化学","いろいろな電池","水素と酸素が化学変化を起こすとき、どのようなエネルギーの変化が起こるか。","水素と酸素が化学変化を起こすときに発生する電気エネルギーをとり出す。",["水素と酸素が物理変化を起こすときに光エネルギーを吸収する。","水素と酸素が混ざらないようにして位置エネルギーをためる。","水素と酸素が固体になるときに磁力を発生させる。"],"正解は「水素と酸素が化学変化を起こすときに発生する電気エネルギーをとり出す。」。"],
 [9,"生物","細胞分裂と生物の成長","タマネギの根の先端を観察するとき、うすい塩酸に入れるのはなぜか。","細胞をはなれやすくするため。",["細胞を大きく成長させるため。","細胞を乾燥させるため。","細胞の核を消すため。"],"正解は「細胞をはなれやすくするため。」。"],
 [10,"生物","細胞分裂と生物の成長","染色液で細胞を染めるのはなぜか。","核を赤く染色して見やすくするため。",["細胞壁を透明にしてなくすため。","細胞を動かして観察しやすくするため。","染色体を白くして見えなくするため。"],"正解は「核を赤く染色して見やすくするため。」。"],
@@ -1242,29 +1243,29 @@ const Q3Descriptive=[
 [21,"物理","仕事と力学的エネルギー","水平面上で木片を動かすとき、ばねのした仕事は何に使われたか。","木片を動かすための仕事に使われた。",["木片を高い位置へ上げる仕事に使われた。","木片を冷やすためだけに使われた。","ばねの重さをなくすために使われた。"],"正解は「木片を動かすための仕事に使われた。」。"],
 [22,"地学","太陽","太陽とはどのような天体か。","自ら光を出している天体。",["地球のまわりを回る透明な天体。","太陽の光を反射するだけの天体。","宇宙に固定された人工衛星。"],"正解は「自ら光を出している天体。」。"],
 [23,"地学","太陽","太陽の黒点を観察するとき、肉眼や望遠鏡で直接見てはいけないのはなぜか。","肉眼や望遠鏡で直接太陽を見ると危険だから。",["黒点が消えてしまうから。","太陽の大きさが変わるから。","望遠鏡の倍率が下がるから。"],"正解は「肉眼や望遠鏡で直接太陽を見ると危険だから。」。"],
-[24,"地学","太陽","黒点が中央部では円形、周辺部ではだ円形に見えるのはなぜか。","黒点の形が、中央部では円形、周辺部ではだ円形になるため。",["黒点が地球に近づくほど白くなるため。","太陽が四角い板のような形をしているため。","黒点が月の影でできているため。"],"正解は「黒点の形が、中央部では円形、周辺部ではだ円形になるため。」。"],
-[25,"地学","太陽","太陽が黒点よりも明るく見える理由は何か。","まわりより温度が低いから。",["まわりより温度が高いから。","黒点だけが光を出しているから。","太陽が地球より小さいから。"],"正解は「まわりより温度が低いから。」。"],
+[24,"地学","太陽","黒点が中央部では円形、周辺部ではだ円形に見えるのはなぜか。","太陽が球形で、周辺ほど斜めから見えるため。",["黒点が地球に近づくほど白くなるため。","太陽が平面の板のような形をしているため。","月の影が黒点の形を変えるため。"],"正解は「太陽が球形で、周辺ほど斜めから見えるため。」。"],
+[25,"地学","太陽","太陽が黒点よりも明るく見える理由は何か。","黒点の温度が周囲より低いから。",["黒点の温度が周囲より高いから。","黒点の温度が周囲と同じだから。","黒点だけが太陽より強い光を出しているから。"],"正解は「黒点の温度が周囲より低いから。」。"],
 [26,"地学","太陽の1日の動き","透明半球に太陽の位置を記録するとき、透明半球の中心は何を表すか。","観測者の位置を表す。",["太陽の中心を表す。","北極星の位置を表す。","月の中心を表す。"],"正解は「観測者の位置を表す。」。"],
-[27,"地学","太陽の1日の動き","透明半球のつくる円の中心を、観測者の位置に重ねるのはなぜか。","透明半球のつくる円の中心に重なるようにするため。",["透明半球の端に太陽を合わせるため。","北の方位をなくすため。","太陽の高度をいつも0度にするため。"],"正解は「透明半球のつくる円の中心に重なるようにするため。」。"],
+[27,"地学","太陽の1日の動き","透明半球のつくる円の中心を、観測者の位置に重ねるのはなぜか。","観測者から見た太陽の位置を正しく記録するため。",["太陽を透明半球の端に固定するため。","北の方位をなくすため。","太陽の高度をいつも0度にするため。"],"正解は「観測者から見た太陽の位置を正しく記録するため。」。"],
 [28,"地学","太陽の1日の動き","透明半球上で太陽の位置を記録した点の間隔がほぼ一定になるのはなぜか。","地球が一定の速さで自転しているから。",["太陽が地球のまわりを不規則に回るから。","月が透明半球を動かしているから。","観測者が毎回違う場所に移動するから。"],"正解は「地球が一定の速さで自転しているから。」。"],
 [29,"地学","太陽の1日の動き","太陽の南中とはどのようなことか。","太陽が子午線の真南にくること。",["太陽が地平線の真下にくること。","太陽が北極星と重なること。","太陽が月の後ろに隠れること。"],"正解は「太陽が子午線の真南にくること。」。"],
 [30,"地学","太陽の1日の動き","夏至の日と冬至の日で、太陽の南中高度はどのように違うか。","南中したときの太陽の高度を南中高度といい、夏至の日は高く、冬至の日は低い。",["夏至の日は低く、冬至の日は高い。","どちらの日も南中高度は必ず0度である。","南中高度は季節と関係がない。"],"正解は「南中したときの太陽の高度を南中高度といい、夏至の日は高く、冬至の日は低い。」。"],
 [31,"地学","太陽の1日の動き","地球上で季節が変化するのはなぜか。","地球が地軸を傾けたまま公転しているから。",["地球が自転をやめる季節があるから。","太陽が地球に近づいたり遠ざかったりしないから。","月が地球の地軸を毎日反対にするから。"],"正解は「地球が地軸を傾けたまま公転しているから。」。"],
 [32,"地学","星の1年の動き","同じ時刻に見える星座の位置が季節で変わるのはなぜか。","地球が公転しているから。",["地球が公転していないから。","太陽が星座のまわりを1日に1回回るから。","星座が地球のまわりを公転しているから。"],"正解は「地球が公転しているから。」。"],
-[33,"地学","星の1年の動き","太陽が見かけ上、星座の間を西から東へ動いて見える理由は何か。","地球から見て、星座Pが太陽と反対の方向に位置しているから。",["星座が太陽の表面にあるから。","地球が自転していないから。","太陽が星座を追いこしているから。"],"正解は「地球から見て、星座Pが太陽と反対の方向に位置しているから。」。"],
+[33,"地学","星の1年の動き","太陽が見かけ上、星座の間を西から東へ動いて見える理由は何か。","地球が太陽のまわりを公転しているから。",["地球が自転しているだけだから。","太陽が1日に星座の間を公転するから。","星座が地球のまわりを公転しているから。"],"正解は「地球が太陽のまわりを公転しているから。」。"],
 [34,"地学","月と金星の見え方","金星が地球から見て太陽に近いところを公転していることは、どの観察からわかるか。","金星は地球よりも太陽に近いところを公転しているから。",["金星がいつも真夜中に南中するから。","金星が北極星の近くにあるから。","金星が月よりも遠いところを公転しているから。"],"正解は「金星は地球よりも太陽に近いところを公転しているから。」。"],
 [35,"地学","月と金星の見え方","金星の満ち欠けは、なぜ起こるか。","金星が太陽に照らされる部分と、地球から見える部分が変わるから。",["金星が自ら光ったり消えたりするから。","金星の大きさが実際に毎日変わるから。","金星が地球の影に毎日入るから。"],"正解は「金星が太陽に照らされる部分と、地球から見える部分が変わるから。」。"],
 [36,"地学","月と金星の見え方","地球よりも外側を公転している天体には、どのようなものがあるか。","火星、木星、土星、天王星、海王星は外惑星。",["水星と金星だけが外惑星。","月と太陽が外惑星。","すべての惑星が内惑星。"],"正解は「火星、木星、土星、天王星、海王星は外惑星。」。"],
 [37,"生物","自然のなかの生物","光合成によって、無機物から有機物をつくり出しているのはなぜか。","生産者である植物が、光合成によって有機物をつくり出しているから。",["消費者である動物が、光合成で無機物を食べるから。","分解者が日光を出して、植物を食べるから。","植物が有機物をすべて無機物に戻すから。"],"正解は「生産者である植物が、光合成によって有機物をつくり出しているから。」。"],
 [38,"生物","自然のなかの生物","食物連鎖では、食べるものと食べられるものの数はどのようになっているか。","食べるものよりも食べられるものの方が数量が多い。",["食べるものの方が必ず数量が多い。","どの段階でも数量は必ず同じである。","食べられるものは存在しない。"],"正解は「食べるものよりも食べられるものの方が数量が多い。」。"],
 [39,"生物","自然のなかの生物","ある生物の数が急に減ると、もとにもどるまで時間がかかるのはなぜか。","人間の活動や自然災害などによってつり合いがくずれたため。",["食物連鎖がなくなり、すべての生物が同時に増えるため。","生物は一度減ると絶対に増えないため。","生産者だけが急に増え続けるため。"],"正解は「人間の活動や自然災害などによってつり合いがくずれたため。」。"],
-[40,"生物","自然のなかの生物","落ち葉が自然に分解されるのはなぜか。","土の中の微生物や小動物によって、落ち葉が分解されるから。",["落ち葉が太陽の光だけで金属になるから。","落ち葉が動物に変化するから。","土の中では生物がまったくはたらかないから。"],"正解は「土の中の微生物や小動物によって、落ち葉が分解されるから。」。"],
+[40,"生物","自然のなかの生物","落ち葉が自然に分解されるのはなぜか。","土の中の微生物や小動物によって、落ち葉が分解されるから。",["落ち葉が光だけで自然に消えるから。","落ち葉がそのまま別の生きた動物になるから。","土の中の微生物は落ち葉に関わらないから。"],"正解は「土の中の微生物や小動物によって、落ち葉が分解されるから。」。"],
 [41,"生物","自然環境の調査と保全","水生生物を調べるとき、場所によってすむ水生生物が異なるのはなぜか。","水のよごれの程度によって、生息している水生生物が異なるから。",["水生生物はどの川にも同じ種類だけがすむから。","水がきれいな場所ほど生物が必ず0になるから。","水のよごれと水生生物には関係がないから。"],"正解は「水のよごれの程度によって、生息している水生生物が異なるから。」。"],
-[42,"生物","自然環境の調査と保全","自然環境を観察するとき、何を調べるのがよいか。","自然環境の状態を調べるため。",["天体の年周運動だけを調べるため。","電流の大きさだけを調べるため。","化学反応式だけを調べるため。"],"正解は「自然環境の状態を調べるため。」。"],
-[43,"生物","自然環境の調査と保全","地球温暖化はなぜ起こるか。","地球表面から放射される熱を吸収し、再び地表に放射するから。",["地球が太陽のまわりを公転しなくなるから。","酸素がすべてなくなるから。","月が地球の熱をすべて吸収するから。"],"正解は「地球表面から放射される熱を吸収し、再び地表に放射するから。」。"],
-[44,"生物","自然環境の調査と保全","外来生物が野外に定着すると問題になるのはなぜか。","外来生物には天敵が少なく、在来生物の生態系をくずすおそれがあるから。",["外来生物を野外に逃がさないから。","外来生物は必ず在来種を増やすから。","外来生物は自然環境にまったく影響しないから。"],"正解は「外来生物には天敵が少なく、在来生物の生態系をくずすおそれがあるから。」。"],
-[45,"地学","科学技術と人間","植物工場で、植物のからだをつくる炭素はどこからとり入れられるか。","植物が光合成によってとり入れた二酸化炭素から。",["植物が金属から直接炭素をとり入れる。","植物が酸素だけを食べて炭素に変える。","植物が土をすべて電気に変えてとり入れる。"],"正解は「植物が光合成によってとり入れた二酸化炭素から。」。"],
-[46,"地学","科学技術と人間","持続可能な社会とはどのような社会か。","生活に必要なエネルギーなどを将来にわたって安定して手に入れられる社会。",["電気をまったく使わずに生活する社会。","化石燃料だけを無制限に使い続ける社会。","水や蒸気を使わずに熱を消す社会。"],"正解は「生活に必要なエネルギーなどを将来にわたって安定して手に入れられる社会。」。"]
+[42,"生物","自然環境の調査と保全","自然環境を観察するとき、何を調べるのがよいか。","生物と、その周囲の水・土・気温などの環境をあわせて調べる。",["生物の種類だけを調べる。","水のよごれだけを調べる。","気温だけを調べる。"],"正解は「生物と、その周囲の水・土・気温などの環境をあわせて調べる。」。"],
+[43,"生物","自然環境の調査と保全","地球温暖化はなぜ起こるか。","温室効果ガスが地表から放射される熱を吸収し、再び地表に放射するから。",["温室効果ガスが地表からの熱をすべて宇宙へ逃がすから。","大気の成分は熱の移動にまったく関係しないから。","太陽の光だけが原因で、地球からの放射は関係ないから。"],"正解は「温室効果ガスが地表から放射される熱を吸収し、再び地表に放射するから。」。"],
+[44,"生物","自然環境の調査と保全","外来生物が野外に定着すると問題になるのはなぜか。","外来生物には天敵が少なく、在来生物の生態系をくずすおそれがあるから。",["在来生物の数を必ず増やすから。","外来生物は在来生物と同じ役割しかしないから。","外来生物は自然環境にまったく影響しないから。"],"正解は「外来生物には天敵が少なく、在来生物の生態系をくずすおそれがあるから。」。"],
+[45,"地学","科学技術と人間","植物工場で、植物のからだをつくる炭素はどこからとり入れられるか。","植物が光合成によってとり入れた二酸化炭素から。",["植物がとり入れた酸素から。","植物が吸い上げた水から。","土から吸収した無機塩類から。"],"正解は「植物が光合成によってとり入れた二酸化炭素から。」。"],
+[46,"地学","科学技術と人間","持続可能な社会とはどのような社会か。","生活に必要なエネルギーなどを将来にわたって安定して手に入れられる社会。",["将来の資源を考えず、今だけ便利に暮らす社会。","化石燃料だけを無制限に使い続ける社会。","一つの資源だけに頼り続ける社会。"],"正解は「生活に必要なエネルギーなどを将来にわたって安定して手に入れられる社会。」。"]
 ];
 const practiceData=[
 ["中1","生物","動物の分類",1,"動物の分類","背骨がある動物をまとめて何というか。","セキツイ動物",["無セキツイ動物","節足動物","軟体動物"],"背骨がある動物はセキツイ動物、背骨がない動物は無セキツイ動物です。"],
@@ -1360,7 +1361,9 @@ const grades=["全学年","中1","中2","中3"],fields=["全分野","生物","�
 const gradeNotices={中1:"中1への伝達事項はここに表示されます。",中2:"中2への伝達事項はここに表示されます。",中3:"中3への伝達事項はここに表示されます。"};
 const okuponHomeUrl="https://okuponsoba.github.io/okupon-homepage/#apps",mathHomeUrl="https://okuponsoba.github.io/math/";
 const details={中1生物:"植物・動物・細胞",中1記述対策:"説明問題を四択で練習",中1化学:"身のまわりの物質・気体・水溶液",中1物理:"光・音・力",中1地学:"火山・地震・地層",中2生物:"細胞・人体・神経",中2化学:"原子・分子・化学変化",中2物理:"電流・電力・磁界",中2地学:"天気・前線・気圧",中3生物:"遺伝・生態系・進化",中3化学:"イオン・酸アルカリ・電池",中3物理:"仕事・エネルギー",中3地学:"宇宙・太陽系・月"};
-const S="scienceQuizRecords",N="scienceQuizUserName",G="scienceQuizUserGrade",P="scienceQuizProfileSaved",T="scienceQuizStreak",BT="scienceQuizBestPerfectTimes";
+const S="scienceQuizRecords",N="scienceQuizUserName",G="scienceQuizUserGrade",P="scienceQuizProfileSaved",T="scienceQuizStreak",BT="scienceQuizBestPerfectTimes",DID="scienceQuizDeviceId",SCODE="scienceQuizStudentCode";
+const SB_URL="https://kjlmgrnrhzfwcpuytxdm.supabase.co",SB_KEY="sb_publishable_8vQ2_xzJyaIP96JedzK06w_HRBV6Es1";
+const sb=window.supabase?.createClient?window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}}):null;
 const confusables=[
  ["セキツイ動物","無セキツイ動物"],["脊椎動物","無脊椎動物"],["外骨格","内骨格"],["節足動物","軟体動物"],["ハチュウ類","両生類","鳥類","ホニュウ類","魚類"],["卵生","胎生"],
  ["裸子植物","被子植物"],["単子葉類","双子葉類"],["シダ植物","コケ植物"],["ひげ根","主根と側根"],["胚珠","子房"],["花粉","やく"],["めしべ","おしべ"],["受粉","受精"],
@@ -1383,14 +1386,45 @@ const relatedTerms=answer=>{
  pairs.forEach(([a,b])=>{if(answer===a)terms.push(b);if(answer===b)terms.push(a)});
  return uniqChoices(terms,answer);
 };
+const groupedTopicEnds={
+ "身近な物理現象A":[11,15,20,30],"身近な物理現象B":[7,14,22,30],
+ "身のまわりの物質・気体・水溶液A":[5,13,23,30],"身のまわりの物質・気体・水溶液B":[5,16,20,30],
+ "火山・地震・地層A":[8,19,25,30],"火山・地震・地層B":[12,21,30],
+ "生物の体のつくりとはたらきA":[6,13,24,30],"生物の体のつくりとはたらきB":[7,12,24,30],
+ "電流とその利用A":[9,13,21,30],"電流とその利用B":[11,15,20,28],
+ "天気とその変化A":[5,11,15,23,29],"天気とその変化B":[5,14,20,29]
+};
+const curatedWrongOverrides={
+ "中3-物理-A-1":["浮力","気圧","圧力"],"中3-物理-A-2":["水圧","重力","弾性力"],
+ "中3-物理-A-3":["力の分解","合力","分力"],"中3-物理-A-4":["分力","力の分解","力の合成"],"中3-物理-A-5":["力の合成","合力","分力"],"中3-物理-A-6":["合力","力の合成","力の分解"],
+ "中3-物理-A-7":["瞬間の速さ","等速直線運動","自由落下"],"中3-物理-A-8":["平均の速さ","等速直線運動","自由落下"],"中3-物理-A-10":["自由落下","平均の速さ","瞬間の速さ"],"中3-物理-A-11":["慣性の法則","作用・反作用の法則","等速直線運動"],"中3-物理-A-12":["慣性","作用・反作用の法則","等速直線運動"],"中3-物理-A-13":["慣性の法則","慣性","等速直線運動"],
+ "中3-物理-A-14":["仕事率","仕事の原理","力学的エネルギー"],"中3-物理-A-15":["仕事","仕事率","力学的エネルギー"],"中3-物理-A-16":["仕事","仕事の原理","電力"],"中3-物理-A-17":["運動エネルギー","力学的エネルギー","化学エネルギー"],"中3-物理-A-18":["位置エネルギー","力学的エネルギー","熱エネルギー"],"中3-物理-A-19":["位置エネルギー","運動エネルギー","化学エネルギー"],
+ "中3-物理-B-4":["差","積","変わらない"],"中3-物理-B-5":["遅かった","変わらない","止まっていた"],"中3-物理-B-6":["斜面に垂直な分力","重力","垂直抗力"],"中3-物理-B-7":["速さ","移動距離","質量"],"中3-物理-B-8":["作用","慣性","慣性の法則"],
+ "中3-物理-B-11":["2倍","1倍","4倍"],"中3-物理-B-12":["1/2倍","1倍","4倍"],"中3-物理-B-18":["エネルギー保存の法則","仕事率","電力"],"中3-物理-B-19":["化学エネルギー","熱エネルギー","音エネルギー"],"中3-物理-B-20":["光エネルギー","熱エネルギー","音エネルギー"]
+};
+const topicKey=q=>{
+ const ends=groupedTopicEnds[q.unit];
+ if(ends){const group=ends.findIndex(end=>(Number(q.no)||0)<=end);return`${q.grade}-${q.field}-${q.unit}-${group}`}
+ if(q.grade==="中3"&&q.field==="物理"){
+  const no=Number(q.no)||0,isB=q.level==="B";
+  if(no<=(isB?3:2))return"中3-物理-水圧と浮力";
+  if(no<=(isB?4:6))return"中3-物理-力の合成と分解";
+  if(no<=(isB?8:13))return"中3-物理-運動";
+  if(no<=(isB?13:16))return"中3-物理-仕事";
+  return"中3-物理-エネルギー";
+ }
+ return`${q.grade}-${q.field}-${q.unit}`;
+};
 const smartWrongs=q=>{
  const all=[...data,...practiceData],same=x=>x!==q&&x.answer!==q.answer;
- const matching=x=>same(x)&&sameChoiceKind(x.answer,q.answer,q.question);
- const ownWrongs=uniqChoices(q.wrongs||[],q.answer).filter(x=>sameChoiceKind(x,q.answer,q.question));
+ const matching=x=>same(x)&&topicKey(x)===topicKey(q)&&sameChoiceKind(x.answer,q.answer,q.question);
+ const ownSource=curatedWrongOverrides[k(q)]||q.wrongs||[];
+ const ownWrongs=uniqChoices(ownSource,q.answer).filter(x=>sameChoiceKind(x,q.answer,q.question));
+ const topicWrongs=all.filter(matching).map(x=>x.answer);
  const pools=[
   relatedTerms(q.answer).filter(x=>sameChoiceKind(x,q.answer,q.question)),
   ownWrongs,
-  all.filter(x=>matching(x)&&x.grade===q.grade&&x.field===q.field&&x.unit===q.unit).map(x=>x.answer)
+  topicWrongs
  ];
  const picked=[];
  for(const pool of pools){for(const x of sh(uniqChoices(pool,q.answer))){if(!picked.includes(x))picked.push(x);if(picked.length>=3)return picked}}
@@ -1398,6 +1432,34 @@ const smartWrongs=q=>{
 };
 const mq=q=>({...q,choices:sh([q.answer,...smartWrongs(q)])});
 const load=(key,d=[])=>{try{const raw=localStorage.getItem(key);if(!raw)return d;const v=JSON.parse(raw);return v??d}catch{return d}},save=(key,v)=>localStorage.setItem(key,JSON.stringify(v));
+const randomId=()=>{try{return crypto.randomUUID().replace(/-/g,"")}catch{return`${Date.now()}${Math.random().toString(36).slice(2)}`}};
+const persistedId=key=>{let value=localStorage.getItem(key);if(!value){value=randomId();localStorage.setItem(key,value)}return value};
+const studentCode=()=>{let value=localStorage.getItem(SCODE);if(!value){value=`RK${randomId().slice(0,10).toUpperCase()}`;localStorage.setItem(SCODE,value)}return value};
+const activityType=t=>t==="一問一答"?"one_answer":t==="記述対策"?"descriptive":t==="練習問題"?"practice":"daily";
+const quizMode=m=>m==="練習モード"?"practice":"test";
+const recordInfo=r=>{
+ const units=Array.isArray(r.unitScores)?r.unitScores:[];
+ const unitNames=units.map(x=>String(x.unit||"")).filter(Boolean);
+ const unit=String(r.unit||unitNames.join(" / ")||"学習記録");
+ const grade=recordGrades.find(g=>String(r.grade||unitNames[0]||"").startsWith(g))||"中1";
+ const field=fieldNames.find(f=>String(r.field||"")===f||unitNames.some(u=>u.includes(f)))||"生物";
+ return{grade,field,unit,units};
+};
+const cloudRecord=(r,userId)=>{const info=recordInfo(r),date=/^\d{4}-\d{2}-\d{2}$/.test(String(r.date||""))?new Date(`${r.date}T12:00:00+09:00`).toISOString():new Date(Number(r.id)||Date.now()).toISOString();return{
+ client_record_id:`${persistedId(DID)}-${String(r.id)}`,
+ student_id:userId,
+ completed_at:date,
+ activity_type:activityType(r.activityType),
+ quiz_mode:quizMode(r.quizMode),
+ grade:info.grade,
+ field:info.field,
+ unit:info.unit,
+ total_count:Math.max(0,Number(r.total)||0),
+ correct_count:Math.max(0,Number(r.score)||0),
+ elapsed_seconds:Math.max(0,Number(r.timeSeconds)||0),
+ is_retry:Boolean(r.isRetry),
+ unit_scores:info.units
+}};
 const asArray=v=>Array.isArray(v)?v:[],asStreak=v=>v&&typeof v==="object"?{lastDate:v.lastDate||"",current:Number(v.current)||0,best:Number(v.best)||0}:{lastDate:"",current:0,best:0};
 const dk=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`,add=(s,n)=>{const d=new Date(`${s}T00:00:00`);d.setDate(d.getDate()+n);return dk(d)};
 const df=s=>{if(!s)return"";const [y,m,d]=String(s).split("-");return y&&m&&d?`${y}年${Number(m)}月${Number(d)}日`:s};
@@ -1452,22 +1514,42 @@ function HomeMotivation({records,streak,userGrade,startDaily,setQuizType,setSolv
 
 function App(){
  const savedName=()=>localStorage.getItem(N)||"",savedGrade=()=>localStorage.getItem(G)||"",savedProfile=()=>localStorage.getItem(P)==="1"&&!!savedName()&&!!savedGrade();
- const [scr,setScr]=useState("home"),[name,setName]=useState(savedName),[userGrade,setUserGrade]=useState(savedGrade),[profileSaved,setProfileSaved]=useState(savedProfile),[quizType,setQuizType]=useState("一問一答"),[solveMode,setSolveMode]=useState("テストモード"),[descLevels,setDescLevels]=useState([]),[grade,setGrade]=useState(""),[field,setField]=useState(""),[level,setLevel]=useState(""),[qs,setQs]=useState([]),[i,setI]=useState(0),[ans,setAns]=useState({}),[hist,setHist]=useState([]),[wrongs,setWrongs]=useState([]),[records,setRecords]=useState([]),[bestTimes,setBestTimes]=useState({}),[rg,setRg]=useState("全学年"),[order,setOrder]=useState("number"),[back,setBack]=useState(false),[sec,setSec]=useState(0),[finalSec,setFinalSec]=useState(0),[start,setStart]=useState(null),[streak,setStreak]=useState({lastDate:"",current:0,best:0}),[result,setResult]=useState(null),[reviewMode,setReviewMode]=useState(false),[dailyMode,setDailyMode]=useState(false);
+ const [scr,setScr]=useState("home"),[name,setName]=useState(savedName),[userGrade,setUserGrade]=useState(savedGrade),[profileSaved,setProfileSaved]=useState(savedProfile),[quizType,setQuizType]=useState("一問一答"),[solveMode,setSolveMode]=useState("テストモード"),[descLevels,setDescLevels]=useState([]),[grade,setGrade]=useState(""),[field,setField]=useState(""),[level,setLevel]=useState(""),[qs,setQs]=useState([]),[i,setI]=useState(0),[ans,setAns]=useState({}),[hist,setHist]=useState([]),[wrongs,setWrongs]=useState([]),[records,setRecords]=useState([]),[bestTimes,setBestTimes]=useState({}),[rg,setRg]=useState("全学年"),[order,setOrder]=useState("number"),[back,setBack]=useState(false),[sec,setSec]=useState(0),[finalSec,setFinalSec]=useState(0),[start,setStart]=useState(null),[streak,setStreak]=useState({lastDate:"",current:0,best:0}),[result,setResult]=useState(null),[reviewMode,setReviewMode]=useState(false),[dailyMode,setDailyMode]=useState(false),[cloudUser,setCloudUser]=useState(null),[cloud,setCloud]=useState({label:"クラウド保存を準備中",detail:"この端末の履歴もそのまま保存されます。"});
+ const syncProfile=async(user,displayName,schoolGrade)=>{
+  if(!sb||!user||!displayName||!schoolGrade)return;
+  const {error}=await sb.from("student_profiles").upsert({id:user.id,student_code:studentCode(),display_name:displayName.slice(0,24),school_grade:schoolGrade});
+  if(error)throw error;
+ };
+ const syncRecords=async(user,list)=>{
+  if(!sb||!user||!list.length)return;
+  const {error}=await sb.from("learning_records").upsert(list.map(r=>cloudRecord(r,user.id)),{onConflict:"client_record_id"});
+  if(error)throw error;
+ };
  useEffect(()=>{setRecords(asArray(load(S)));setBestTimes(load(BT,{}));setStreak(asStreak(load(T,{lastDate:"",current:0,best:0})));setName(localStorage.getItem(N)||"");setUserGrade(localStorage.getItem(G)||"")},[]);
+ useEffect(()=>{let active=true;const connect=async()=>{try{
+  if(!sb){if(active)setCloud({label:"この端末に保存中",detail:"クラウド保存の読み込みに失敗しました。"});return}
+  let {data:{session},error}=await sb.auth.getSession();if(error)throw error;
+  if(!session){const signed=await sb.auth.signInAnonymously();if(signed.error)throw signed.error;session=signed.data.session}
+  const user=session?.user;if(!user)throw new Error("匿名ログインを開始できませんでした。");
+  const localName=localStorage.getItem(N)||"",localGrade=localStorage.getItem(G)||"",localRecords=asArray(load(S));
+  if(localName&&localGrade){await syncProfile(user,localName,localGrade);await syncRecords(user,localRecords)}
+ if(active){setCloudUser(user);setCloud({label:"クラウドに保存中",detail:"この端末の学習履歴を安全に同期しています。"})}
+ }catch(error){console.warn("Cloud sync is unavailable.",error);if(active)setCloud({label:"この端末に保存中",detail:"通信できない時も履歴はこの端末に残ります。"})}};void connect();return()=>{active=false}},[]);
+ useEffect(()=>{if(!cloudUser||!profileSaved||!name||!userGrade)return;const sync=async()=>{try{await syncProfile(cloudUser,name,userGrade);await syncRecords(cloudUser,records);setCloud({label:"クラウドに保存中",detail:"この端末の学習履歴を安全に同期しています。"})}catch(error){console.warn("Cloud sync retry failed.",error);setCloud({label:"この端末に保存中",detail:"通信できない時も履歴はこの端末に残ります。"})}};const retry=()=>{if(document.visibilityState==="visible")void sync()};void sync();const timer=setInterval(retry,30000);window.addEventListener("online",retry);document.addEventListener("visibilitychange",retry);return()=>{clearInterval(timer);window.removeEventListener("online",retry);document.removeEventListener("visibilitychange",retry)}},[cloudUser,profileSaved,name,userGrade,records]);
  useEffect(()=>{if(scr!=="quiz"||!start)return;const t=setInterval(()=>setSec(Math.floor((Date.now()-start)/1000)),250);return()=>clearInterval(t)},[scr,start]);
  const filtered=useMemo(()=>quizType==="記述対策"?data.filter(q=>q.grade===(grade||"中1")&&q.field===field&&descLevels.includes(q.level)):quizType==="練習問題"?practiceData.filter(q=>q.grade===(grade||"中1")&&q.field===field&&q.level===level):data.filter(q=>(grade==="全学年"||q.grade===grade)&&(field==="全分野"||q.field===field)&&q.level===level),[quizType,descLevels,grade,field,level]),cur=qs[i],ck=cur?k(cur):"",picked=ans[ck]||"",answered=qs.filter(q=>ans[k(q)]).length,target=qs.length*10,unit=grade&&field&&level&&grade!=="全学年"&&field!=="全分野"?`${grade}${field}${level}`:"",unitRecs=unit?rec(records,unit):[],bestKey=grade&&field&&level?`${grade}-${field}-${level}`:"",bestPerfect=bestKey?Number(bestTimes[bestKey])||0:0,fw=useMemo(()=>Array.from({length:20},(_,id)=>({id,left:`${Math.random()*100}%`,top:`${Math.random()*50}%`,delay:`${id*.08}s`})),[scr]);
  const greeting=useMemo(()=>greetings[Math.floor(Math.random()*greetings.length)],[]);
  const streakNext=()=>{const today=dk();if(streak.lastDate===today)return streak;const c=streak.lastDate===add(today,-1)?streak.current+1:1;return{lastDate:today,current:c,best:Math.max(streak.best,c)}};
  const savePerfectBest=(score,time)=>{if(quizType!=="一問一答"||solveMode!=="テストモード"||!bestKey||score!==qs.length||!qs.length)return;const old=Number(bestTimes[bestKey])||0;if(old&&old<=time)return;const next={...bestTimes,[bestKey]:time};save(BT,next);setBestTimes(next)};
- const saveRes=(h,score,time)=>{const r={id:Date.now(),date:dk(),userName:name.trim()||"名前なし",score,total:qs.length,accuracy:Math.round(score/qs.length*100),timeSeconds:time,unitScores:us(h)},rs=[r,...records],st=streakNext();save(S,rs);save(T,st);setRecords(rs);setStreak(st);savePerfectBest(score,time)};
+ const saveRes=(h,score,time)=>{const r={id:Date.now(),date:dk(),userName:name.trim()||"名前なし",score,total:qs.length,accuracy:Math.round(score/qs.length*100),timeSeconds:time,unitScores:us(h),activityType:dailyMode?"daily":quizType,quizMode:solveMode,grade:dailyMode?"":grade,field:dailyMode?"":field,unit:dailyMode?"今日の5問":unit,isRetry:false},rs=[r,...records],st=streakNext();save(S,rs);save(T,st);setRecords(rs);setStreak(st);savePerfectBest(score,time);if(cloudUser)void syncRecords(cloudUser,[r]).catch(error=>{console.warn("Cloud record sync failed.",error);setCloud({label:"この端末に保存中",detail:"クラウドへの同期は次回の接続時に再試行します。"})})};
  const begin=()=>{if(!filtered.length){setScr("soon");return}const ordered=order==="number"?[...filtered].sort((a,b)=>a.no-b.no):sh(filtered);setQs(ordered.map(mq));setI(0);setAns({});setHist([]);setWrongs([]);setResult(null);setBack(false);setSec(0);setFinalSec(0);setStart(null);setReviewMode(false);setDailyMode(false);setScr("ready")};
  const startDaily=()=>{const daily=dailyFive(records,userGrade);if(!daily.length){setScr("soon");return}setQuizType("一問一答");setSolveMode("練習モード");setGrade(recordGrades.includes(userGrade)?userGrade:"全学年");setField("今日の5問");setLevel("");setDescLevels([]);setQs(daily.map(mq));setI(0);setAns({});setHist([]);setWrongs([]);setResult(null);setBack(false);setSec(0);setFinalSec(0);setStart(null);setReviewMode(false);setDailyMode(true);setScr("ready")};
  const finish=a=>{const h=qs.map(q=>{const s=a[k(q)];return{...q,selected:s||"未回答",correct:s===q.answer}}),score=h.filter(x=>x.correct).length,time=start?Math.floor((Date.now()-start)/1000):sec;setHist(h);setWrongs(h.filter(x=>!x.correct));setFinalSec(time);setStart(null);setResult({score,total:qs.length,praise:pr(score,qs.length),saved:!reviewMode});if(!reviewMode)saveRes(h,score,time);setScr("result")};
  const choose=c=>{const n={...ans,[ck]:c};setAns(n);if(solveMode==="練習モード"){setBack(true);return}i+1<qs.length?(setI(i+1),setBack(false)):finish(n)},next=()=>i+1<qs.length?(setI(i+1),setBack(false)):finish(ans),prev=()=>{setBack(true);setI(Math.max(0,i-1))},home=()=>setScr("home");
- const clearRecords=()=>{if(!confirm("保存履歴をすべて消します。元に戻せません。消してもよいですか？"))return;save(S,[]);setRecords([]);alert("保存履歴を消しました。")};
- const register=()=>{const n=name.trim();if(!n||!userGrade)return;localStorage.setItem(N,n);localStorage.setItem(G,userGrade);localStorage.setItem(P,"1");setName(n);setUserGrade(userGrade);setProfileSaved(true);setScr("home")},review=()=>{const ordered=order==="number"?[...wrongs].sort((a,b)=>a.no-b.no):sh(wrongs);setQs(ordered.map(mq));setI(0);setAns({});setHist([]);setWrongs([]);setResult(null);setBack(false);setSec(0);setFinalSec(0);setStart(null);setReviewMode(true);setDailyMode(dailyMode);setScr("ready")};
+ const clearRecords=async()=>{if(!confirm("保存履歴をすべて消します。元に戻せません。消してもよいですか？"))return;save(S,[]);setRecords([]);if(cloudUser&&sb){const {error}=await sb.from("learning_records").delete().eq("student_id",cloudUser.id);if(error){console.warn("Cloud record deletion failed.",error);alert("この端末の履歴は消しました。クラウドの削除は次回もう一度実行してください。");return}}alert("保存履歴を消しました。")};
+ const register=()=>{const n=name.trim();if(!n||!userGrade)return;localStorage.setItem(N,n);localStorage.setItem(G,userGrade);localStorage.setItem(P,"1");setName(n);setUserGrade(userGrade);setProfileSaved(true);if(cloudUser)void syncProfile(cloudUser,n,userGrade).catch(error=>{console.warn("Cloud profile sync failed.",error);setCloud({label:"この端末に保存中",detail:"プロフィールの同期は次回の接続時に再試行します。"})});setScr("home")},review=()=>{const ordered=order==="number"?[...wrongs].sort((a,b)=>a.no-b.no):sh(wrongs);setQs(ordered.map(mq));setI(0);setAns({});setHist([]);setWrongs([]);setResult(null);setBack(false);setSec(0);setFinalSec(0);setStart(null);setReviewMode(true);setDailyMode(dailyMode);setScr("ready")};
 
- if(scr==="profile"||!profileSaved)return <Main><C><div className="text-center space-y-2"><div className="text-5xl">🐱</div><h1 className="text-3xl font-black">はじめに設定</h1><p className="text-slate-500">名前と伝達事項を見る学年を登録してください。</p></div><div className="space-y-2"><b>表示名</b><input value={name} onChange={e=>setName(e.target.value)} placeholder="本名ではなくニックネームを入力" className="w-full rounded-2xl border px-4 py-3"/></div><div><b>伝達事項を見る学年</b><B items={recordGrades} value={userGrade} set={setUserGrade}/></div><Btn onClick={register} disabled={!name.trim()||!userGrade} kind="main">設定を保存</Btn>{profileSaved&&<Box><b>保存履歴の管理</b><p className="text-xs text-slate-500">履歴を消す前に確認画面が出ます。</p><Btn onClick={clearRecords}>履歴を消す</Btn></Box>}</C></Main>;
+ if(scr==="profile"||!profileSaved)return <Main><C><div className="text-center space-y-2"><div className="text-5xl">🐱</div><h1 className="text-3xl font-black">はじめに設定</h1><p className="text-slate-500">名前と伝達事項を見る学年を登録してください。</p></div><div className="space-y-2"><b>表示名</b><input value={name} onChange={e=>setName(e.target.value)} maxLength="24" placeholder="本名ではなくニックネームを入力" className="w-full rounded-2xl border px-4 py-3"/></div><div><b>伝達事項を見る学年</b><B items={recordGrades} value={userGrade} set={setUserGrade}/></div><Box><b>学習記録の保存</b><p className="text-sm font-bold text-sky-700">{cloud.label}</p><p className="text-xs text-slate-500">{cloud.detail}</p></Box><Btn onClick={register} disabled={!name.trim()||!userGrade} kind="main">設定を保存</Btn>{profileSaved&&<Box><b>保存履歴の管理</b><p className="text-xs text-slate-500">履歴を消す前に確認画面が出ます。</p><Btn onClick={clearRecords}>履歴を消す</Btn></Box>}</C></Main>;
  if(scr==="home")return <Main><C><div className="home-hero text-center"><div className="home-kicker">SCIENCE QUIZ</div><h1 className="font-black">理科ホーム</h1><p>問題を見て、今日やるところを選んでください。</p></div><Box><div className="text-5xl">🐱</div><div className="text-xl font-black">{name}さん、{greeting}</div><div className="text-sm text-slate-500">今日の理科も、できるところから進めよう。</div></Box><HomeMotivation records={records} streak={streak} userGrade={userGrade} startDaily={startDaily} setQuizType={setQuizType} setSolveMode={setSolveMode} setGrade={setGrade} setField={setField} setLevel={setLevel} setDescLevels={setDescLevels}/><Toc edit={()=>setScr("profile")} records={()=>setScr("records")} home={home}/><div id="notices" className="scroll-mt-4"><Notices grade={userGrade}/></div><StepGuide quizType={quizType} solveMode={solveMode} grade={grade} field={field} level={level} descLevels={descLevels} filtered={filtered}/><Catalog quizType={quizType} setQuizType={setQuizType} solveMode={solveMode} setSolveMode={setSolveMode} grade={grade} setGrade={setGrade} field={field} setField={setField} level={level} setLevel={setLevel} descLevels={descLevels} setDescLevels={setDescLevels} unit={unit} unitRecs={unitRecs} order={order} setOrder={setOrder} begin={begin}/><Box><div className="text-sm text-slate-500">選択中</div><div className={`text-xl font-black ${(quizType==="記述対策"?grade&&field&&descLevels.length:grade&&field&&level)?"text-amber-800":"text-slate-400"}`}>{quizType==="記述対策"?(grade&&field&&descLevels.length?`${grade}・${field}・記述・${solveMode}`:"まだ選択していません"):(grade&&field&&level?`${grade}・${field}・${level}・${solveMode}`:"まだ選択していません")}</div><div className={`text-3xl font-black ${filtered.length?"text-slate-950":"text-slate-300"}`}>{filtered.length}問</div></Box><div id="records" className="scroll-mt-4"><Box><div className="text-sm text-slate-500">連続学習記録</div><div className="text-2xl font-black">🔥 {streak.current}日目</div><div className="text-xs text-slate-500">最長 {streak.best}日</div></Box></div><div className="grid grid-cols-1 gap-3"><Btn onClick={()=>setScr("records")}>📊 保存履歴</Btn></div><Btn onClick={()=>setScr("profile")}>名前・伝達事項の学年を編集</Btn></C></Main>;
  if(scr==="soon")return <Main><C><div className="text-center space-y-4"><div className="text-5xl">🚧</div><h1 className="text-3xl font-bold">Coming Soon</h1><p>この学年・分野・問題タイプはまだ追加されていません。</p><HomeLinks home={home}/></div></C></Main>;
  if(scr==="ready")return <Main><C><div className="text-center space-y-4"><h1 className="text-3xl font-bold">準備画面</h1><p className="text-sm text-slate-500">内容を確認して、スタートを押してください。</p><ReadyInfo qs={qs} quizType={quizType} solveMode={solveMode} grade={grade} field={field} level={level} descLevels={descLevels} target={target} bestPerfect={bestPerfect} dailyMode={dailyMode}/><div className="grid grid-cols-1 gap-3"><Btn onClick={()=>{setSec(0);setFinalSec(0);setStart(Date.now());setScr("quiz")}} kind="main">スタート</Btn><HomeLinks home={home}/></div></div></C></Main>;
