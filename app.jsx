@@ -640,10 +640,12 @@ function Btn({ children, onClick, disabled, kind = "", className = "", ...props 
 }
 
 function ScienceText({ children }) {
-  const parts = String(children).split(/(\d+(?:\.\d+)?)(N)(?=$|[^A-Za-z])/g);
+  const parts = String(children ?? "").split(/(Ω|\d+(?:\.\d+)?N\b)/g);
   return parts.map((part, index) =>
-    part === "N" && index > 0 && /\d/.test(parts[index - 1]) ? (
-      <span key={index} className="unit-newton">N</span>
+    part === "Ω" ? (
+      <span key={index} className="unit-ohm">Ω<span className="unit-reading">（オーム）</span></span>
+    ) : /^\d+(?:\.\d+)?N$/.test(part) ? (
+      <span key={index} className="unit-newton">{part}</span>
     ) : (
       <React.Fragment key={index}>{part}</React.Fragment>
     )
@@ -1593,9 +1595,9 @@ function App() {
                     {picked === cur.answer ? "正解！" : "ここを確認しよう"}
                   </div>
                   <div className="text-sm">
-                    正しい答え：<b className="text-green-700">{cur.answer}</b>
+                    正しい答え：<b className="text-green-700"><ScienceText>{cur.answer}</ScienceText></b>
                   </div>
-                  <p className="text-sm text-slate-700">{cur.explanation}</p>
+                  <p className="text-sm text-slate-700"><ScienceText>{cur.explanation}</ScienceText></p>
                 </Box>
               )}
               <div className="quiz-nav grid grid-cols-2 gap-3">
@@ -1694,15 +1696,15 @@ function App() {
                 <div className="text-sm text-slate-500">
                   第{a.no}問 {a.unit}
                 </div>
-                <b>{a.question}</b>
+                <b><ScienceText>{a.question}</ScienceText></b>
                 <div>
                   選んだ答え：
-                  <b className={a.correct ? "text-sky-700" : "text-red-700"}>{a.selected}</b>
+                  <b className={a.correct ? "text-sky-700" : "text-red-700"}><ScienceText>{a.selected}</ScienceText></b>
                 </div>
                 <div>
-                  正しい答え：<b className="text-green-700">{a.answer}</b>
+                  正しい答え：<b className="text-green-700"><ScienceText>{a.answer}</ScienceText></b>
                 </div>
-                {!a.correct && <p className="text-sm">{a.explanation}</p>}
+                {!a.correct && <p className="text-sm"><ScienceText>{a.explanation}</ScienceText></p>}
               </div>
             ))}
           </div>
