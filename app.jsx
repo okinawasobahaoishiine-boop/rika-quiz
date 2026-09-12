@@ -638,6 +638,17 @@ function Btn({ children, onClick, disabled, kind = "", className = "", ...props 
     </button>
   );
 }
+
+function ScienceText({ children }) {
+  const parts = String(children).split(/(\d+(?:\.\d+)?)(N)(?=$|[^A-Za-z])/g);
+  return parts.map((part, index) =>
+    part === "N" && index > 0 && /\d/.test(parts[index - 1]) ? (
+      <span key={index} className="unit-newton">N</span>
+    ) : (
+      <React.Fragment key={index}>{part}</React.Fragment>
+    )
+  );
+}
 function LinkBtn({ children, href, className = "" }) {
   return (
     <a
@@ -1556,7 +1567,7 @@ function App() {
                 max={qs.length}
               />
               <Box className="quiz-question">
-                <p className="text-xl font-bold leading-relaxed">{cur.question}</p>
+                <p className="text-xl font-bold leading-relaxed"><ScienceText>{cur.question}</ScienceText></p>
               </Box>
               <div className="quiz-choice-grid grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {cur.choices.map((c) => (
@@ -1570,7 +1581,7 @@ function App() {
                     <span className="choice-marker" aria-hidden="true">
                       {["ア", "イ", "ウ", "エ"][cur.choices.indexOf(c)]}
                     </span>
-                    <span>{c}</span>
+                    <span><ScienceText>{c}</ScienceText></span>
                   </Btn>
                 ))}
               </div>
