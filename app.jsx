@@ -294,7 +294,7 @@ function Catalog({
         </div>
         <p className="mt-2 text-xs text-slate-500">
           {solveMode === "練習モード"
-            ? "答えた直後に正誤と解説を表示します。"
+            ? "答えた直後に正誤と解説を表示します。点数は最初の回答で決まります。"
             : "最後まで解いてからまとめて採点します。"}
         </p>
       </div>
@@ -941,6 +941,7 @@ function App() {
     [qs, setQs] = useState([]),
     [i, setI] = useState(0),
     [ans, setAns] = useState({}),
+    firstAnswers = React.useRef({}),
     [hist, setHist] = useState([]),
     [wrongs, setWrongs] = useState([]),
     [records, setRecords] = useState([]),
@@ -1196,6 +1197,7 @@ function App() {
     setQs(ordered.map(mq));
     setI(0);
     setAns({});
+    firstAnswers.current = {};
     setHist([]);
     setWrongs([]);
     setResult(null);
@@ -1222,6 +1224,7 @@ function App() {
     setQs(daily.map(mq));
     setI(0);
     setAns({});
+    firstAnswers.current = {};
     setHist([]);
     setWrongs([]);
     setResult(null);
@@ -1235,7 +1238,7 @@ function App() {
   };
   const finish = (a) => {
     const h = qs.map((q) => {
-        const s = a[k(q)];
+        const s = firstAnswers.current[k(q)] ?? a[k(q)];
         return { ...q, selected: s || "未回答", correct: s === q.answer };
       }),
       score = h.filter((x) => x.correct).length,
@@ -1261,6 +1264,9 @@ function App() {
     setScr("result");
   };
   const choose = (c) => {
+      if (!Object.prototype.hasOwnProperty.call(firstAnswers.current, ck)) {
+        firstAnswers.current[ck] = c;
+      }
       const n = { ...ans, [ck]: c };
       setAns(n);
       if (solveMode === "練習モード") {
@@ -1311,6 +1317,7 @@ function App() {
       setQs(ordered.map(mq));
       setI(0);
       setAns({});
+      firstAnswers.current = {};
       setHist([]);
       setWrongs([]);
       setResult(null);
@@ -1598,6 +1605,9 @@ function App() {
                     正しい答え：<b className="text-green-700"><ScienceText>{cur.answer}</ScienceText></b>
                   </div>
                   <p className="text-sm text-slate-700"><ScienceText>{cur.explanation}</ScienceText></p>
+                  {firstAnswers.current[ck] !== cur.answer && picked === cur.answer && (
+                    <p className="text-sm text-slate-500">解き直しで正解しました。点数は最初の回答で決まるため、この問題は不正解として記録します。</p>
+                  )}
                 </Box>
               )}
               <div className="quiz-nav grid grid-cols-2 gap-3">
