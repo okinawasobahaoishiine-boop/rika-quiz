@@ -295,7 +295,7 @@ function Catalog({
         <p className="mt-2 text-xs text-slate-500">
           {solveMode === "練習モード"
             ? "答えた直後に正誤と解説を表示します。点数は最初の回答で決まります。"
-            : "最後まで解いてからまとめて採点します。"}
+            : "すぐに正誤を表示。正解は自動で次へ、間違いは画面をタップして次へ進みます。"}
         </p>
       </div>
       {quizType === "一問一答" ? (
@@ -1264,6 +1264,7 @@ function App() {
     setScr("result");
   };
   const choose = (c) => {
+      if (solveMode === "テストモード" && picked) return;
       if (!Object.prototype.hasOwnProperty.call(firstAnswers.current, ck)) {
         firstAnswers.current[ck] = c;
       }
@@ -1273,7 +1274,6 @@ function App() {
         setBack(true);
         return;
       }
-      i + 1 < qs.length ? (setI(i + 1), setBack(false)) : finish(n);
     },
     next = () => (i + 1 < qs.length ? (setI(i + 1), setBack(false)) : finish(ans)),
     prev = () => {
@@ -1281,6 +1281,11 @@ function App() {
       setI(Math.max(0, i - 1));
     },
     home = () => setScr("home");
+  useEffect(() => {
+    if (scr !== "quiz" || solveMode !== "テストモード" || !picked || picked !== cur?.answer) return;
+    const timer = setTimeout(() => next(), 500);
+    return () => clearTimeout(timer);
+  }, [scr, solveMode, i, picked]);
   const retryResultSave = () => {
     try {
       saveRes(hist, result.score, finalSec);
@@ -1507,7 +1512,7 @@ function App() {
     );
   if (scr === "quiz")
     return (
-      <Main>
+      <Main className="quiz-screen">
         <C>
           <div className="flex items-start justify-between gap-3">
             <div>
@@ -1578,11 +1583,12 @@ function App() {
               <Box className="quiz-question">
                 <p className="text-xl font-bold leading-relaxed"><ScienceText>{cur.question}</ScienceText></p>
               </Box>
-              <div className="quiz-choice-grid grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className={`quiz-choice-grid grid grid-cols-1 sm:grid-cols-2 gap-3 ${cur.choices.every((c) => c.length <= 18) ? "short-choices" : ""}`}>
                 {cur.choices.map((c) => (
                   <Btn
                     key={c}
                     onClick={() => choose(c)}
+                    disabled={solveMode === "テストモード" && !!picked}
                     kind={picked === c ? "main" : ""}
                     className="quiz-choice"
                     aria-pressed={picked === c}
@@ -1594,6 +1600,21 @@ function App() {
                   </Btn>
                 ))}
               </div>
+              {solveMode === "テストモード" && picked && (
+                picked === cur.answer ? (
+                  <div className="test-correct" role="status">○ 正解！</div>
+                ) : (
+                  <button type="button" className="test-feedback-overlay" onClick={next} autoFocus aria-label="不正解。画面をタップして次へ進む">
+                    <div className="test-feedback-card">
+                      <div className="text-2xl font-black text-red-700">× ここを確認しよう</div>
+                      <p>あなたの答え：<ScienceText>{picked}</ScienceText></p>
+                      <p>正しい答え：<b className="text-green-700"><ScienceText>{cur.answer}</ScienceText></b></p>
+                      <p><ScienceText>{cur.explanation}</ScienceText></p>
+                      <div className="font-bold text-sky-700">画面をタップして{i + 1 >= qs.length ? "結果を見る" : "次へ"}</div>
+                    </div>
+                  </button>
+                )
+              )}
               {solveMode === "練習モード" && picked && (
                 <Box className="answer-feedback">
                   <div
@@ -1610,7 +1631,7 @@ function App() {
                   )}
                 </Box>
               )}
-              <div className="quiz-nav grid grid-cols-2 gap-3">
+              {solveMode === "練習モード" && <div className="quiz-nav grid grid-cols-2 gap-3">
                 <Btn onClick={prev} disabled={i === 0}>
                   前に戻る
                 </Btn>
@@ -1619,7 +1640,7 @@ function App() {
                     {i + 1 >= qs.length ? "採点する" : "次に進む"}
                   </Btn>
                 )}
-              </div>
+              </div>}
             </>
           )}
         </C>
@@ -1804,8 +1825,8 @@ function App() {
   }
   return null;
 }
-function Main({ children }) {
-  return <div className="min-h-screen flex items-center justify-center p-4 sm:p-6">{children}</div>;
+function Main({ children, className = "" }) {
+  return <div className={`min-h-screen flex items-center justify-center p-4 sm:p-6 ${className}`}>{children}</div>;
 }
 function Box({ children, className = "" }) {
   return (
