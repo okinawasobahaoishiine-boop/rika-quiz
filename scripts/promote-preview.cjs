@@ -4,7 +4,7 @@ const path = require('path');
 const crypto = require('crypto');
 const {execFileSync} = require('child_process');
 const root = path.resolve(__dirname, '..');
-const files = ['index.html', 'app.jsx', 'app-config.js', 'learning-state.js', 'styles.css', 'quiz-data.js'];
+const files = ['index.html', 'app.jsx', 'app-config.js', 'learning-state.js', 'explanations.jsx', 'styles.css', 'quiz-data.js'];
 const hash = b => crypto.createHash('sha256').update(b).digest('hex');
 const changes = files.filter(f => !fs.existsSync(path.join(root, f)) || hash(fs.readFileSync(path.join(root, f))) !== hash(fs.readFileSync(path.join(root, 'preview', f))));
 console.log('本番への反映候補:', changes.length ? changes.join(', ') : 'なし');

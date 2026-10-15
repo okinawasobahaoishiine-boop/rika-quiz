@@ -1,4 +1,44 @@
 :root { color-scheme: light; --ink:#173043; --muted:#526777; --line:#d9e4eb; --accent:#075985; }
+.lesson-topic-entry { display:flex; align-items:center; justify-content:space-between; gap:14px; width:100%; text-align:left; padding:22px; border:1px solid #beddd5; background:#eaf8f3; border-radius:16px; }
+.lesson-topic-entry strong { display:block; font-size:23px; margin-bottom:8px; }
+.lesson-topic-entry small { display:block; font-size:14px; color:var(--muted); }
+.metal-lesson { max-width:760px; margin:0 auto; scroll-margin-top:16px; }
+.lesson-heading { margin-bottom:18px; }
+.lesson-heading h1 { font-size:clamp(25px,5vw,34px); font-weight:850; line-height:1.5; margin:8px 0; }
+.lesson-heading h2 { font-size:22px; font-weight:750; margin-top:10px; }
+.lesson-series { font-size:14px; color:var(--muted); margin-top:12px; }
+.lesson-format { font-size:13px; color:#08766b; }
+.lesson-toc { border:1px solid var(--line); border-radius:12px; margin:16px 0; background:#f8fafc; }
+.lesson-toc nav { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; padding:0 12px 12px; }
+.lesson-toc button { min-height:44px; text-align:left; padding:8px; border:1px solid var(--line); border-radius:8px; background:#fff; font-size:14px; }
+.lesson-toc button[aria-current="step"] { color:#fff; background:#075985; border-color:#075985; }
+.lesson-content { display:grid; gap:18px; font-size:17px; line-height:1.85; }
+.lesson-content p { margin:0; overflow-wrap:anywhere; }
+.lesson-content strong { font-weight:800; }
+.lesson-lead { font-size:19px; }
+.lesson-content figure { margin:0; padding:12px; background:#f8fbfd; border:1px solid #d9e4eb; border-radius:16px; }
+.lesson-drawing { width:100%; max-width:520px; display:block; margin:0 auto; height:auto; font-family:system-ui,"Noto Sans JP",sans-serif; }
+.lesson-content figcaption { font-size:14px; color:var(--muted); margin-top:12px; line-height:1.7; }
+.lesson-key { padding:18px; border-left:5px solid #08766b; background:#edf8f5; border-radius:0 12px 12px 0; }
+.lesson-key>strong { display:block; margin-bottom:8px; }
+.lesson-note { font-size:13px; line-height:1.8; color:var(--muted); margin-top:14px; }
+.lesson-switch { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.lesson-switch button { min-height:48px; padding:10px; border:1px solid #b7cad7; border-radius:10px; background:#fff; font-size:15px; }
+.lesson-switch button[aria-pressed="true"] { color:#fff; background:#075985; border-color:#075985; }
+.lesson-steps { list-style:decimal; padding-left:24px; }
+.lesson-steps li { padding:4px 0; }
+.lesson-compare { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.lesson-compare section { background:#f0f8fc; border-radius:12px; padding:16px; }
+.lesson-compare h2,.lesson-exception h2 { font-size:19px; font-weight:800; margin-bottom:8px; }
+.lesson-exception { padding:18px; border:1px solid #e7d6ac; border-radius:12px; background:#fff8e9; }
+.lesson-summary { display:grid; gap:10px; }
+.lesson-summary>div { padding:16px; border:1px solid var(--line); border-radius:12px; }
+.lesson-summary dt { font-weight:800; margin-bottom:6px; }
+.lesson-summary dd { margin:0; }
+.lesson-page-actions { display:flex; justify-content:space-between; gap:12px; margin-top:26px; }
+.lesson-page-actions button { min-height:48px; padding:10px 18px; border:1px solid #bed0dc; border-radius:12px; background:#fff; font-size:16px; font-weight:750; }
+.lesson-page-actions button:last-child:not(:disabled) { background:#075985; color:#fff; }
+@media(max-width:420px) { .lesson-compare { grid-template-columns:1fr; } .lesson-content figure { padding:8px; } .lesson-content { font-size:16px; } .lesson-lead { font-size:18px; } .lesson-page-actions button { padding:10px 12px; } }
 .science-page-content { width:min(100%,1000px); }
 .science-preview-banner { display:flex; align-items:center; flex-wrap:wrap; gap:6px 12px; margin-bottom:12px; padding:12px 16px; background:#fff2cf; color:#644200; border:2px solid #b77705; border-radius:12px; }
 .science-preview-banner strong { font-size:18px; }

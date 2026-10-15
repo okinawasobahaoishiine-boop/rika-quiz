@@ -997,8 +997,9 @@ function HomeMotivation({
 const ScienceNavigation = React.createContext(null);
 
 function App() {
-  const [scr, updateScreen] = useState(INITIAL_QUIZ_SESSION?.screen || "home");
-  const navigation = React.useRef({ current: INITIAL_QUIZ_SESSION?.screen || "home", trail: INITIAL_QUIZ_SESSION ? ["home", "questions"] : [] });
+  const initialScreen = INITIAL_QUIZ_SESSION?.screen || (new URLSearchParams(window.location.search).get("explanation") === "metal-nonmetal" ? "metal-explanation" : "home");
+  const [scr, updateScreen] = useState(initialScreen);
+  const navigation = React.useRef({ current: initialScreen, trail: INITIAL_QUIZ_SESSION ? ["home", "questions"] : [] });
   const setScr = (next) => {
     const nav = navigation.current;
     if (next === nav.current) return;
@@ -1500,7 +1501,7 @@ function ScienceApp() {
       setScr("ready");
     };
 
-  if (scr === "profile" || !profileSaved)
+  if (scr === "profile" || (!profileSaved && !["explanations", "metal-explanation", "explanation-updates"].includes(scr)))
     return (
       <Main>
         <C>
@@ -1544,15 +1545,15 @@ function ScienceApp() {
         </C>
       </Main>
     );
+  if (scr === "metal-explanation")
+    return <Main><C><MetalExplanation /></C></Main>;
   if (scr === "explanations")
     return (
       <Main>
         <C>
-          <div className="text-center space-y-4">
-            <p className="eyebrow">解説を読む</p>
-            <h1 className="text-3xl font-black">Coming Soon</h1>
-            <p>図や漫画で学べる解説ページを準備しています。公開までもうしばらくお待ちください。</p>
-          </div>
+          <header><p className="eyebrow">中学1年・化学</p><h1 className="text-2xl font-black">解説を読む</h1><p>文章と図で、物質の性質を理解しよう。</p></header>
+          <button className="lesson-topic-entry" onClick={() => setScr("metal-explanation")}><span><strong>金属と非金属</strong><small>図解付きページ／金属光沢・電気・熱・展性と延性</small></span><span aria-hidden="true">→</span></button>
+          <p className="text-sm text-slate-600">ほかのテーマは順次制作します。</p>
         </C>
       </Main>
     );
@@ -1569,6 +1570,11 @@ function ScienceApp() {
             <p className="text-sm muted">解説ページは公開準備中です。完成・制作中の状況をこちらに掲載します。</p>
           </div>
           <section className="explanation-status-list" aria-label="解説の制作状況">
+            <article>
+              <h2>金属と非金属 <span className="explanation-state">図解ページ・テスト公開</span></h2>
+              <p>7つの項目を文章と図で読むページ版を追加しました。</p>
+              <Btn onClick={() => setScr("metal-explanation")}>ページ版の解説を読む</Btn>
+            </article>
             <article>
               <h2>金属と非金属 <span className="explanation-state">漫画制作済み</span></h2>
               <p>金属光沢・電気伝導性・熱伝導性・展性・延性・例外を7ページで解説。</p>
@@ -1610,7 +1616,7 @@ function ScienceApp() {
               </button>
               <button className="home-entry home-entry-explanation" onClick={() => setScr("explanations")}>
                 <span className="home-entry-icon" aria-hidden="true">📖</span>
-                <span><strong>解説を読む</strong><small>Coming Soon<br />解説ページを準備中</small></span>
+                <span><strong>解説を読む</strong><small>金属と非金属の図解ページを追加<br />文章と図で理解を深める</small></span>
                 <span aria-hidden="true">→</span>
               </button>
               <button className="home-entry home-entry-records" onClick={() => setScr("records")}>
@@ -1631,9 +1637,9 @@ function ScienceApp() {
           </section>
           <section className="home-explanation-updates" aria-labelledby="home-updates-heading">
             <div className="home-updates-heading"><h2 id="home-updates-heading">解説の更新情報</h2><button onClick={() => setScr("explanation-updates")}>一覧を見る →</button></div>
-            <button className="home-update-item" onClick={() => setScr("explanations")}>
-              <strong>金属と非金属 <span className="explanation-state">漫画制作済み</span></strong>
-              <span>10月15日・中1 化学・7ページ／公開準備中</span>
+            <button className="home-update-item" onClick={() => setScr("metal-explanation")}>
+              <strong>金属と非金属 <span className="explanation-state">図解ページを追加</span></strong>
+              <span>10月16日・中1 化学／文章と図のページ版をテスト公開</span>
             </button>
           </section>
           </>}
