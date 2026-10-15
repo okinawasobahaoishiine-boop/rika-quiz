@@ -1838,7 +1838,7 @@ function ScienceApp() {
                 ) : (
                   <button type="button" className="test-feedback-overlay" onClick={next} autoFocus aria-label="不正解。画面をタップして次へ進む">
                     <div className="test-feedback-card">
-                      <div className="text-2xl font-black">確認。</div>
+                      <div className="text-2xl font-black"><span className="text-red-700" aria-hidden="true">× </span>確認。</div>
                       <div className="feedback-question">
                         <p className="feedback-question-label">問題</p>
                         <p><ScienceText>{cur.question}</ScienceText></p>
