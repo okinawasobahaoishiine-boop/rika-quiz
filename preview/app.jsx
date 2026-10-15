@@ -1417,7 +1417,19 @@ function ScienceApp() {
         </C>
       </Main>
     );
-  if (scr === "explanations" || scr === "explanation-updates")
+  if (scr === "explanations")
+    return (
+      <Main>
+        <C>
+          <div className="text-center space-y-4">
+            <p className="eyebrow">解説を読む</p>
+            <h1 className="text-3xl font-black">Coming Soon</h1>
+            <p>図や漫画で学べる解説ページを準備しています。公開までもうしばらくお待ちください。</p>
+          </div>
+        </C>
+      </Main>
+    );
+  if (scr === "explanation-updates")
     return (
       <Main>
         <C>
@@ -1471,7 +1483,7 @@ function ScienceApp() {
               </button>
               <button className="home-entry home-entry-explanation" onClick={() => setScr("explanations")}>
                 <span className="home-entry-icon" aria-hidden="true">📖</span>
-                <span><strong>解説を読む</strong><small>学年・単元から理解を深める<br />図と漫画を順次公開予定</small></span>
+                <span><strong>解説を読む</strong><small>Coming Soon<br />解説ページを準備中</small></span>
                 <span aria-hidden="true">→</span>
               </button>
               <button className="home-entry home-entry-records" onClick={() => setScr("records")}>
@@ -1695,6 +1707,10 @@ function ScienceApp() {
                   <button type="button" className="test-feedback-overlay" onClick={next} autoFocus aria-label="不正解。画面をタップして次へ進む">
                     <div className="test-feedback-card">
                       <div className="text-2xl font-black text-red-700">× ここを確認しよう</div>
+                      <div className="feedback-question">
+                        <p className="feedback-question-label">問題</p>
+                        <p><ScienceText>{cur.question}</ScienceText></p>
+                      </div>
                       <p>あなたの答え：<ScienceText>{picked}</ScienceText></p>
                       <p>正しい答え：<b className="text-green-700"><ScienceText>{cur.answer}</ScienceText></b></p>
                       <p><ScienceText>{cur.explanation}</ScienceText></p>

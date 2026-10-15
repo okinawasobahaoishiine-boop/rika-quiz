@@ -167,6 +167,11 @@ summary { cursor:pointer; font-weight:700; padding:16px; }
 .test-correct { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#f0fdfa; color:#047857; font-size:42px; font-weight:900; z-index:40; }
 .test-feedback-overlay { position:fixed; inset:0; width:100%; height:100dvh; display:flex; align-items:center; justify-content:center; padding:20px 20px calc(110px + env(safe-area-inset-bottom,0px)); background:#e9f4f7; z-index:40; text-align:left; overflow:auto; }
 .test-feedback-card { width:min(100%,600px); background:white; border-radius:20px; padding:24px; display:grid; gap:14px; line-height:1.6; }
+.feedback-question { padding:12px 14px; border:1px solid #c7dfe9; border-radius:12px; background:#f0f8fc; color:var(--ink); overflow-wrap:anywhere; }
+.feedback-question-label { font-size:13px; font-weight:700; color:var(--accent); margin-bottom:4px; }
+/* Keep long feedback reachable instead of clipping it above the viewport. */
+.test-feedback-overlay { align-items:safe center; }
+.test-feedback-card { flex-shrink:0; overflow-wrap:anywhere; }
 @media(max-height:700px) {
   .quiz-screen .quiz-question p { font-size:16px!important; }
   .quiz-screen .quiz-choice { font-size:14px!important; padding:8px!important; }
