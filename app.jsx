@@ -294,8 +294,8 @@ function Catalog({
         </div>
         <p className="mt-2 text-xs text-slate-500">
           {solveMode === "練習モード"
-            ? "答えた直後に正誤と解説を表示します。点数は最初の回答で決まります。"
-            : "すぐに正誤を表示。正解は自動で次へ、間違いは画面をタップして次へ進みます。"}
+            ? "すぐに正誤を表示。正解は0.5秒後に次へ、間違いは解説を見て画面をタップ。点数は最初の回答で決まります。"
+            : "回答すると次へ進みます。最後まで解いてからまとめて正誤と結果を表示します。"}
         </p>
       </div>
       {quizType === "一問一答" ? (
@@ -1264,16 +1264,14 @@ function App() {
     setScr("result");
   };
   const choose = (c) => {
-      if (solveMode === "テストモード" && picked) return;
+      if (picked) return;
       if (!Object.prototype.hasOwnProperty.call(firstAnswers.current, ck)) {
         firstAnswers.current[ck] = c;
       }
       const n = { ...ans, [ck]: c };
       setAns(n);
-      if (solveMode === "練習モード") {
-        setBack(true);
-        return;
-      }
+      if (solveMode === "練習モード") return;
+      i + 1 < qs.length ? (setI(i + 1), setBack(false)) : finish(n);
     },
     next = () => (i + 1 < qs.length ? (setI(i + 1), setBack(false)) : finish(ans)),
     prev = () => {
@@ -1282,7 +1280,7 @@ function App() {
     },
     home = () => setScr("home");
   useEffect(() => {
-    if (scr !== "quiz" || solveMode !== "テストモード" || !picked || picked !== cur?.answer) return;
+    if (scr !== "quiz" || solveMode !== "練習モード" || !picked || picked !== cur?.answer) return;
     const timer = setTimeout(() => next(), 500);
     return () => clearTimeout(timer);
   }, [scr, solveMode, i, picked]);
@@ -1588,7 +1586,7 @@ function App() {
                   <Btn
                     key={c}
                     onClick={() => choose(c)}
-                    disabled={solveMode === "テストモード" && !!picked}
+                    disabled={!!picked}
                     kind={picked === c ? "main" : ""}
                     className="quiz-choice"
                     aria-pressed={picked === c}
@@ -1600,7 +1598,7 @@ function App() {
                   </Btn>
                 ))}
               </div>
-              {solveMode === "テストモード" && picked && (
+              {solveMode === "練習モード" && picked && (
                 picked === cur.answer ? (
                   <div className="test-correct" role="status">○ 正解！</div>
                 ) : (
@@ -1615,32 +1613,6 @@ function App() {
                   </button>
                 )
               )}
-              {solveMode === "練習モード" && picked && (
-                <Box className="answer-feedback">
-                  <div
-                    className={`text-2xl font-black ${picked === cur.answer ? "text-sky-700" : "text-red-700"}`}
-                  >
-                    {picked === cur.answer ? "正解！" : "ここを確認しよう"}
-                  </div>
-                  <div className="text-sm">
-                    正しい答え：<b className="text-green-700"><ScienceText>{cur.answer}</ScienceText></b>
-                  </div>
-                  <p className="text-sm text-slate-700"><ScienceText>{cur.explanation}</ScienceText></p>
-                  {firstAnswers.current[ck] !== cur.answer && picked === cur.answer && (
-                    <p className="text-sm text-slate-500">解き直しで正解しました。点数は最初の回答で決まるため、この問題は不正解として記録します。</p>
-                  )}
-                </Box>
-              )}
-              {solveMode === "練習モード" && <div className="quiz-nav grid grid-cols-2 gap-3">
-                <Btn onClick={prev} disabled={i === 0}>
-                  前に戻る
-                </Btn>
-                {(back || !picked || i + 1 >= qs.length) && (
-                  <Btn onClick={next} disabled={!picked} kind="main">
-                    {i + 1 >= qs.length ? "採点する" : "次に進む"}
-                  </Btn>
-                )}
-              </div>}
             </>
           )}
         </C>
