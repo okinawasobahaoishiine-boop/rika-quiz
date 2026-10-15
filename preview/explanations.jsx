@@ -86,68 +86,88 @@ function MagnetDrawing() {
   </LessonDrawing>;
 }
 
+const METAL_SECTION_IDS = ["metal-introduction", "metal-luster", "metal-electricity", "metal-heat", "metal-shaping", "metal-exceptions", "metal-summary"];
+function scrollToLessonAnchor(event, id) {
+  if (event && (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey)) return;
+  event?.preventDefault();
+  const target = document.getElementById(id);
+  if (!target) return;
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  target.querySelector("h2")?.focus({ preventScroll: true });
+  target.scrollIntoView({ behavior: reduced ? "instant" : "smooth", block: "start" });
+  window.history.replaceState(window.history.state, "", `#${id}`);
+}
+function MetalLessonSection({ id, title, children }) {
+  return <section id={id} className="lesson-section" aria-labelledby={`${id}-heading`}>
+    <h2 id={`${id}-heading`} tabIndex={-1}>{title}</h2>
+    <div className="lesson-content">{children}</div>
+    <a className="lesson-back-to-toc" href="#metal-toc" onClick={event=>scrollToLessonAnchor(event,"metal-toc")}>目次へ戻る ↑</a>
+  </section>;
+}
 function MetalExplanation() {
-  const params = new URLSearchParams(window.location.search);
-  const [chapter, setChapter] = React.useState(() => Math.floor(Math.min(6, Math.max(0, Number(params.get("chapter")) || 0))));
   const [metal, setMetal] = React.useState(true);
-  const article = React.useRef(null);
-  const move = (index) => { setChapter(index); setMetal(true); requestAnimationFrame(() => article.current?.scrollIntoView({block:"start",behavior:"auto"})); };
-  return <article className="metal-lesson" ref={article}>
+  React.useEffect(()=>{
+    const oldChapter = Math.floor(Math.min(6, Math.max(0, Number(new URLSearchParams(window.location.search).get("chapter")) || 0)));
+    const id = window.location.hash.slice(1) || (oldChapter ? METAL_SECTION_IDS[oldChapter] : "");
+    if (!id || ![...METAL_SECTION_IDS,"metal-toc"].includes(id)) return;
+    const frame = requestAnimationFrame(()=>document.getElementById(id)?.scrollIntoView({behavior:"instant",block:"start"}));
+    return ()=>cancelAnimationFrame(frame);
+  },[]);
+  return <article className="metal-lesson">
     <header className="lesson-heading">
       <p className="eyebrow">中学1年・化学 ／ 身のまわりの物質</p>
-      {chapter===0 ? <><h1>金属と非金属</h1><h2>どう見分ける？</h2></> : <><p className="lesson-series">金属と非金属</p><h1>{METAL_LESSON_CHAPTERS[chapter]}</h1></>}
+      <h1>金属と非金属</h1>
       <p className="lesson-format">文章と簡単な図で読む解説</p>
     </header>
-    <details className="lesson-toc"><summary>読む項目を選ぶ</summary><nav aria-label="解説の目次">{METAL_LESSON_CHAPTERS.map((title,index)=><button key={title} type="button" aria-current={chapter===index?"step":undefined} onClick={()=>move(index)}>{title}</button>)}</nav></details>
-    <div className="lesson-content" key={chapter}>
-      {chapter===0 && <>
+    <section id="metal-toc" className="lesson-toc" aria-labelledby="metal-toc-heading"><h2 id="metal-toc-heading" tabIndex={-1}>目次</h2><p>タップすると、その解説まで移動します。</p><nav aria-label="解説の目次">{METAL_LESSON_CHAPTERS.map((title,index)=><a key={title} href={`#${METAL_SECTION_IDS[index]}`} onClick={event=>scrollToLessonAnchor(event,METAL_SECTION_IDS[index])}>{title}</a>)}</nav></section>
+    <div className="lesson-sections">
+      <MetalLessonSection id="metal-introduction" title="どう見分ける？">
         <p className="lesson-lead">鉄・銅・アルミニウムは金属。ガラスやプラスチックは、非金属の材料の例です。</p>
         <figure><MaterialDrawing/><figcaption>色や見た目だけでなく、物質の性質を比べてみよう。</figcaption></figure>
         <div className="lesson-key"><strong>1つの特徴だけでは決めない。</strong><p>ガラスも光を反射します。磁石につかない金属もあります。いくつかの性質を組み合わせて判断しましょう。</p></div>
         <p>これから、金属光沢・電気伝導性・熱伝導性・展性・延性を、実験や身近な例で確認します。</p>
         <p className="lesson-note">ここでの「非金属」は金属以外の物質・材料を指します。ガラスやプラスチックは、非金属元素そのものの名前ではありません。</p>
-      </>}
-      {chapter===1 && <>
+      </MetalLessonSection>
+      <MetalLessonSection id="metal-luster" title="① 金属光沢">
         <p className="lesson-lead">金属の表面を磨くと、金属に特有の光沢が現れます。これが<strong>金属光沢</strong>です。</p>
         <figure><LusterDrawing/><figcaption>くすんだ銅も、表面を磨くと特有の光沢が現れる。</figcaption></figure>
         <div className="lesson-key"><strong>金属光沢＝金属に特有の光沢</strong><p>銅は赤褐色、アルミニウムは銀白色。金属だから全部同じ色、というわけではありません。</p></div>
         <p>ガラスやプラスチックにも表面の反射はあります。「光っているから金属」とは決めず、ほかの性質も確かめます。</p>
-      </>}
-      {chapter===2 && <>
+      </MetalLessonSection>
+      <MetalLessonSection id="metal-electricity" title="② 電気伝導性">
         <p className="lesson-lead">回路の途中に試料を入れ、<strong>豆電球がつくか</strong>を調べる実験です。</p>
         <div className="lesson-switch" role="group" aria-label="回路に入れる試料"><button type="button" aria-pressed={metal} onClick={()=>setMetal(true)}>金属（銅）</button><button type="button" aria-pressed={!metal} onClick={()=>setMetal(false)}>非金属（ガラス）</button></div>
         <figure><ConductivityDrawing metal={metal}/><figcaption aria-live="polite">{metal ? "銅は電気を通すので、電流が流れて豆電球がつく。" : "ガラスは電気を通しにくいので、豆電球がつかない。"}</figcaption></figure>
         <ol className="lesson-steps"><li>乾電池・豆電球・導線で、試料を入れる部分がある回路を作る。</li><li>2つのクリップの間に試料をはさむ。</li><li>試料だけを取り替え、豆電球の点灯を比べる。</li></ol>
         <div className="lesson-key"><strong>金属は電気伝導性が高い。</strong><p>電気を通しやすいため、銅やアルミニウムは電線などに使われます。電気の通しやすさを表す量を<strong>電気伝導率</strong>といいます。</p></div>
         <p className="lesson-note">この模式図の実験は「電気を通すか」を確かめるもの。伝導率の数値を測っているわけではありません。電池を導線だけで直接つなぐ短絡はしません。</p>
-      </>}
-      {chapter===3 && <>
+      </MetalLessonSection>
+      <MetalLessonSection id="metal-heat" title="③ 熱伝導性">
         <p className="lesson-lead">金属は、温めた部分から離れた<strong>持ち手側まで熱が伝わりやすい</strong>物質です。</p>
         <figure><HeatDrawing/><figcaption>同じ温度の湯・同じ太さと長さの棒・同じ時間で比較した模式図。矢印は熱が伝わる様子を表す。</figcaption></figure>
-        <div className="lesson-compare"><section><h2>金属</h2><p>長く太い矢印が持ち手側まで伸びる。<strong>熱伝導性が高い。</strong></p></section><section><h2>非金属（ガラス）</h2><p>矢印は下端付近に短くとどまる。金属より熱が伝わりにくい。</p></section></div>
+        <div className="lesson-compare"><section><h3>金属</h3><p>長く太い矢印が持ち手側まで伸びる。<strong>熱伝導性が高い。</strong></p></section><section><h3>非金属（ガラス）</h3><p>矢印は下端付近に短くとどまる。金属より熱が伝わりにくい。</p></section></div>
         <div className="lesson-key"><strong>熱伝導率＝物質の熱の伝わりやすさを表す量</strong><p>熱いスープに入れた金属スプーンでは、スープにつかっていない持ち手も熱くなることがあります。</p></div>
         <p className="lesson-note">非金属に「全く熱が伝わらない」という意味ではありません。この図は銅とガラスの比較であり、非金属にも熱をよく伝えるものがあります。熱い棒を手で触って確かめないでください。</p>
-      </>}
-      {chapter===4 && <>
+      </MetalLessonSection>
+      <MetalLessonSection id="metal-shaping" title="④ 展性・⑤ 延性">
         <p className="lesson-lead">金属は、力を加えると<strong>薄い板や細い線に加工できる</strong>という性質があります。</p>
         <figure><ShapeDrawing/><figcaption>上：たたいて薄い板にする。下：金型を通して引っ張り、細い線にする模式図。</figcaption></figure>
-        <div className="lesson-compare"><section><h2>④ 展性</h2><p>たたくと<strong>薄く広がる</strong>性質。アルミニウム箔などに利用。</p></section><section><h2>⑤ 延性</h2><p>引っ張ると<strong>細く伸びる</strong>性質。銅線などに利用。</p></section></div>
+        <div className="lesson-compare"><section><h3>④ 展性</h3><p>たたくと<strong>薄く広がる</strong>性質。アルミニウム箔などに利用。</p></section><section><h3>⑤ 延性</h3><p>引っ張ると<strong>細く伸びる</strong>性質。銅線などに利用。</p></section></div>
         <div className="lesson-key"><strong>展性は「板」、延性は「線」。</strong><p>線を巻いた状態からほどくことではなく、材料そのものを細く加工できる性質です。</p></div>
-      </>}
-      {chapter===5 && <>
+      </MetalLessonSection>
+      <MetalLessonSection id="metal-exceptions" title="例外と磁石">
         <p className="lesson-lead">「磁石につくか」だけでは、金属かどうかは決められません。</p>
         <figure><MagnetDrawing/><figcaption>鉄・銅・アルミニウムの3種類を比べると、磁石につくのは鉄。</figcaption></figure>
         <div className="lesson-key"><strong>銅やアルミニウムも金属。でも、磁石にはつかない。</strong><p>鉄のほかに、ニッケルやコバルトも磁石につきます。「金属は全部つく」「鉄だけがつく」のどちらも正確ではありません。</p></div>
-        <section className="lesson-exception"><h2>黒鉛は非金属。でも電気を通す。</h2><p>電気を通すから必ず金属、ともいえません。例外もあるため、複数の性質を組み合わせて判断します。</p></section>
-      </>}
-      {chapter===6 && <>
+        <section className="lesson-exception"><h3>黒鉛は非金属。でも電気を通す。</h3><p>電気を通すから必ず金属、ともいえません。例外もあるため、複数の性質を組み合わせて判断します。</p></section>
+      </MetalLessonSection>
+      <MetalLessonSection id="metal-summary" title="まとめ">
         <p className="lesson-lead">専門用語と、何ができる性質なのかをセットにしよう。</p>
         <dl className="lesson-summary">{[["① 金属光沢","磨くと、金属に特有の光沢が現れる。"],["② 電気伝導性","電気を通しやすい。電気伝導率が高い。"],["③ 熱伝導性","熱を伝えやすい。持ち手側まで熱が伝わりやすい。"],["④ 展性","たたくと、薄く広がる。"],["⑤ 延性","引っ張ると、細く伸びる。"]].map(([term,meaning])=><div key={term}><dt>{term}</dt><dd>{meaning}</dd></div>)}</dl>
         <div className="lesson-key"><strong>複数の性質で判断する。</strong><p>磁石につくのは一部の金属。非金属の黒鉛も電気を通します。1つの結果だけで決めないことが大切です。</p></div>
         <p>「金属の性質を1つ説明して」と聞かれたら、専門用語だけでなく、その意味や使われ方まで説明してみましょう。</p>
-      </>}
+      </MetalLessonSection>
     </div>
-    <nav className="lesson-page-actions" aria-label="解説の項目移動"><button type="button" disabled={chapter===0} onClick={()=>move(chapter-1)}>← 前の項目</button><button type="button" disabled={chapter===6} onClick={()=>move(chapter+1)}>次の項目 →</button></nav>
     <p className="lesson-note">簡単な図解付きのページ版です。既存の漫画とは別に、文章・図の配置を調整できる形で制作しています。</p>
   </article>;
 }
