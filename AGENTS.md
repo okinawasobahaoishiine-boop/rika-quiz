@@ -1,5 +1,14 @@
 # rika-quiz Codex Notes
 
+## Preview-first workflow (2026-10-16)
+
+- Default edits go to `preview/`, not the production files at this root.
+- Read `TESTING.md` and `preview/AGENTS.md` before changes.
+- "更新して/直して" means preview only. Production promotion needs explicit "本番に反映して" approval.
+- Production URL stays unchanged. Preview URL ends in `/preview/`.
+- Never mix preview localStorage keys or cloud traffic with production.
+- Use `scripts/promote-preview.cjs` to inspect promotion; `--apply` only after explicit approval.
+
 ## Token-saving workflow
 
 - Keep user-facing replies in Japanese.
