@@ -169,6 +169,25 @@ summary { cursor:pointer; font-weight:700; padding:16px; }
 .test-feedback-card { width:min(100%,600px); background:white; border-radius:20px; padding:24px; display:grid; gap:14px; line-height:1.6; }
 .feedback-question { padding:12px 14px; border:1px solid #c7dfe9; border-radius:12px; background:#f0f8fc; color:var(--ink); overflow-wrap:anywhere; }
 .feedback-question-label { font-size:13px; font-weight:700; color:var(--accent); margin-bottom:4px; }
+.choice-instructions { font-size:13px; line-height:1.6; min-height:42px; color:var(--accent); text-align:left; }
+.test-correct { flex-direction:column; padding-bottom:calc(110px + env(safe-area-inset-bottom,0px)); }
+.correct-symbol { font-size:clamp(140px,42vw,260px); line-height:1.15; font-weight:900; }
+.correct-caption { font-size:14px; font-weight:600; }
+.assessment-breakdowns { text-align:left; display:grid; gap:10px; margin-top:12px; }
+.assessment-breakdown,.history-grade { border:1px solid var(--line); border-radius:12px; background:#fff; overflow-wrap:anywhere; }
+.assessment-breakdown>p,.assessment-breakdown>ul { margin:8px 14px 12px; font-size:14px; }
+.assessment-breakdown li { padding:6px 0; border-bottom:1px solid #edf2f5; }
+.learning-history { display:grid; gap:14px; text-align:left; }
+.learning-unit-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; padding:12px; }
+.learning-unit-summary { padding:14px; border:1px solid var(--line); border-radius:12px; background:#fafcfd; min-width:0; }
+.learning-unit-summary h3 { font-weight:800; margin-bottom:8px; }
+.unit-history-details summary { padding:12px 0; color:var(--accent); }
+.history-kind-label { display:grid; gap:6px; font-size:14px; margin-bottom:12px; }
+.history-kind-label select { padding:10px; border:1px solid #c8d7e1; border-radius:8px; background:#fff; width:100%; min-width:0; font-size:16px; }
+.unit-history-list { display:grid; gap:10px; margin:8px 0 14px; padding:0 12px; list-style:none; }
+.unit-history-list li { display:grid; gap:6px; padding:10px 0; border-bottom:1px solid var(--line); font-size:13px; }
+.assessment-target { color:#08766b; font-weight:700; }
+@media(max-width:640px) { .learning-unit-grid { grid-template-columns:1fr; } }
 /* Keep long feedback reachable instead of clipping it above the viewport. */
 .test-feedback-overlay { align-items:safe center; }
 .test-feedback-card { flex-shrink:0; overflow-wrap:anywhere; }

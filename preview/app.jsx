@@ -294,8 +294,8 @@ function Catalog({
         </div>
         <p className="mt-2 text-xs text-slate-500">
           {solveMode === "練習モード"
-            ? "すぐに正誤を表示。正解は0.5秒後に次へ、間違いは解説を見て画面をタップ。点数は最初の回答で決まります。"
-            : "回答すると次へ進みます。最後まで解いてからまとめて正誤と結果を表示します。"}
+            ? "同じ選択肢を2回タップして回答。正解は1秒後に次へ（この1秒は時間に含みません）。間違いは解説を見てタップ。点数は最初に確定した回答で決まります。"
+            : "同じ選択肢を2回タップして回答すると次へ。最後まで解いてからまとめて正誤と結果を表示します。"}
         </p>
       </div>
       {quizType === "一問一答" ? (
@@ -545,10 +545,11 @@ function Radar({ items, grade }) {
     <Box>
       <div id="radar" className="scroll-mt-4">
         <b>得意・弱点分析</b>
-        <div className="text-xs text-slate-500">過去3回分のテストから分野別の正答率を表示</div>
+        <div className="text-sm text-slate-600">暫定評価：各学年のA・Bを半々、全学年は6枠を均等に平均。各枠の最新の完了テストを使用します。</div>
+        <p className="text-xs text-slate-500">未受験は計算上0％ですが、不正解ではありません。練習・今日の5問は履歴に残り、レーダーには入りません。</p>
       </div>
       <div className="mx-auto max-w-xs">
-        <svg viewBox={`0 0 ${size} ${size}`} className="w-full">
+        <svg viewBox={`0 0 ${size} ${size}`} className="w-full" role="img" aria-label={`${grade}の分野別評価。学年とA・Bを均等集計。詳しい内訳は下に表示。`}>
           <polygon points={pt(() => 1)} fill="none" stroke="#cbd5e1" />
           <polygon points={pt(() => 0.75)} fill="none" stroke="#e2e8f0" />
           <polygon points={pt(() => 0.5)} fill="none" stroke="#e2e8f0" />
@@ -597,28 +598,96 @@ function Radar({ items, grade }) {
         {items.map((x) => (
           <div
             key={x.field}
-            className={`rounded-xl border p-2 text-center text-xs font-bold ${cls(x.accuracy)}`}
+            className={`rounded-xl border p-2 text-center text-xs font-bold ${x.checked ? cls(x.accuracy) : "bg-slate-50 text-slate-600 border-slate-200"}`}
           >
             <div>{x.field}</div>
             <div className="text-[10px] font-normal text-slate-500">{topic(x)}</div>
             <div>{x.total ? `${x.accuracy}%` : "未実施"}</div>
-            <div className="text-[10px] opacity-70">
-              {x.total ? lab(x.score, x.total) : "0/0点"}
-            </div>
+            <div className="text-xs">受験済み {x.checked}/{x.slots.length}枠</div>
           </div>
         ))}
       </div>
-      {best && weak ? (
+      <div className="assessment-breakdowns">
+        {items.map(x => (
+          <details key={x.field} className="assessment-breakdown">
+            <summary>{x.field}の内訳・100％になっていない理由</summary>
+            <p>{x.missing.length ? `未受験：${x.missing.join("、")}` : "すべての枠で受験済みです。"}</p>
+            {x.improving.length > 0 && <p>100％未満：{x.improving.join("、")}</p>}
+            {!x.missing.length && !x.improving.length && <p>すべての枠で満点です！</p>}
+            <ul>{x.slots.map(slot => (
+              <li key={slot.unit}><b>{slot.unit}</b>：{slot.record ? `${displayAssessmentPercent(slot.accuracy)}％（${slot.score}/${slot.total}点・${recordDate(slot.record)}）` : "未受験（不正解とは別）"}</li>
+            ))}</ul>
+          </details>
+        ))}
+      </div>
+      {best && weak && best.field !== weak.field ? (
         <div className="text-sm">
           <b>得意：</b>
           {best.field}（{best.accuracy}%） / <b>弱点：</b>
           {weak.field}（{weak.accuracy}%）
         </div>
       ) : (
-        <p className="text-sm text-slate-500">履歴がたまると分析が表示されます。</p>
+        <p className="text-sm text-slate-500">{best ? `現在評価できる分野：${best.field}。未受験の分野は弱点とは別に表示します。` : "評価できるテストがたまると分析が表示されます。"}</p>
       )}
     </Box>
   );
+}
+function UnitLearningHistory({ unit, records }) {
+  const all = chronologicalRecords(records).filter(r => (r.unitScores || []).some(x => x.unit === unit));
+  const [kind, setKind] = useState(() => all.some(r => historyKind(r) === "test") ? "test" : all.some(r => historyKind(r) === "practice") ? "practice" : "unknown");
+  const [limits, setLimits] = useState({});
+  const rows = all.filter(r => historyKind(r) === kind);
+  const limit = limits[kind] || 5;
+  const assessment = unitAssessment(records, unit);
+  const tests = all.filter(r => historyKind(r) === "test");
+  const recent = tests[0]?.unitScores.find(x => x.unit === unit);
+  const previous = tests[1]?.unitScores.find(x => x.unit === unit);
+  return (
+    <article className="learning-unit-summary">
+      <h3>{unit}</h3>
+      <p>レーダー：{assessment.record ? `${displayAssessmentPercent(assessment.accuracy)}％` : "未受験／評価できるテストなし"}</p>
+      <p className="text-sm text-slate-600">{recent ? `${previous ? `前回${displayAssessmentPercent(previous.score / previous.total * 100)}％ → ` : ""}最新${displayAssessmentPercent(recent.score / recent.total * 100)}％` : "テスト履歴はまだありません。"}{all[0] ? ` ／ 最終学習 ${recordDate(all[0])}` : ""}</p>
+      <details className="unit-history-details">
+        <summary>履歴を見る（{all.length}件）</summary>
+        <label className="history-kind-label">表示する履歴
+          <select aria-label={`${unit}の履歴の種類`} value={kind} onChange={e => setKind(e.target.value)}>
+            <option value="test">テスト</option><option value="practice">練習・今日の5問</option><option value="unknown">種別不明の過去記録</option>
+          </select>
+        </label>
+        {!rows.length && <p>この種類の履歴はありません。</p>}
+        <ol className="unit-history-list">{rows.slice(0, limit).map(r => {
+          const slot = r.unitScores.find(x => x.unit === unit);
+          const reason = assessmentReason(r, unit);
+          const target = assessment.record && String(assessment.record.id) === String(r.id);
+          return <li key={r.id}>
+            <b>{recordDate(r)}　{slot.score}/{slot.total}点（{displayAssessmentPercent(slot.score / slot.total * 100)}％）</b>
+            <span>{r.isRetry ? "間違えた問題の復習" : r.activityType === "daily" ? "今日の5問" : r.activityType || "種別不明"} ／ {r.quizMode || "モード不明"} ／ {tm(r.timeSeconds)}</span>
+            <span className={target ? "assessment-target" : "text-slate-600"}>{target ? "レーダー評価対象：この枠の最新の完了テスト" : reason || "対象外：より新しい完了テストがあります"}</span>
+          </li>;
+        })}</ol>
+        {rows.length > limit && <Btn onClick={() => setLimits(old => ({ ...old, [kind]: limit + 5 }))}>もっと見る（残り{rows.length - limit}件）</Btn>}
+      </details>
+    </article>
+  );
+}
+function LearningHistory({ records, grade }) {
+  const [otherLimit, setOtherLimit] = useState(5);
+  const targetGrades = grade === "全学年" ? recordGrades : [grade];
+  const recognized = unit => recordGrades.some(g => fieldNames.some(f => levels.some(l => unit === `${g}${f}${l}`)));
+  const others = chronologicalRecords(records).filter(r => (!(r.unitScores || []).length || r.unitScores.some(x => !recognized(x.unit))) && (grade === "全学年" || r.grade === grade || (r.unitScores || []).some(x => String(x.unit).startsWith(grade))));
+  return <section className="learning-history" aria-label="単元別の学習履歴">
+    <h2 className="text-xl font-bold">単元別の学習記録</h2>
+    <p className="text-sm text-slate-600">全件保存しています。各単元の「履歴を見る」で直近5件、「もっと見る」で過去分を表示します。</p>
+    {targetGrades.map(g => <details key={g} className="history-grade" open={grade !== "全学年"}>
+      <summary>{g}の学習記録（A・B別）</summary>
+      <div className="learning-unit-grid">{uns(g).map(unit => <UnitLearningHistory key={unit} unit={unit} records={records} />)}</div>
+    </details>)}
+    <details className="history-grade">
+      <summary>記述・その他／分類できない過去の履歴（{others.length}件）</summary>
+      <ol className="unit-history-list">{others.slice(0, otherLimit).map(r => <li key={r.id}><b>{recordDate(r)}　{r.score}/{r.total}点</b><span>{r.unit || r.activityType || "分類不明"}／{r.quizMode || "モード不明"}</span><span>レーダー対象外：A・B別の完了テストとして確認できない記録です。</span></li>)}</ol>
+      {others.length > otherLimit && <Btn onClick={() => setOtherLimit(otherLimit + 5)}>もっと見る</Btn>}
+    </details>
+  </section>;
 }
 function C({ children }) {
   return <div className="app-shell app-panel rounded-3xl p-5 sm:p-7 space-y-5">{children}</div>;
@@ -806,8 +875,7 @@ function HomeMotivation({
   setDescLevels,
   onSelectQuestions,
 }) {
-  const radarRecords = scoped(records, "全学年", 3),
-    stats = fieldStats(radarRecords, "全学年"),
+  const stats = assessmentStats(records, "全学年"),
     active = stats.filter((x) => x.total),
     weak = active.length ? [...active].sort((a, b) => a.accuracy - b.accuracy)[0] : null,
     best = active.length ? [...active].sort((a, b) => b.accuracy - a.accuracy)[0] : null,
@@ -929,8 +997,8 @@ function HomeMotivation({
 const ScienceNavigation = React.createContext(null);
 
 function App() {
-  const [scr, updateScreen] = useState("home");
-  const navigation = React.useRef({ current: "home", trail: [] });
+  const [scr, updateScreen] = useState(INITIAL_QUIZ_SESSION?.screen || "home");
+  const navigation = React.useRef({ current: INITIAL_QUIZ_SESSION?.screen || "home", trail: INITIAL_QUIZ_SESSION ? ["home", "questions"] : [] });
   const setScr = (next) => {
     const nav = navigation.current;
     if (next === nav.current) return;
@@ -966,42 +1034,56 @@ function App() {
 
 function ScienceApp() {
   const { scr, setScr } = React.useContext(ScienceNavigation);
+  const restored = INITIAL_QUIZ_SESSION;
   const savedName = () => localStorage.getItem(N) || "",
     savedGrade = () => localStorage.getItem(G) || "",
     savedProfile = () => localStorage.getItem(P) === "1" && !!savedName() && !!savedGrade();
   const [name, setName] = useState(savedName),
     [userGrade, setUserGrade] = useState(savedGrade),
     [profileSaved, setProfileSaved] = useState(savedProfile),
-    [quizType, setQuizType] = useState("一問一答"),
-    [solveMode, setSolveMode] = useState("練習モード"),
-    [descLevels, setDescLevels] = useState([]),
-    [grade, setGrade] = useState(() => savedGrade() || "中1"),
-    [field, setField] = useState(""),
-    [level, setLevel] = useState(""),
-    [qs, setQs] = useState([]),
-    [i, setI] = useState(0),
-    [ans, setAns] = useState({}),
-    firstAnswers = React.useRef({}),
-    [hist, setHist] = useState([]),
-    [wrongs, setWrongs] = useState([]),
+    [quizType, setQuizType] = useState(restored?.quizType || "一問一答"),
+    [solveMode, setSolveMode] = useState(restored?.solveMode || "練習モード"),
+    [descLevels, setDescLevels] = useState(restored?.descLevels || []),
+    [grade, setGrade] = useState(() => restored?.grade || savedGrade() || "中1"),
+    [field, setField] = useState(restored?.field || ""),
+    [level, setLevel] = useState(restored?.level || ""),
+    [qs, setQs] = useState(restored?.qs || []),
+    [i, setI] = useState(restored?.i || 0),
+    [ans, setAns] = useState(restored?.ans || {}),
+    [selected, setSelected] = useState(restored?.selected || ""),
+    firstAnswers = React.useRef(restored?.firstAnswers || {}),
+    [hist, setHist] = useState(restored?.hist || []),
+    [wrongs, setWrongs] = useState(restored?.wrongs || []),
     [records, setRecords] = useState([]),
     [bestTimes, setBestTimes] = useState({}),
     [rg, setRg] = useState("全学年"),
-    [order, setOrder] = useState("number"),
+    [order, setOrder] = useState(restored?.order || "number"),
     [back, setBack] = useState(false),
-    [sec, setSec] = useState(0),
-    [finalSec, setFinalSec] = useState(0),
-    [start, setStart] = useState(null),
+    [sec, setSec] = useState(Math.floor((restored?.elapsedMs || 0) / 1000)),
+    [finalSec, setFinalSec] = useState(restored?.finalSec || 0),
+    [start, setStart] = useState(restored?.screen === "quiz" ? Date.now() : null),
     [streak, setStreak] = useState({ lastDate: "", current: 0, best: 0 }),
-    [result, setResult] = useState(null),
-    [reviewMode, setReviewMode] = useState(false),
-    [dailyMode, setDailyMode] = useState(false),
+    [result, setResult] = useState(restored?.result || null),
+    [reviewMode, setReviewMode] = useState(restored?.reviewMode || false),
+    [dailyMode, setDailyMode] = useState(restored?.dailyMode || false),
     [cloudUser, setCloudUser] = useState(null),
     [cloud, setCloud] = useState({
       label: "クラウド保存を準備中",
       detail: "この端末の履歴もそのまま保存されます。",
     });
   const [storageWarning, setStorageWarning] = useState("");
+  const elapsedMs = React.useRef(restored?.elapsedMs || 0);
+  const tickAnchor = React.useRef(null);
+  const sessionId = React.useRef(restored?.sessionId || Date.now());
+  const correctRemaining = React.useRef(restored?.correctRemainingMs ?? 1000);
+  const correctDeadline = React.useRef(null);
+  const checkpoint = React.useRef(null);
+  const clockRead = () => elapsedMs.current + (tickAnchor.current === null ? 0 : Math.max(0, performance.now() - tickAnchor.current));
+  const flushClock = () => { elapsedMs.current = clockRead(); tickAnchor.current = null; return elapsedMs.current; };
+  const resetAttempt = () => {
+    flushClock(); elapsedMs.current = 0; correctRemaining.current = 1000; correctDeadline.current = null;
+    sessionId.current = Date.now(); setSelected("");
+  };
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [scr]);
@@ -1112,11 +1194,6 @@ function ScienceApp() {
       document.removeEventListener("visibilitychange", retry);
     };
   }, [cloudUser, profileSaved, name, userGrade, records]);
-  useEffect(() => {
-    if (scr !== "quiz" || !start) return;
-    const t = setInterval(() => setSec(Math.floor((Date.now() - start) / 1000)), 250);
-    return () => clearInterval(t);
-  }, [scr, start]);
   const filtered = useMemo(
       () =>
         quizType === "記述対策"
@@ -1139,6 +1216,7 @@ function ScienceApp() {
     cur = qs[i],
     ck = cur ? k(cur) : "",
     picked = ans[ck] || "",
+    correctFeedback = scr === "quiz" && solveMode === "練習モード" && picked && picked === cur?.answer,
     answered = qs.filter((q) => ans[k(q)]).length,
     target = qs.length * 10,
     unit =
@@ -1159,6 +1237,38 @@ function ScienceApp() {
       [scr],
     );
 
+  useEffect(() => {
+    if (scr !== "quiz" || !start || correctFeedback) return;
+    tickAnchor.current = performance.now();
+    const timer = setInterval(() => setSec(Math.floor(clockRead() / 1000)), 100);
+    return () => { clearInterval(timer); flushClock(); };
+  }, [scr, start, correctFeedback]);
+
+  // Saving an elapsed duration, never a wall-clock start time, excludes reload downtime.
+  checkpoint.current = () => {
+    try {
+      if (!["ready", "quiz", "result"].includes(scr) || !qs.length) {
+        localStorage.removeItem(QUIZ_SESSION_KEY);
+        return;
+      }
+      const remaining = correctDeadline.current === null ? correctRemaining.current : Math.max(0, correctDeadline.current - performance.now());
+      save(QUIZ_SESSION_KEY, { version: 1, owner: savedName(), screen: scr, sessionId: sessionId.current,
+        quizType, solveMode, descLevels, grade, field, level, qs, i, ans, selected, firstAnswers: firstAnswers.current,
+        hist, wrongs, order, elapsedMs: clockRead(), finalSec, reviewMode, dailyMode, result,
+        correctRemainingMs: remaining });
+    } catch {
+      setStorageWarning("途中経過を保存できません。リロードすると再開できない可能性があります。履歴は変更していません。");
+    }
+  };
+  useEffect(() => { checkpoint.current?.(); }, [scr, qs, i, ans, selected, quizType, solveMode, result]);
+  useEffect(() => {
+    const persist = () => checkpoint.current?.();
+    const timer = setInterval(persist, 250);
+    window.addEventListener("pagehide", persist);
+    document.addEventListener("visibilitychange", persist);
+    return () => { clearInterval(timer); window.removeEventListener("pagehide", persist); document.removeEventListener("visibilitychange", persist); };
+  }, []);
+
   const streakNext = () => {
     const today = dk();
     if (streak.lastDate === today) return streak;
@@ -1167,7 +1277,7 @@ function ScienceApp() {
   };
   const savePerfectBest = (score, time) => {
     if (
-      quizType !== "一問一答" ||
+      reviewMode || quizType !== "一問一答" ||
       solveMode !== "テストモード" ||
       !bestKey ||
       score !== qs.length ||
@@ -1182,7 +1292,7 @@ function ScienceApp() {
   };
   const saveRes = (h, score, time) => {
     const r = {
-        id: Date.now(),
+        id: sessionId.current,
         date: dk(),
         userName: name.trim() || "名前なし",
         score,
@@ -1195,7 +1305,10 @@ function ScienceApp() {
         grade: dailyMode ? "" : grade,
         field: dailyMode ? "" : field,
         unit: dailyMode ? "今日の5問" : unit,
-        isRetry: false,
+        isRetry: reviewMode,
+        completed: true,
+        assessmentVersion: ASSESSMENT_POLICY,
+        questionKeys: h.map(k),
       },
       rs = mergeRecords(r, records),
       st = streakNext();
@@ -1234,6 +1347,7 @@ function ScienceApp() {
       return;
     }
     const ordered = order === "number" ? [...filtered].sort((a, b) => a.no - b.no) : sh(filtered);
+    resetAttempt();
     setQs(ordered.map(mq));
     setI(0);
     setAns({});
@@ -1255,6 +1369,7 @@ function ScienceApp() {
       setScr("soon");
       return;
     }
+    resetAttempt();
     setQuizType("一問一答");
     setSolveMode("練習モード");
     setGrade(recordGrades.includes(userGrade) ? userGrade : "全学年");
@@ -1282,14 +1397,14 @@ function ScienceApp() {
         return { ...q, selected: s || "未回答", correct: s === q.answer };
       }),
       score = h.filter((x) => x.correct).length,
-      time = start ? Math.floor((Date.now() - start) / 1000) : sec;
+      time = Math.floor(flushClock() / 1000);
     setHist(h);
     setWrongs(h.filter((x) => !x.correct));
     setFinalSec(time);
     setStart(null);
-    let saved = !reviewMode,
+    let saved = true,
       saveFailed = false;
-    if (!reviewMode) {
+    {
       try {
         saveRes(h, score, time);
       } catch (error) {
@@ -1305,6 +1420,12 @@ function ScienceApp() {
   };
   const choose = (c) => {
       if (picked) return;
+      if (selected !== c) { setSelected(c); return; }
+      setSelected("");
+      if (solveMode === "練習モード" && c === cur.answer) {
+        setSec(Math.floor(flushClock() / 1000));
+        correctRemaining.current = 1000;
+      }
       if (!Object.prototype.hasOwnProperty.call(firstAnswers.current, ck)) {
         firstAnswers.current[ck] = c;
       }
@@ -1313,16 +1434,21 @@ function ScienceApp() {
       if (solveMode === "練習モード") return;
       i + 1 < qs.length ? (setI(i + 1), setBack(false)) : finish(n);
     },
-    next = () => (i + 1 < qs.length ? (setI(i + 1), setBack(false)) : finish(ans)),
+    next = () => {
+      setSelected(""); correctRemaining.current = 1000; correctDeadline.current = null;
+      return i + 1 < qs.length ? (setI(i + 1), setBack(false)) : finish(ans);
+    },
     prev = () => {
       setBack(true);
       setI(Math.max(0, i - 1));
     },
     home = () => setScr("home");
   useEffect(() => {
-    if (scr !== "quiz" || solveMode !== "練習モード" || !picked || picked !== cur?.answer) return;
-    const timer = setTimeout(() => next(), 500);
-    return () => clearTimeout(timer);
+    if (!correctFeedback) return;
+    const remaining = Math.min(1000, Math.max(0, correctRemaining.current));
+    correctDeadline.current = performance.now() + remaining;
+    const timer = setTimeout(() => next(), remaining);
+    return () => { clearTimeout(timer); correctRemaining.current = Math.max(0, (correctDeadline.current ?? performance.now()) - performance.now()); correctDeadline.current = null; };
   }, [scr, solveMode, i, picked]);
   const retryResultSave = () => {
     try {
@@ -1357,6 +1483,7 @@ function ScienceApp() {
     },
     review = () => {
       const ordered = order === "number" ? [...wrongs].sort((a, b) => a.no - b.no) : sh(wrongs);
+      resetAttempt();
       setQs(ordered.map(mq));
       setI(0);
       setAns({});
@@ -1595,6 +1722,8 @@ function ScienceApp() {
             <div className="grid grid-cols-1 gap-3">
               <Btn
                 onClick={() => {
+                  elapsedMs.current = 0; tickAnchor.current = null;
+                  setSelected("");
                   setSec(0);
                   setFinalSec(0);
                   setStart(Date.now());
@@ -1614,6 +1743,7 @@ function ScienceApp() {
     return (
       <Main className="quiz-screen">
         <C>
+          {storageWarning && <div className="storage-alert" role="alert">{storageWarning}</div>}
           <div className="flex items-start justify-between gap-3">
             <div>
               <h1 className="quiz-title text-2xl font-black">
@@ -1689,9 +1819,10 @@ function ScienceApp() {
                     key={c}
                     onClick={() => choose(c)}
                     disabled={!!picked}
-                    kind={picked === c ? "main" : ""}
+                    kind={(picked || selected) === c ? "main" : ""}
                     className="quiz-choice"
-                    aria-pressed={picked === c}
+                    aria-pressed={(picked || selected) === c}
+                    aria-describedby="choice-instructions"
                   >
                     <span className="choice-marker" aria-hidden="true">
                       {["ア", "イ", "ウ", "エ"][cur.choices.indexOf(c)]}
@@ -1700,13 +1831,14 @@ function ScienceApp() {
                   </Btn>
                 ))}
               </div>
+              <p id="choice-instructions" className="choice-instructions" aria-live="polite">{selected ? "選択中です。同じ答えをもう一度タップすると回答します。別の答えで選び直せます。" : "1回目は選択、同じ答えをもう一度タップして回答。素早く押す必要はありません。"}</p>
               {solveMode === "練習モード" && picked && (
                 picked === cur.answer ? (
-                  <div className="test-correct" role="status">○ 正解！</div>
+                  <div className="test-correct" role="status" aria-label="正解。1秒後に次へ。表示中は時間を計測しません。"><span className="correct-symbol" aria-hidden="true">〇</span><span className="correct-caption">1秒後に次へ・表示中は計測停止</span></div>
                 ) : (
                   <button type="button" className="test-feedback-overlay" onClick={next} autoFocus aria-label="不正解。画面をタップして次へ進む">
                     <div className="test-feedback-card">
-                      <div className="text-2xl font-black text-red-700">× ここを確認しよう</div>
+                      <div className="text-2xl font-black">確認。</div>
                       <div className="feedback-question">
                         <p className="feedback-question-label">問題</p>
                         <p><ScienceText>{cur.question}</ScienceText></p>
@@ -1776,7 +1908,7 @@ function ScienceApp() {
               {result?.saveFailed
                 ? "この結果はまだ保存されていません"
                 : result?.saved === false
-                  ? "復習モードのため保存履歴には反映されません"
+                  ? "この結果はまだ保存されていません"
                   : "結果はこの端末に保存済み"}
             </div>
             {result?.saved !== false && (
@@ -1793,7 +1925,7 @@ function ScienceApp() {
             <div className="text-xs text-slate-500">
               {dailyMode ? "今日の5問は各単元の履歴にも反映されます。" : det(u)}
             </div>
-            {rs.length ? <Row records={rs} /> : <p>まだ保存履歴はありません。</p>}
+            {rs.length ? <Row records={rs.slice(0, 5)} /> : <p>まだ保存履歴はありません。</p>}
           </Box>
           <div className="space-y-3">
             <h2 className="text-lg font-bold">全問題の結果</h2>
@@ -1830,8 +1962,6 @@ function ScienceApp() {
     );
   }
   if (scr === "records") {
-    const latest = scoped(records, rg, 10),
-      radarRecords = scoped(records, rg, 3);
     return (
       <Main>
         <C>
@@ -1839,7 +1969,7 @@ function ScienceApp() {
             <div>
               <h1 className="text-2xl font-black">保存履歴</h1>
               <p className="text-sm text-slate-500">
-                レーダーは直近3回、履歴は直近10回を表示。以前の記録も保存されています。
+                履歴は全件保存。レーダーは学年・A/B別の最新完了テストを均等に評価する暫定仕様です。
               </p>
             </div>
             <HomeLinks home={home} />
@@ -1854,44 +1984,8 @@ function ScienceApp() {
               ))}
             </div>
           </div>
-          <Radar items={fieldStats(radarRecords, rg)} grade={rg} />
-          {!latest.length ? (
-            <Box>この範囲の保存履歴はありません。</Box>
-          ) : (
-            <div className="space-y-3">
-              <Box>
-                <b>合計</b>
-                <Row records={latest} />
-              </Box>
-              {rg !== "全学年" &&
-                uns(rg).map((u) => (
-                  <Box key={u}>
-                    <b>{u}</b>
-                    <div className="text-xs text-slate-500">{det(u)}</div>
-                    <div className="grid grid-cols-5 gap-1">
-                      {latest.map((r) => {
-                        const x = mg(r, u);
-                        return x ? (
-                          <div
-                            key={`${r.id}-${u}`}
-                            className={`rounded-xl border px-1 py-2 text-center text-xs font-bold ${cls(Math.round((x.score / x.total) * 100))}`}
-                          >
-                            {lab(x.score, x.total)}
-                          </div>
-                        ) : (
-                          <div
-                            key={`${r.id}-${u}`}
-                            className="rounded-xl border px-1 py-2 text-center text-xs text-slate-300"
-                          >
-                            —
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </Box>
-                ))}
-            </div>
-          )}
+          <Radar items={assessmentStats(records, rg)} grade={rg} />
+          <LearningHistory key={rg} records={records} grade={rg} />
           <Box>
             <div className="text-sm text-slate-500">連続学習記録</div>
             <div className="text-2xl font-black">🔥 {streak.current}日目</div>
