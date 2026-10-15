@@ -804,6 +804,7 @@ function HomeMotivation({
   setField,
   setLevel,
   setDescLevels,
+  onSelectQuestions,
 }) {
   const radarRecords = scoped(records, "全学年", 3),
     stats = fieldStats(radarRecords, "全学年"),
@@ -831,6 +832,7 @@ function HomeMotivation({
     setField(questField);
     setLevel("A");
     setDescLevels([]);
+    onSelectQuestions?.();
     setTimeout(
       () =>
         document
@@ -1377,31 +1379,76 @@ function App() {
         </C>
       </Main>
     );
-  if (scr === "home")
+  if (scr === "explanations" || scr === "explanation-updates")
     return (
       <Main>
         <C>
+          <nav className="science-page-nav" aria-label="ページ移動">
+            <Btn onClick={home}>← 戻る</Btn>
+            <b>{scr === "explanation-updates" ? "解説の更新情報" : "解説を読む"}</b>
+            <Btn onClick={home}>理科ホーム</Btn>
+          </nav>
+          <div>
+            <p className="eyebrow">中学1年・化学</p>
+            <h1 className="text-2xl font-black">身のまわりの物質</h1>
+            <p className="text-sm muted">解説ページは公開準備中です。完成・制作中の状況をこちらに掲載します。</p>
+          </div>
+          <section className="explanation-status-list" aria-label="解説の制作状況">
+            <article>
+              <h2>金属と非金属 <span className="explanation-state">漫画制作済み</span></h2>
+              <p>金属光沢・電気伝導性・熱伝導性・展性・延性・例外を7ページで解説。</p>
+              <p className="text-sm muted">10月15日更新／アプリでの公開準備中</p>
+            </article>
+            {["密度", "有機物と無機物", "気体の性質と集め方", "溶けるしくみ", "純粋な物質と混合物", "溶解度と再結晶", "状態変化と温度", "混合物の分け方"].map((title) => (
+              <article key={title}>
+                <h2>{title} <span className="explanation-state is-planned">制作準備中</span></h2>
+                <p className="text-sm muted">シナリオ初稿作成済み／漫画はこれから制作します。</p>
+              </article>
+            ))}
+          </section>
+        </C>
+      </Main>
+    );
+  if (scr === "home" || scr === "questions")
+    return (
+      <Main>
+        <C>
+          {scr === "questions" && (
+            <nav className="science-page-nav" aria-label="ページ移動">
+              <Btn onClick={home}>← 戻る</Btn>
+              <b>問題を解く</b>
+              <Btn onClick={home}>理科ホーム</Btn>
+            </nav>
+          )}
           <header className="student-header">
             <div>
               <span className="eyebrow">おくぽんの理科学習</span>
-              <h1>理科 一問一答</h1>
+              <h1>{scr === "questions" ? "問題を選ぼう" : "理科ホーム"}</h1>
             </div>
             <Btn onClick={() => setScr("profile")}>設定</Btn>
           </header>
-          <section className="welcome-panel">
+          {scr === "home" && <>
+          <section className="welcome-panel large-home-welcome">
             <p className="eyebrow">
               {userGrade}・{name}さん
             </p>
-            <h2>今日も、一問ずつ。</h2>
-            <p>覚えるときは練習モード。力を試すときはテストモード。</p>
-            <div className="quick-actions">
-              <Btn onClick={startDaily} kind="main">
-                今日の5問を始める
-              </Btn>
-              <a className="secondary-link" href="#questions">
-                単元を選んで始める ↓
-              </a>
+            <h2>今日は、何から始める？</h2>
+            <p>解いて確かめる。読んで理解する。</p>
+            <div className="home-entry-grid">
+              <button className="home-entry" onClick={() => setScr("questions")}>
+                <span className="home-entry-icon" aria-hidden="true">✏️</span>
+                <span><strong>問題を解く</strong><small>一問一答・記述対策など<br />練習モード／テストモード</small></span>
+                <span aria-hidden="true">→</span>
+              </button>
+              <button className="home-entry home-entry-explanation" onClick={() => setScr("explanations")}>
+                <span className="home-entry-icon" aria-hidden="true">📖</span>
+                <span><strong>解説を読む</strong><small>学年・単元から理解を深める<br />図と漫画を順次公開予定</small></span>
+                <span aria-hidden="true">→</span>
+              </button>
             </div>
+            <button className="daily-home-entry" onClick={startDaily}>
+              <strong>今日の5問</strong><span>まずは短く、練習モードで →</span>
+            </button>
             <div className="welcome-stats">
               <span>
                 連続学習 <b>{streak.current}日</b>
@@ -1409,6 +1456,14 @@ function App() {
               <button onClick={() => setScr("records")}>学習記録を見る →</button>
             </div>
           </section>
+          <section className="home-explanation-updates" aria-labelledby="home-updates-heading">
+            <div className="home-updates-heading"><h2 id="home-updates-heading">解説の更新情報</h2><button onClick={() => setScr("explanation-updates")}>一覧を見る →</button></div>
+            <button className="home-update-item" onClick={() => setScr("explanations")}>
+              <strong>金属と非金属 <span className="explanation-state">漫画制作済み</span></strong>
+              <span>10月15日・中1 化学・7ページ／公開準備中</span>
+            </button>
+          </section>
+          </>}
           <div className="save-status" role="status">
             <span aria-hidden="true">●</span>
             <div>
@@ -1416,7 +1471,7 @@ function App() {
               <p>{cloud.detail}</p>
             </div>
           </div>
-          <Catalog
+          {scr === "questions" && <Catalog
             quizType={quizType}
             setQuizType={setQuizType}
             solveMode={solveMode}
@@ -1434,10 +1489,11 @@ function App() {
             order={order}
             setOrder={setOrder}
             begin={begin}
-          />
+          />}
           <details className="home-details">
             <summary>得意・苦手とがんばりを見る</summary>
             <HomeMotivation
+              onSelectQuestions={() => setScr("questions")}
               records={records}
               streak={streak}
               userGrade={userGrade}
