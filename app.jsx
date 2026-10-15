@@ -926,12 +926,50 @@ function HomeMotivation({
   );
 }
 
+const ScienceNavigation = React.createContext(null);
+
 function App() {
+  const [scr, updateScreen] = useState("home");
+  const navigation = React.useRef({ current: "home", trail: [] });
+  const setScr = (next) => {
+    const nav = navigation.current;
+    if (next === nav.current) return;
+    if (next === "home") nav.trail = [];
+    else nav.trail.push(nav.current);
+    nav.current = next;
+    updateScreen(next);
+  };
+  const allowLeave = () => navigation.current.current !== "quiz" || window.confirm(
+    "学習を中断しますか？今回の途中の回答は保存されません。過去の学習記録は残ります。",
+  );
+  const goBack = () => {
+    if (!allowLeave()) return;
+    const nav = navigation.current;
+    let previous;
+    if (nav.current === "quiz" || nav.current === "ready") {
+      previous = nav.trail.includes("questions") ? "questions" : "home";
+      nav.trail = [];
+    } else if (nav.current === "result") {
+      previous = "home";
+      nav.trail = [];
+    } else previous = nav.trail.pop() || "home";
+    nav.current = previous;
+    updateScreen(previous);
+  };
+  const goHome = () => { if (allowLeave()) setScr("home"); };
+  return (
+    <ScienceNavigation.Provider value={{ scr, setScr, goBack, goHome }}>
+      <ScienceApp />
+    </ScienceNavigation.Provider>
+  );
+}
+
+function ScienceApp() {
+  const { scr, setScr } = React.useContext(ScienceNavigation);
   const savedName = () => localStorage.getItem(N) || "",
     savedGrade = () => localStorage.getItem(G) || "",
     savedProfile = () => localStorage.getItem(P) === "1" && !!savedName() && !!savedGrade();
-  const [scr, setScr] = useState("home"),
-    [name, setName] = useState(savedName),
+  const [name, setName] = useState(savedName),
     [userGrade, setUserGrade] = useState(savedGrade),
     [profileSaved, setProfileSaved] = useState(savedProfile),
     [quizType, setQuizType] = useState("一問一答"),
@@ -1383,11 +1421,9 @@ function App() {
     return (
       <Main>
         <C>
-          <nav className="science-page-nav" aria-label="ページ移動">
-            <Btn onClick={home}>← 戻る</Btn>
+          <header className="science-page-heading">
             <b>{scr === "explanation-updates" ? "解説の更新情報" : "解説を読む"}</b>
-            <Btn onClick={home}>理科ホーム</Btn>
-          </nav>
+          </header>
           <div>
             <p className="eyebrow">中学1年・化学</p>
             <h1 className="text-2xl font-black">身のまわりの物質</h1>
@@ -1413,13 +1449,6 @@ function App() {
     return (
       <Main>
         <C>
-          {scr === "questions" && (
-            <nav className="science-page-nav" aria-label="ページ移動">
-              <Btn onClick={home}>← 戻る</Btn>
-              <b>問題を解く</b>
-              <Btn onClick={home}>理科ホーム</Btn>
-            </nav>
-          )}
           <header className="student-header">
             <div>
               <span className="eyebrow">おくぽんの理科学習</span>
@@ -1445,6 +1474,11 @@ function App() {
                 <span><strong>解説を読む</strong><small>学年・単元から理解を深める<br />図と漫画を順次公開予定</small></span>
                 <span aria-hidden="true">→</span>
               </button>
+              <button className="home-entry home-entry-records" onClick={() => setScr("records")}>
+                <span className="home-entry-icon" aria-hidden="true">📊</span>
+                <span><strong>学習記録を見る</strong><small>点数・得意と苦手・これまでのがんばり</small></span>
+                <span aria-hidden="true">→</span>
+              </button>
             </div>
             <button className="daily-home-entry" onClick={startDaily}>
               <strong>今日の5問</strong><span>まずは短く、練習モードで →</span>
@@ -1453,7 +1487,7 @@ function App() {
               <span>
                 連続学習 <b>{streak.current}日</b>
               </span>
-              <button onClick={() => setScr("records")}>学習記録を見る →</button>
+              <span>自分のペースで続けよう</span>
             </div>
           </section>
           <section className="home-explanation-updates" aria-labelledby="home-updates-heading">
@@ -1854,7 +1888,18 @@ function App() {
   return null;
 }
 function Main({ children, className = "" }) {
-  return <div className={`min-h-screen flex items-center justify-center p-4 sm:p-6 ${className}`}>{children}</div>;
+  const navigation = React.useContext(ScienceNavigation);
+  return (
+    <>
+      <div className={`science-main min-h-screen flex items-center justify-center p-4 sm:p-6 ${className}`}>{children}</div>
+      <nav className="science-bottom-nav" aria-label="画面下の移動ボタン">
+        <div className="science-bottom-nav-inner">
+          <Btn kind="main" onClick={navigation.goBack} disabled={navigation.scr === "home"}>← 戻る</Btn>
+          <Btn onClick={navigation.goHome} disabled={navigation.scr === "home"}>理科ホーム</Btn>
+        </div>
+      </nav>
+    </>
+  );
 }
 function Box({ children, className = "" }) {
   return (

@@ -137,7 +137,7 @@ summary { cursor:pointer; font-weight:700; padding:16px; }
   .quiz-info { font-size:13px; }
   .quiz-home { padding:8px!important; }
   .mission-grid { grid-template-columns:1fr; }
-  .home-links { grid-template-columns:1fr!important; }
+  .home-links { grid-template-columns:repeat(3,minmax(0,1fr)); }
   .ready-stat { padding:12px; }
 }
 .quiz-screen { align-items:flex-start; padding:8px!important; }
@@ -159,8 +159,8 @@ summary { cursor:pointer; font-weight:700; padding:16px; }
 .quiz-screen .answer-feedback p { line-height:1.5; font-size:14px; }
 .quiz-screen .quiz-nav .app-btn { min-height:44px; padding:8px; }
 .quiz-screen .quiz-choice:disabled { opacity:1; }
-.test-correct { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#f0fdfaeb; color:#047857; font-size:42px; font-weight:900; z-index:40; }
-.test-feedback-overlay { position:fixed; inset:0; width:100%; height:100dvh; display:flex; align-items:center; justify-content:center; padding:20px; background:#173043b3; z-index:40; text-align:left; overflow:auto; }
+.test-correct { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#f0fdfa; color:#047857; font-size:42px; font-weight:900; z-index:40; }
+.test-feedback-overlay { position:fixed; inset:0; width:100%; height:100dvh; display:flex; align-items:center; justify-content:center; padding:20px 20px calc(110px + env(safe-area-inset-bottom,0px)); background:#e9f4f7; z-index:40; text-align:left; overflow:auto; }
 .test-feedback-card { width:min(100%,600px); background:white; border-radius:20px; padding:24px; display:grid; gap:14px; line-height:1.6; }
 @media(max-height:700px) {
   .quiz-screen .quiz-question p { font-size:16px!important; }
@@ -169,4 +169,22 @@ summary { cursor:pointer; font-weight:700; padding:16px; }
 @media(prefers-reduced-motion:reduce) {
   html { scroll-behavior:auto; }
   *,*::before,*::after { animation:none!important; transition:none!important; }
+}
+
+/* Opaque app surface and bottom navigation, including mobile safe areas. */
+html, body, #root { background-color:#f1f6f8; opacity:1; }
+#root { min-height:100dvh; isolation:isolate; }
+.science-main { background:#f1f6f8; min-height:100dvh; padding-bottom:calc(108px + env(safe-area-inset-bottom,0px))!important; }
+.science-bottom-nav { position:fixed; bottom:0; left:0; right:0; z-index:60; background:#fff; border-top:2px solid #c8d7e1; box-shadow:0 -4px 18px #17304314; padding:12px max(12px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px)); }
+.science-bottom-nav-inner { display:grid; grid-template-columns:1.4fr 1fr; gap:12px; max-width:1000px; margin:0 auto; }
+.science-bottom-nav .app-btn { min-height:54px; font-size:18px; }
+.science-bottom-nav .app-btn:disabled { opacity:1; color:#526777; background:#edf2f5; border-color:#d9e4eb; }
+.science-page-heading { padding-bottom:12px; border-bottom:1px solid var(--line); }
+.home-links { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+.home-links .app-btn { min-width:0; padding:8px 4px; background:#fff; font-size:12px; }
+.home-entry-records { background:#fff6e7; border-color:#e8d7b8; grid-column:1 / -1; }
+.home-entry-records strong { font-size:24px; }
+@media(max-width:360px) {
+  .home-links .app-btn { font-size:11px; }
+  .home-entry-records strong { font-size:21px; }
 }
