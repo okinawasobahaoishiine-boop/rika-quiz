@@ -1,4 +1,7 @@
-// Existing storage keys, identity and cloud schema are intentionally preserved.
+// Stable storage remains unchanged. Preview never opens the production cloud client.
+const SCIENCE_IS_PREVIEW = /\/preview(?:\/|$)/.test(window.location.pathname);
+const scienceStorageKey = (key) => SCIENCE_IS_PREVIEW ? "rikaQuizPreview:" + key : key;
+if (SCIENCE_IS_PREVIEW) document.title = "【テスト版】理科アプリ";
 const grades = ["全学年", "中1", "中2", "中3"],
   fields = ["全分野", "生物", "化学", "物理", "地学"],
   levels = ["A", "B"],
@@ -26,17 +29,17 @@ const details = {
   中3物理: "仕事・エネルギー",
   中3地学: "宇宙・太陽系・月",
 };
-const S = "scienceQuizRecords",
-  N = "scienceQuizUserName",
-  G = "scienceQuizUserGrade",
-  P = "scienceQuizProfileSaved",
-  T = "scienceQuizStreak",
-  BT = "scienceQuizBestPerfectTimes",
-  DID = "scienceQuizDeviceId",
-  SCODE = "scienceQuizStudentCode";
+const S = scienceStorageKey("scienceQuizRecords"),
+  N = scienceStorageKey("scienceQuizUserName"),
+  G = scienceStorageKey("scienceQuizUserGrade"),
+  P = scienceStorageKey("scienceQuizProfileSaved"),
+  T = scienceStorageKey("scienceQuizStreak"),
+  BT = scienceStorageKey("scienceQuizBestPerfectTimes"),
+  DID = scienceStorageKey("scienceQuizDeviceId"),
+  SCODE = scienceStorageKey("scienceQuizStudentCode");
 const SB_URL = "https://kjlmgrnrhzfwcpuytxdm.supabase.co",
   SB_KEY = "sb_publishable_8vQ2_xzJyaIP96JedzK06w_HRBV6Es1";
-const sb = window.supabase?.createClient
+const sb = !SCIENCE_IS_PREVIEW && window.supabase?.createClient
   ? window.supabase.createClient(SB_URL, SB_KEY, {
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
     })
