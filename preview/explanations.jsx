@@ -23,6 +23,8 @@ function LessonMaterialDefs({ id }) {
     <radialGradient id={`${id}-sphere-copper`} cx=".3" cy=".25" r=".8"><stop stopColor="#ffe3bd"/><stop offset=".4" stopColor="#dc9b62"/><stop offset="1" stopColor="#9c4e26"/></radialGradient>
     <pattern id={`${id}-brushed`} width="8" height="4" patternUnits="userSpaceOnUse"><path d="M0 1H8" stroke="#fff" strokeWidth=".4" opacity=".3"/><path d="M0 3H8" stroke="#422811" strokeWidth=".3" opacity=".14"/></pattern>
     <filter id={`${id}-shadow`} x="-30%" y="-30%" width="170%" height="180%"><feDropShadow dx="1" dy="3" stdDeviation="2.2" floodColor="#213c4b" floodOpacity=".2"/></filter>
+    <linearGradient id={`${id}-reflection`} x1="0" y1="0" x2="1" y2=".65"><stop stopColor="#fff" stopOpacity="0"/><stop offset=".32" stopColor="#fff" stopOpacity="0"/><stop offset=".43" stopColor="#fff8e6" stopOpacity=".8"/><stop offset=".48" stopColor="#fff" stopOpacity=".95"/><stop offset=".57" stopColor="#fff" stopOpacity=".04"/><stop offset=".8" stopColor="#52311e" stopOpacity=".28"/><stop offset="1" stopColor="#fff" stopOpacity=".15"/></linearGradient>
+    <filter id={`${id}-surface`} x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".72 .19" numOctaves="3" seed="14" result="grain"/><feColorMatrix in="grain" type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".12"/></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" result="texture"/><feBlend in="SourceGraphic" in2="texture" mode="multiply"/></filter>
   </defs>;
 }
 function MaterialDrawing() {
@@ -49,6 +51,10 @@ function LusterDrawing() {
     <path d="M140 83H177M168 74L179 83L168 92" fill="none" stroke="#08766b" strokeWidth="4" strokeLinecap="round"/>
     <g filter="url(#luster-shadow)"><path d="M195 50L287 42L300 107L207 119Z" fill="url(#luster-copper)" stroke="#9d5c33" strokeWidth=".7"/><path d="M207 119L300 107V113L207 125Z" fill="#8d461f"/><path d="M195 50L287 42L289 46L197 54Z" fill="#f8d1a5"/><path d="M195 50L287 42L300 107L207 119Z" fill="url(#luster-brushed)"/></g>
     <path d="M207 118L299 106M197 51L286 43" stroke="#ffe7c4" strokeWidth="1.4" opacity=".9"/>
+    <path d="M20 50L112 42L125 107L32 119Z" fill="url(#luster-dull)" filter="url(#luster-surface)" opacity=".65"/>
+    <path d="M195 50L287 42L300 107L207 119Z" fill="url(#luster-reflection)"/>
+    <path d="M202 62L289 53M205 77L292 68M210 100L297 89" stroke="#fff0d4" strokeWidth=".35" opacity=".65"/>
+    <path d="M208 121L298 110" stroke="#562c18" strokeWidth=".6" opacity=".7"/>
     <g fontSize="16" fill="#173043" textAnchor="middle"><text x="72" y="155">磨く前</text><text x="248" y="155">磨いたあと</text></g>
     <text x="160" y="184" fontSize="14" fill="#526777" textAnchor="middle">同じ金属でも、表面の状態で見え方が違う</text>
   </LessonDrawing>;
@@ -90,6 +96,10 @@ function HeatDrawing() {
       <ellipse cx="108" cy="32" rx="6" ry="3" fill={i===0 ? "#d79964" : "#dbedf5"} stroke={i===0 ? "#a9663b" : "#a3bfcd"} strokeWidth=".7"/>
       <path d="M34 94V169Q84 189 134 169V94" fill="url(#heat-glass)" stroke="#9fbcc9" strokeWidth=".8"/>
       <path d="M41 103V161M128 104V164" stroke="#fff" strokeWidth="2.3" opacity=".85"/>
+      <path d="M45 105L47 160M122 109L123 164" stroke="#fff" strokeWidth=".6" opacity=".7"/>
+      <path d="M43 168Q84 181 125 168" fill="none" stroke="#6196aa" strokeWidth="1" opacity=".65"/>
+      <path d="M50 173Q84 181 118 173" fill="none" stroke="#fff" strokeWidth="1.6" opacity=".85"/>
+      <ellipse cx="84" cy="122" rx="43" ry="5.4" fill="none" stroke="#fff" strokeWidth=".7" opacity=".55"/>
       <path d="M37 112H48M37 132H48M37 152H48M37 122H43M37 142H43" stroke="#7c9aa8" strokeWidth=".8" opacity=".7"/>
       <ellipse cx="84" cy="91" rx="50" ry="8" fill="none" stroke="#789cab" strokeWidth="1.4"/>
       <path d="M37 93Q84 108 131 93M39 169Q84 183 129 169" fill="none" stroke="#e9f6fb" strokeWidth="2"/>
@@ -106,6 +116,9 @@ function ShapeDrawing() {
     <g transform="rotate(-25 64 27)" filter="url(#shape-shadow)"><path d="M64 27L97 66" stroke="url(#shape-wood)" strokeWidth="9" strokeLinecap="round"/><rect x="43" y="15" width="42" height="21" rx="3" fill="url(#shape-steel)" stroke="#70828e" strokeWidth=".8"/><path d="M46 18H82" stroke="#fff" strokeWidth="1" opacity=".8"/></g>
     <path d="M111 60H150M140 50L151 60L140 70" stroke="#08766b" strokeWidth="4" fill="none"/>
     <g filter="url(#shape-shadow)"><path d="M180 55L285 46L296 55L191 65Z" fill="url(#shape-copper)" stroke="#ad7045" strokeWidth=".8"/><path d="M191 65L296 55V58L191 68Z" fill="#96512b"/><path d="M180 55L285 46" stroke="#ffe2b7" strokeWidth="1.3"/></g>
+    <path d="M180 55L285 46L296 55L191 65Z" fill="url(#shape-reflection)"/>
+    <path d="M193 56L216 53L225 57L248 51L272 53L285 49M206 61L225 57L242 60L263 54L286 56" fill="none" stroke="#ffe2c0" strokeWidth=".6" opacity=".7"/>
+    <path d="M31 54L43 51L51 58L69 49L82 54M39 67L51 58L62 68L80 60" fill="none" stroke="#ffcc99" strokeWidth=".8" opacity=".6"/>
     <g fill="#173043" fontSize="14" textAnchor="middle"><text x="56" y="101">かたまり</text><text x="235" y="101">薄い板・箔</text></g>
     <path d="M25 118H295" stroke="#d9e4eb"/>
     <g filter="url(#shape-shadow)"><rect x="26" y="155" width="119" height="24" rx="3" fill="url(#shape-copper-cylinder)" stroke="#a36337" strokeWidth=".8"/><ellipse cx="26" cy="167" rx="4" ry="12" fill="#be8050"/>
