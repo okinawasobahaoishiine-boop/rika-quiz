@@ -1,5 +1,13 @@
 # テスト版と本番の運用
 
+## 密度漫画9ページ（2026-10-16）
+
+- `preview/?explanation=density`。ホーム・解説一覧・更新情報・中1化学A第3問の結果から開く。
+- `preview/density-lesson.jsx`、画像9枚は`preview/assets/density/`。原本は解説フォルダに保持。
+- 目次付きの縦読み。画像タップで原寸画像を別タブへ開き、端末で拡大できる。2枚目以降は遅延読込み。
+- 密度は確認用テスト版。本番反映は明示承認時のみ。昇格スクリプトへJSXと画像9枚を登録済み。
+- 検証：`Records/Validation/DensityPreview20261016/check.cjs`。
+
 ## 図解ページ版：金属と非金属
 
 - ソース：preview/explanations.jsx。文章とSVGの図を使った7項目のページであり、既存漫画画像とは別。

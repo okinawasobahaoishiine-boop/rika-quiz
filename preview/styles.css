@@ -252,6 +252,9 @@ html, body, #root { background-color:#f1f6f8; opacity:1; }
 .science-bottom-nav-inner { display:grid; grid-template-columns:1.4fr 1fr; gap:12px; max-width:1000px; margin:0 auto; }
 .science-bottom-nav .app-btn { min-height:54px; font-size:18px; }
 .science-bottom-nav .app-btn:disabled { opacity:1; color:#526777; background:#edf2f5; border-color:#d9e4eb; }
+.density-comic { display:block; width:100%; height:auto; aspect-ratio:2 / 3; border-radius:12px; cursor:zoom-in; }
+.density-lesson .lesson-section { min-width:0; }
+.density-lesson .lesson-section > a:first-of-type { display:block; }
 .science-page-heading { padding-bottom:12px; border-bottom:1px solid var(--line); }
 .home-links { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
 .home-links .app-btn { min-width:0; padding:8px 4px; background:#fff; font-size:12px; }
