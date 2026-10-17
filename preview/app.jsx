@@ -1573,11 +1573,11 @@ function ScienceApp() {
           <div>
             <p className="eyebrow">中学1年・化学</p>
             <h1 className="text-2xl font-black">身のまわりの物質</h1>
-            <p className="text-sm muted">解説ページは公開準備中です。完成・制作中の状況をこちらに掲載します。</p>
+            <p className="text-sm muted">公開中の解説と、制作中のテーマをこちらに掲載します。</p>
           </div>
           <section className="explanation-status-list" aria-label="解説の制作状況">
             <article>
-              <h2>金属と非金属 <span className="explanation-state">図解ページ・テスト公開</span></h2>
+              <h2>金属と非金属 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "図解ページ・テスト公開" : "図解ページ・公開中"}</span></h2>
               <p>7つの項目を文章と図で読むページ版を追加しました。</p>
               <Btn onClick={() => setScr("metal-explanation")}>ページ版の解説を読む</Btn>
             </article>
@@ -1586,8 +1586,8 @@ function ScienceApp() {
               <p>金属光沢・電気伝導性・熱伝導性・展性・延性・例外を7ページで解説。</p>
               <p className="text-sm muted">10月15日更新／アプリでの公開準備中</p>
             </article>
-            <article><h2>密度 <span className="explanation-state">漫画・テスト公開</span></h2><p>質量・体積から計算・浮沈・気体まで、全9ページ。</p><Btn onClick={() => setScr("density-explanation")}>密度の漫画を読む</Btn></article>
-            <article><h2>有機物と無機物 <span className="explanation-state">漫画・テスト公開</span></h2><p>白い粉の比較・砂糖の加熱と燃焼・分類と例外を全5ページで解説。</p><Btn onClick={() => setScr("organic-explanation")}>有機物と無機物の漫画を読む</Btn></article>
+            <article><h2>密度 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画・テスト公開" : "漫画・公開中"}</span></h2><p>質量・体積から計算・浮沈・気体まで、全9ページ。</p><Btn onClick={() => setScr("density-explanation")}>密度の漫画を読む</Btn></article>
+            <article><h2>有機物と無機物 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画・テスト公開" : "漫画・公開中"}</span></h2><p>白い粉の比較・砂糖の加熱と燃焼・分類と例外を全5ページで解説。</p><Btn onClick={() => setScr("organic-explanation")}>有機物と無機物の漫画を読む</Btn></article>
             {["気体の性質と集め方", "溶けるしくみ", "純粋な物質と混合物", "溶解度と再結晶", "状態変化と温度", "混合物の分け方"].map((title) => (
               <article key={title}>
                 <h2>{title} <span className="explanation-state is-planned">制作準備中</span></h2>
@@ -1649,7 +1649,7 @@ function ScienceApp() {
             <button className="home-update-item" onClick={() => setScr("density-explanation")}><strong>密度 <span className="explanation-state">漫画9ページを追加</span></strong><span>10月16日・中1 化学／目次・拡大表示付き</span></button>
             <button className="home-update-item" onClick={() => setScr("metal-explanation")}>
               <strong>金属と非金属 <span className="explanation-state">図解ページを追加</span></strong>
-              <span>10月16日・中1 化学／文章と図のページ版をテスト公開</span>
+              <span>10月16日・中1 化学／文章と図のページ版を{SCIENCE_IS_PREVIEW ? "テスト公開" : "公開"}</span>
             </button>
           </section>
           </>}
