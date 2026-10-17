@@ -997,7 +997,7 @@ function HomeMotivation({
 const ScienceNavigation = React.createContext(null);
 
 function App() {
-  const initialScreen = INITIAL_QUIZ_SESSION?.screen || ({"metal-nonmetal":"metal-explanation",density:"density-explanation"}[new URLSearchParams(window.location.search).get("explanation")] || "home");
+  const initialScreen = INITIAL_QUIZ_SESSION?.screen || ({"metal-nonmetal":"metal-explanation",density:"density-explanation","organic-inorganic":"organic-explanation"}[new URLSearchParams(window.location.search).get("explanation")] || "home");
   const [scr, updateScreen] = useState(initialScreen);
   const navigation = React.useRef({ current: initialScreen, trail: INITIAL_QUIZ_SESSION ? ["home", "questions"] : [] });
   const setScr = (next) => {
@@ -1501,7 +1501,7 @@ function ScienceApp() {
       setScr("ready");
     };
 
-  if (scr === "profile" || (!profileSaved && !["explanations", "metal-explanation", "density-explanation", "explanation-updates"].includes(scr)))
+  if (scr === "profile" || (!profileSaved && !["explanations", "metal-explanation", "density-explanation", "organic-explanation", "explanation-updates"].includes(scr)))
     return (
       <Main>
         <C>
@@ -1545,6 +1545,8 @@ function ScienceApp() {
         </C>
       </Main>
     );
+  if (scr === "organic-explanation")
+    return <Main><C><OrganicExplanation /></C></Main>;
   if (scr === "density-explanation")
     return <Main><C><DensityExplanation /></C></Main>;
   if (scr === "metal-explanation")
@@ -1556,6 +1558,7 @@ function ScienceApp() {
           <header><p className="eyebrow">中学1年・化学</p><h1 className="text-2xl font-black">解説を読む</h1><p>文章と図で、物質の性質を理解しよう。</p></header>
           <button className="lesson-topic-entry" onClick={() => setScr("metal-explanation")}><span><strong>金属と非金属</strong><small>図解付きページ／金属光沢・電気・熱・展性と延性</small></span><span aria-hidden="true">→</span></button>
           <button className="lesson-topic-entry" onClick={() => setScr("density-explanation")}><span><strong>密度</strong><small>全9ページの漫画／質量・体積・計算・浮くと沈む</small></span><span aria-hidden="true">→</span></button>
+          <button className="lesson-topic-entry" onClick={() => setScr("organic-explanation")}><span><strong>有機物と無機物</strong><small>全5ページの漫画／加熱・燃焼・炭素と分類</small></span><span aria-hidden="true">→</span></button>
           <p className="text-sm text-slate-600">ほかのテーマは順次制作します。</p>
         </C>
       </Main>
@@ -1584,7 +1587,8 @@ function ScienceApp() {
               <p className="text-sm muted">10月15日更新／アプリでの公開準備中</p>
             </article>
             <article><h2>密度 <span className="explanation-state">漫画・テスト公開</span></h2><p>質量・体積から計算・浮沈・気体まで、全9ページ。</p><Btn onClick={() => setScr("density-explanation")}>密度の漫画を読む</Btn></article>
-            {["有機物と無機物", "気体の性質と集め方", "溶けるしくみ", "純粋な物質と混合物", "溶解度と再結晶", "状態変化と温度", "混合物の分け方"].map((title) => (
+            <article><h2>有機物と無機物 <span className="explanation-state">漫画・テスト公開</span></h2><p>白い粉の比較・砂糖の加熱と燃焼・分類と例外を全5ページで解説。</p><Btn onClick={() => setScr("organic-explanation")}>有機物と無機物の漫画を読む</Btn></article>
+            {["気体の性質と集め方", "溶けるしくみ", "純粋な物質と混合物", "溶解度と再結晶", "状態変化と温度", "混合物の分け方"].map((title) => (
               <article key={title}>
                 <h2>{title} <span className="explanation-state is-planned">制作準備中</span></h2>
                 <p className="text-sm muted">シナリオ初稿作成済み／漫画はこれから制作します。</p>
@@ -1620,7 +1624,7 @@ function ScienceApp() {
               </button>
               <button className="home-entry home-entry-explanation" onClick={() => setScr("explanations")}>
                 <span className="home-entry-icon" aria-hidden="true">📖</span>
-                <span><strong>解説を読む</strong><small>密度の漫画・金属と非金属の図解<br />文章と図で理解を深める</small></span>
+                <span><strong>解説を読む</strong><small>有機物と無機物・密度の漫画と金属の図解<br />文章と図で理解を深める</small></span>
                 <span aria-hidden="true">→</span>
               </button>
               <button className="home-entry home-entry-records" onClick={() => setScr("records")}>
@@ -1641,6 +1645,7 @@ function ScienceApp() {
           </section>
           <section className="home-explanation-updates" aria-labelledby="home-updates-heading">
             <div className="home-updates-heading"><h2 id="home-updates-heading">解説の更新情報</h2><button onClick={() => setScr("explanation-updates")}>一覧を見る →</button></div>
+            <button className="home-update-item" onClick={() => setScr("organic-explanation")}><strong>有機物と無機物 <span className="explanation-state">漫画5ページを追加</span></strong><span>10月17日・中1 化学／結晶修正版・目次・拡大表示付き</span></button>
             <button className="home-update-item" onClick={() => setScr("density-explanation")}><strong>密度 <span className="explanation-state">漫画9ページを追加</span></strong><span>10月16日・中1 化学／目次・拡大表示付き</span></button>
             <button className="home-update-item" onClick={() => setScr("metal-explanation")}>
               <strong>金属と非金属 <span className="explanation-state">図解ページを追加</span></strong>
@@ -1958,6 +1963,7 @@ function ScienceApp() {
                 </div>
                 {!a.correct && <p className="text-sm"><ScienceText>{a.explanation}</ScienceText></p>}
                 {a.grade === "中1" && a.field === "化学" && a.level === "A" && a.no === 3 && <Btn onClick={() => setScr("density-explanation")}>密度の漫画で確かめる</Btn>}
+                {a.grade === "中1" && a.field === "化学" && ((a.level === "A" && [4,5].includes(a.no)) || (a.level === "B" && a.no === 1)) && <Btn onClick={() => setScr("organic-explanation")}>有機物と無機物の漫画で確かめる</Btn>}
               </div>
             ))}
           </div>
