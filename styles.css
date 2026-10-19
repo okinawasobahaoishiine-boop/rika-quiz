@@ -264,3 +264,57 @@ html, body, #root { background-color:#f1f6f8; opacity:1; }
   .home-links .app-btn { font-size:11px; }
   .home-entry-records strong { font-size:21px; }
 }
+
+/* Theme reader: summary/comic views share the existing app navigation. */
+.lesson-reader {text-align:left;min-width:0;color:#183440;--reader-offset:150px}
+.reader-heading p {font-size:13px;color:#536975}
+.reader-heading h1 {font-size:clamp(25px,6vw,34px);font-weight:850;line-height:1.5;margin:8px 0 18px}
+.reader-toolbar {position:sticky;top:0;z-index:25;background:#f1f6f8;padding:8px 0;border-bottom:1px solid #c9d9dd}
+.reader-tabs {display:grid;grid-template-columns:1fr 1fr;border:1px solid #8caeaa;border-radius:12px;background:#fff;padding:4px;gap:4px}
+.reader-tabs button {min-height:48px;font-size:18px;font-weight:800;border-radius:8px;border-bottom:3px solid transparent}
+.reader-tabs button[aria-selected=true] {background:#08766b;color:white;border-bottom-color:#034c45}
+.lesson-reader button:focus-visible,.lesson-reader a:focus-visible,.lesson-reader select:focus-visible {outline:3px solid #bd6617;outline-offset:3px}
+.reader-return {display:block;width:100%;min-height:44px;text-align:left;font-size:14px;font-weight:750;color:#075e55;padding:8px 10px;background:#e1f2ec;border:1px solid #a7cdc0;border-radius:8px;margin:6px 0}
+.reader-tools {display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:14px 0}
+.reader-tools label {display:flex;align-items:center;gap:8px;font-size:13px;max-width:100%}
+.reader-tools select {min-height:44px;min-width:0;max-width:210px;border:1px solid #a9bdc3;border-radius:8px;padding:8px;background:#fff}
+.reader-summary-section {scroll-margin-top:var(--reader-offset);background:#fff;border:1px solid #d1e0e0;border-radius:14px;padding:18px;margin-bottom:20px;overflow-wrap:anywhere}
+.reader-summary-section h2 {font-size:22px;line-height:1.5;font-weight:800;margin:0 0 14px}
+.reader-summary-section p {font-size:16px;line-height:1.85;margin:12px 0}
+.reader-summary-section table {table-layout:fixed;width:100%;border-collapse:collapse;font-size:15px;line-height:1.7;margin:14px 0}
+.reader-summary-section caption {font-size:14px;text-align:left;font-weight:750;padding-bottom:8px}
+.reader-summary-section th,.reader-summary-section td {border:1px solid #c9d9d9;padding:10px 8px;vertical-align:top;overflow-wrap:anywhere}
+.reader-summary-section th {background:#edf6f3;text-align:left;font-weight:750}
+.reader-key {background:#edf8f2;border-left:4px solid #14816b;padding:12px;border-radius:0 8px 8px 0}
+.reader-comic-link {display:block;width:100%;border:1px solid #8ebbad;border-radius:10px;background:#eff8f4;color:#075e55;padding:12px;min-height:48px;font-size:15px;font-weight:750;text-align:left;margin-top:16px}
+.reader-comic-link small {white-space:nowrap;font-size:12px;display:inline-block}
+.reader-text-link {display:inline-block;min-height:44px;color:#075e55;font-size:14px;text-decoration:underline;text-underline-offset:4px;text-align:left;padding:10px 0}
+.reader-flow {display:flex;flex-direction:column;align-items:center;gap:6px;background:#f7faf9;padding:14px;border-radius:10px;margin:12px 0}
+.reader-flow div {width:100%;padding:12px;border:1px solid #b9d5cb;background:#fff;text-align:center;border-radius:8px;font-weight:700}
+.reader-flow>span {color:#08766b;font-size:20px;line-height:1}
+.reader-equal-volume {display:flex;justify-content:center;gap:28px;padding:18px 0}
+.reader-equal-volume>div {width:96px;text-align:center}
+.reader-equal-volume span {display:flex;align-items:center;justify-content:center;height:76px;border:2px solid #599c9b;background:#e7f4f1;box-shadow:6px -5px 0 #c9e1db}
+.reader-equal-volume>div:last-child span {background:#a9d5ca}
+.reader-equal-volume strong {display:block;margin-top:12px}
+.reader-formula {display:flex;align-items:center;justify-content:center;gap:12px;padding:16px 6px;background:#f3f8f6;border-radius:10px;font-size:20px;font-weight:750;margin:12px 0}
+.reader-fraction {display:inline-flex;flex-direction:column;align-items:stretch;text-align:center;vertical-align:middle}
+.reader-fraction>span {padding:3px 12px}
+.reader-fraction>span:first-child {border-bottom:2px solid currentColor}
+.reader-properties {display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.reader-properties>div {padding:10px;background:#f2f7f5;border-radius:8px;min-width:0}
+.reader-properties dt {font-size:12px;color:#526970;font-weight:700}
+.reader-properties dd {margin:4px 0 0;font-size:15px;font-weight:650}
+.reader-caption {font-size:13px!important;color:#536975}
+.reader-gas-table a {display:inline-block;min-height:44px;text-decoration:underline;color:#075e55}
+.reader-safety {font-size:14px;line-height:1.8;padding:14px;background:#fff5e2;border-radius:10px}
+.reader-comic-panel .lesson-heading,.reader-comic-panel #organic-summary {display:none}
+.reader-comic-panel .lesson-toc {display:none}
+.reader-comic-panel .lesson-section {scroll-margin-top:var(--reader-offset)}
+.reader-comic-panel .lesson-back-to-toc {display:none}
+.reader-page-number {display:none}
+.reader-comic-panel .reader-page-number {display:block;font-size:13px;color:#08766b;margin-bottom:6px}
+.reader-comic-hint {font-size:14px;color:#536975;line-height:1.8}
+.reader-comic-end {margin:24px 0}
+.lesson-reader [hidden] {display:none!important}
+@media(max-width:360px) {.reader-summary-section{padding:14px 12px}.reader-summary-section table{font-size:14px}.reader-summary-section th,.reader-summary-section td{padding:8px 6px}.reader-return{font-size:13px}.reader-tools select{max-width:180px}}
