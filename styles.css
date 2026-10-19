@@ -318,3 +318,28 @@ html, body, #root { background-color:#f1f6f8; opacity:1; }
 .reader-comic-end {margin:24px 0}
 .lesson-reader [hidden] {display:none!important}
 @media(max-width:360px) {.reader-summary-section{padding:14px 12px}.reader-summary-section table{font-size:14px}.reader-summary-section th,.reader-summary-section td{padding:8px 6px}.reader-return{font-size:13px}.reader-tools select{max-width:180px}}
+
+/* Start directly below the chosen A/B problem, inside that subject card. */
+.solve-mode-options {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+.inline-start-panel {margin-top:14px;padding:14px;gap:10px;background:#fff;border-color:#b7d9df}
+.inline-start-panel header p {margin:3px 0 0;color:#526777;font-size:13px}
+.inline-start-panel h3 {font-size:16px;line-height:1.5}
+.inline-solve-mode>b {font-size:14px}
+.inline-solve-mode .app-btn {padding:10px 4px;min-height:46px;font-size:14px}
+.inline-mode-help {font-size:12px;line-height:1.6;margin-top:6px;color:#526777}
+.inline-order-options>summary {display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;min-height:36px;padding:4px 0}
+.inline-order-options>summary span {font-size:12px;color:#075985;text-decoration:underline;text-underline-offset:3px}
+.inline-order-options>div {margin:6px 0}
+.inline-unit-records {font-size:13px}
+.one-answer-start {width:100%;min-height:50px}
+.unit-picker-hint {font-size:13px;color:#526777;line-height:1.7;margin-top:8px}
+@media(max-width:360px) {.inline-start-panel{padding:10px}.inline-solve-mode .app-btn{font-size:13px}}
+
+.inline-assessment-note {font-size:12px;line-height:1.6;margin:6px 0;color:#075985;font-weight:700}
+
+.test-quota-note {border-left:3px solid #77aeb4;background:#edf7f5;padding:8px 10px;font-size:12px;line-height:1.6}
+.test-quota-note strong {font-size:13px;display:block}
+.test-quota-note p {margin:3px 0 0}
+.test-attempt-alert {padding:12px;border:1px solid #d6a863;background:#fff5df;color:#69400f;font-size:14px}
+
+.unit-picker {overflow-anchor:none}

@@ -13,6 +13,39 @@ function BackupCard() {
   );
 }
 
+function SolveModeOptions({ solveMode, setSolveMode, compact = false }) {
+  return (
+    <div className={compact ? "inline-solve-mode" : ""}>
+      <b>解き方</b>
+      {compact && <p className="inline-assessment-note">テストモードは成績に反映されます。</p>}
+      <div className="solve-mode-options" role="group" aria-label="解き方">
+        {["練習モード", "テストモード"].map((mode) => (
+          <Btn key={mode} kind={solveMode === mode ? "main" : ""} aria-pressed={solveMode === mode} onClick={() => setSolveMode(mode)}>
+            {mode}
+          </Btn>
+        ))}
+      </div>
+      <p className={compact ? "inline-mode-help" : "mt-2 text-xs text-slate-500"}>
+        {compact
+          ? solveMode === "練習モード" ? "1問ずつ正誤と解説を確認します。" : "最後にまとめて正誤と結果を確認します。"
+          : solveMode === "練習モード"
+            ? "同じ選択肢を2回タップして回答。正解は1秒後に次へ（この1秒は時間に含みません）。間違いは解説を見てタップ。点数は最初に確定した回答で決まります。"
+            : "同じ選択肢を2回タップして回答すると次へ。最後まで解いてからまとめて正誤と結果を表示します。"}
+      </p>
+    </div>
+  );
+}
+
+function TestQuotaNotice({ quota }) {
+  if (!quota?.eligible) return null;
+  return <div className="test-quota-note" role="status">
+    {quota.error ? <p>{quota.error}</p> : quota.resumable ? <><strong>開始済みのテストを再開します</strong><p>回数は追加されません。</p></> : <>
+      <strong>テスト：本日あと{quota.remaining}回</strong>
+      <p>{quota.blocked ? "本日2回受験済み。練習は利用できます。0時リセット。" : "開始時に消費。中断も1回。0時リセット。"}</p>
+    </>}
+  </div>;
+}
+
 function OneAnswerCatalog({
   grade,
   setGrade,
@@ -20,6 +53,9 @@ function OneAnswerCatalog({
   setField,
   level,
   setLevel,
+  solveMode,
+  testQuota,
+  setSolveMode,
   unitRecs,
   order,
   setOrder,
@@ -31,8 +67,28 @@ function OneAnswerCatalog({
   );
   const count = (f, l) =>
     data.filter((q) => q.grade === selectedGrade && q.field === f && q.level === l).length;
+  const pickerRef = React.useRef(null);
+  React.useEffect(() => {
+    if (!available.length) return;
+    let settledFrame;
+    const frame = requestAnimationFrame(() => { settledFrame = requestAnimationFrame(() => {
+      const card = pickerRef.current?.querySelector(".subject-card.is-selected");
+      const actions = card?.querySelector(".subject-actions");
+      const start = card?.querySelector(".one-answer-start");
+      if (!actions || !start) return;
+      const top = actions.getBoundingClientRect().top;
+      const end = start.getBoundingClientRect().bottom;
+      const bottom = document.querySelector(".science-bottom-nav")?.getBoundingClientRect().top || innerHeight;
+      if (end > bottom - 12) {
+        window.scrollBy({ top: end - bottom + 12, behavior: "instant" });
+      } else if (top < 12) {
+        window.scrollBy({ top: Math.max(top - 12, end - bottom + 12), behavior: "instant" });
+      }
+    }); });
+    return () => {cancelAnimationFrame(frame);if(settledFrame)cancelAnimationFrame(settledFrame);};
+  }, [selectedGrade, field, level, solveMode]);
   return (
-    <div className="unit-picker">
+    <div className="unit-picker" ref={pickerRef}>
       <section>
         <h3>1. 学年を選ぶ</h3>
         <div className="grade-tabs" role="group" aria-label="学年">
@@ -54,6 +110,7 @@ function OneAnswerCatalog({
       </section>
       <section>
         <h3>2. 分野と問題を選ぶ</h3>
+        <p className="unit-picker-hint">A問題かB問題を選ぶと、その下に解き方とスタートが表示されます。</p>
         <div className="subject-grid">
           {fieldNames.map((f, index) => (
             <div key={f} className={`subject-card ${field === f ? "is-selected" : ""}`}>
@@ -88,41 +145,32 @@ function OneAnswerCatalog({
                   );
                 })}
               </div>
+              {field === f && available.length > 0 && (
+                <section className="selection-summary inline-start-panel" aria-label="選んだ問題の解き方とスタート">
+                  <header aria-live="polite">
+                    <h3>{selectedGrade}・{field}・{level}問題</h3>
+                    <p>{available.length}問に取り組みます</p>
+                  </header>
+                  <SolveModeOptions solveMode={solveMode} setSolveMode={setSolveMode} compact />
+                  <TestQuotaNotice quota={testQuota} />
+                  <details className="inline-order-options">
+                    <summary>出題順：{order === "number" ? "問題番号順" : "ランダム"} <span>変更</span></summary>
+                    <B items={["問題番号順", "ランダム"]} value={order === "number" ? "問題番号順" : "ランダム"} set={(value) => setOrder(value === "問題番号順" ? "number" : "random")} />
+                  </details>
+                  <Btn className="one-answer-start" onClick={begin} disabled={solveMode==="テストモード" && testQuota?.blocked} kind="main">{solveMode==="テストモード" && testQuota?.blocked ? "今日はこのテストを受験できません" : "この内容でスタート"}</Btn>
+                  {unitRecs.length > 0 && (
+                    <details className="inline-unit-records">
+                      <summary>この単元の学習記録を見る</summary>
+                      <Row records={unitRecs} />
+                    </details>
+                  )}
+                </section>
+              )}
             </div>
           ))}
         </div>
       </section>
-      <section className="selection-summary" aria-live="polite">
-        {available.length ? (
-          <>
-            <div>
-              <h3>
-                {selectedGrade}・{field}・{level}問題
-              </h3>
-              <p>{available.length}問に取り組みます</p>
-            </div>
-            <div className="order-options">
-              <span>出題順</span>
-              <B
-                items={["問題番号順", "ランダム"]}
-                value={order === "number" ? "問題番号順" : "ランダム"}
-                set={(value) => setOrder(value === "問題番号順" ? "number" : "random")}
-              />
-            </div>
-            <Btn onClick={begin} kind="main">
-              この内容でスタート
-            </Btn>
-            {unitRecs.length > 0 && (
-              <details>
-                <summary>この単元の学習記録を見る</summary>
-                <Row records={unitRecs} />
-              </details>
-            )}
-          </>
-        ) : (
-          <p>上の「A問題」か「B問題」を選ぶと、ここから始められます。</p>
-        )}
-      </section>
+
     </div>
   );
 }
@@ -184,6 +232,7 @@ function Catalog({
   quizType,
   setQuizType,
   solveMode,
+  testQuota,
   setSolveMode,
   grade,
   setGrade,
@@ -235,7 +284,7 @@ function Catalog({
       <div id="questions" className="scroll-mt-4">
         <b>問題を選ぶ</b>
         <p className="text-xs text-slate-500">
-          問題タイプと解き方を選び、解く分野を決めてから始めます。
+          {quizType === "一問一答" ? "問題を選び、その下で解き方を決めて始めます。" : "問題タイプと解き方を選び、解く分野を決めてから始めます。"}
         </p>
       </div>
       <div>
@@ -276,28 +325,7 @@ function Catalog({
           </Btn>
         </div>
       </div>
-      <div>
-        <b>解き方</b>
-        <div className="grid grid-cols-2 gap-2 mt-2">
-          <Btn
-            kind={solveMode === "練習モード" ? "main" : ""}
-            onClick={() => setSolveMode("練習モード")}
-          >
-            練習モード
-          </Btn>
-          <Btn
-            kind={solveMode === "テストモード" ? "main" : ""}
-            onClick={() => setSolveMode("テストモード")}
-          >
-            テストモード
-          </Btn>
-        </div>
-        <p className="mt-2 text-xs text-slate-500">
-          {solveMode === "練習モード"
-            ? "同じ選択肢を2回タップして回答。正解は1秒後に次へ（この1秒は時間に含みません）。間違いは解説を見てタップ。点数は最初に確定した回答で決まります。"
-            : "同じ選択肢を2回タップして回答すると次へ。最後まで解いてからまとめて正誤と結果を表示します。"}
-        </p>
-      </div>
+      {quizType !== "一問一答" && <SolveModeOptions solveMode={solveMode} setSolveMode={setSolveMode} />}
       {quizType === "一問一答" ? (
         <OneAnswerCatalog
           {...{
@@ -307,6 +335,9 @@ function Catalog({
             setField,
             level,
             setLevel,
+            solveMode,
+            testQuota,
+            setSolveMode,
             unitRecs,
             order,
             setOrder,
@@ -1084,6 +1115,23 @@ function ScienceApp() {
       detail: "この端末の履歴もそのまま保存されます。",
     });
   const [storageWarning, setStorageWarning] = useState("");
+  const [quotaRevision, setQuotaRevision] = useState(0);
+  const [startingTest, setStartingTest] = useState(false);
+  const [attemptMessage, setAttemptMessage] = useState("");
+  const startingTestRef = React.useRef(false);
+  const testAttemptId = React.useRef(typeof restored?.testAttemptId === "string" && restored.testAttemptId ? restored.testAttemptId : randomId());
+  useEffect(() => {
+    let timer;
+    const refresh=()=>setQuotaRevision(v=>v+1);
+    const storage=event=>{if([TEST_ATTEMPT_KEY,S,SCODE,N].includes(event.key)||event.key===null)refresh();};
+    const schedule=()=>{
+      const next=Date.parse(testAttemptDay()+"T00:00:00+09:00")+86400000;
+      timer=setTimeout(()=>{refresh();schedule();},Math.max(30,next-Date.now()+30));
+    };
+    schedule();
+    window.addEventListener("storage",storage);window.addEventListener("focus",refresh);document.addEventListener("visibilitychange",refresh);
+    return ()=>{clearTimeout(timer);window.removeEventListener("storage",storage);window.removeEventListener("focus",refresh);document.removeEventListener("visibilitychange",refresh);};
+  }, []);
   const elapsedMs = React.useRef(restored?.elapsedMs || 0);
   const tickAnchor = React.useRef(null);
   const sessionId = React.useRef(restored?.sessionId || Date.now());
@@ -1094,7 +1142,7 @@ function ScienceApp() {
   const flushClock = () => { elapsedMs.current = clockRead(); tickAnchor.current = null; return elapsedMs.current; };
   const resetAttempt = () => {
     flushClock(); elapsedMs.current = 0; correctRemaining.current = 1000; correctDeadline.current = null;
-    sessionId.current = Date.now(); setSelected("");
+    sessionId.current = Date.now(); testAttemptId.current = randomId(); setAttemptMessage(""); setSelected("");
   };
   useEffect(() => {
     if (!["density-explanation","organic-explanation","gases-explanation"].includes(scr)) window.scrollTo({ top: 0, behavior: "instant" });
@@ -1249,6 +1297,8 @@ function ScienceApp() {
       [scr],
     );
 
+  const testQuota = useMemo(() => testAttemptStatus(testAttemptUnit(quizType,grade,field,level),new Date(),null,scr==="ready"?testAttemptId.current:""), [quizType,grade,field,level,quotaRevision,records,name,scr]);
+
   useEffect(() => {
     if (scr !== "quiz" || !start || correctFeedback) return;
     tickAnchor.current = performance.now();
@@ -1265,7 +1315,7 @@ function ScienceApp() {
       }
       const remaining = correctDeadline.current === null ? correctRemaining.current : Math.max(0, correctDeadline.current - performance.now());
       save(QUIZ_SESSION_KEY, { version: 1, owner: savedName(), screen: scr, sessionId: sessionId.current,
-        quizType, solveMode, descLevels, grade, field, level, qs, i, ans, selected, firstAnswers: firstAnswers.current,
+        quizType, solveMode, descLevels, grade, field, level, qs, i, ans, selected, testAttemptId:testAttemptId.current, firstAnswers: firstAnswers.current,
         hist, wrongs, order, elapsedMs: clockRead(), finalSec, reviewMode, dailyMode, result,
         correctRemainingMs: remaining });
     } catch {
@@ -1353,6 +1403,21 @@ function ScienceApp() {
         });
     }
   };
+  const startQuiz = async () => {
+    if (startingTestRef.current) return;
+    startingTestRef.current=true;setStartingTest(true);setAttemptMessage("");
+    try {
+      const limitedUnit=solveMode==="テストモード"&&!reviewMode&&!dailyMode ? testAttemptUnit(quizType,grade,field,level) : "";
+      if(limitedUnit) {
+        const reserved=await reserveTestAttempt(limitedUnit,testAttemptId.current,sessionId.current);
+        setQuotaRevision(v=>v+1);
+        if(!reserved.ok){setAttemptMessage(reserved.message);return;}
+      }
+      elapsedMs.current=0;tickAnchor.current=null;
+      setSelected("");setSec(0);setFinalSec(0);setStart(Date.now());setScr("quiz");
+    } finally {startingTestRef.current=false;setStartingTest(false);}
+  };
+
   const begin = () => {
     if (!filtered.length) {
       setScr("soon");
@@ -1680,6 +1745,7 @@ function ScienceApp() {
             quizType={quizType}
             setQuizType={setQuizType}
             solveMode={solveMode}
+            testQuota={testQuota}
             setSolveMode={setSolveMode}
             grade={grade}
             setGrade={setGrade}
@@ -1751,16 +1817,12 @@ function ScienceApp() {
               bestPerfect={bestPerfect}
               dailyMode={dailyMode}
             />
+            {solveMode==="テストモード" && !reviewMode && !dailyMode && <TestQuotaNotice quota={testQuota} />}
+            {attemptMessage && <p className="test-attempt-alert" role="alert">{attemptMessage}</p>}
             <div className="grid grid-cols-1 gap-3">
               <Btn
-                onClick={() => {
-                  elapsedMs.current = 0; tickAnchor.current = null;
-                  setSelected("");
-                  setSec(0);
-                  setFinalSec(0);
-                  setStart(Date.now());
-                  setScr("quiz");
-                }}
+                disabled={startingTest || (solveMode==="テストモード" && !reviewMode && !dailyMode && testQuota.blocked)}
+                onClick={startQuiz}
                 kind="main"
               >
                 スタート
