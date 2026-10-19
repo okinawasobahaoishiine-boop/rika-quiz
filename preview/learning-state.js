@@ -63,4 +63,65 @@ function readQuizSession() {
     return s;
   } catch { return null; }
 }
+
+// Daily limits apply only to one-answer A/B tests. Existing result scoring is unchanged.
+const TEST_ATTEMPT_KEY = scienceStorageKey("scienceQuizTestAttemptsV1");
+const TEST_ATTEMPT_LIMIT = 2;
+const testAttemptDay = (now = new Date()) => {
+  const parts = new Intl.DateTimeFormat("en-CA", {timeZone:"Asia/Tokyo",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(now);
+  return ["year","month","day"].map(type=>parts.find(p=>p.type===type).value).join("-");
+};
+const testAttemptUnit = (type, grade, field, level) =>
+  type === "一問一答" && recordGrades.includes(grade) && fieldNames.includes(field) && levels.includes(level) ? grade+field+level : "";
+const testAttemptOwner = () => localStorage.getItem(SCODE) || localStorage.getItem(DID) || localStorage.getItem(N) || "local";
+function readTestAttempts() {
+  const raw = localStorage.getItem(TEST_ATTEMPT_KEY);
+  if (!raw) return {version:1,entries:[]};
+  const value = JSON.parse(raw);
+  if (value?.version !== 1 || !Array.isArray(value.entries) || value.entries.some(e=>
+    !e || typeof e.id!=="string" || !e.id || typeof e.owner!=="string" || !e.owner ||
+    typeof e.recordId!=="string" || typeof e.unit!=="string" || !ASSESSMENT_QUESTIONS.has(e.unit) ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(e.day) || !Number.isFinite(e.startedAt))) throw Error("Invalid test attempt ledger");
+  return value;
+}
+function testAttemptStatus(unit, now = new Date(), ledger = null, attemptId = "") {
+  if (!unit) return {eligible:false,remaining:2,used:0,blocked:false};
+  try {
+    const state=ledger||readTestAttempts(), owner=testAttemptOwner(), day=testAttemptDay(now);
+    const own=state.entries.filter(e=>e.owner===owner&&e.unit===unit);
+    const usedIds=new Set(own.filter(e=>e.day===day).map(e=>e.id));
+    // Import recognizable completed tests from before the start ledger was introduced.
+    // Ledger-linked results, including a test completed after midnight, are never counted twice.
+    const linked=new Set(own.map(e=>e.recordId)), name=(localStorage.getItem(N)||"").trim();
+    for(const r of asArray(load(S))) {
+      if(!r || typeof r!=="object" || !Array.isArray(r.unitScores))continue;
+      const recordName=typeof r.userName==="string"?r.userName.trim():"";
+      if(r.date===day && (!recordName||recordName===name) && !assessmentReason(r,unit) && !linked.has(String(r.id)))
+        usedIds.add("legacy:"+String(r.id));
+    }
+    const used=usedIds.size,resumable=!!attemptId&&own.some(e=>e.id===attemptId);
+    return {eligible:true,day,used,resumable,remaining:Math.max(0,TEST_ATTEMPT_LIMIT-used),blocked:used>=TEST_ATTEMPT_LIMIT&&!resumable,error:""};
+  } catch {
+    return {eligible:true,used:0,remaining:0,blocked:true,error:"テスト回数を確認できません。保存設定を確認してください。練習モードは利用できます。"};
+  }
+}
+function consumeTestAttempt(unit, id, recordId, now = new Date()) {
+  if(!unit) return {ok:true,charged:false};
+  try {
+    const state=readTestAttempts(),owner=testAttemptOwner();
+    if(state.entries.some(e=>e.owner===owner&&e.unit===unit&&e.id===id))return {ok:true,charged:false,reused:true};
+    const status=testAttemptStatus(unit,now,state);
+    if(status.blocked)return {ok:false,message:status.error||"この問題のテストは本日2回までです。練習モードは利用できます。"};
+    state.entries.push({id,recordId:String(recordId),owner,unit,day:status.day,startedAt:now.getTime()});
+    localStorage.setItem(TEST_ATTEMPT_KEY,JSON.stringify(state));
+    return {ok:true,charged:true,remaining:status.remaining-1};
+  } catch {
+    return {ok:false,message:"テスト回数を保存できませんでした。テストは開始していません。保存設定を確認してください。"};
+  }
+}
+const reserveTestAttempt = (unit,id,recordId) => {
+  const reserve=()=>consumeTestAttempt(unit,id,recordId);
+  return navigator.locks?.request ? navigator.locks.request(TEST_ATTEMPT_KEY+":lock",reserve) : Promise.resolve(reserve());
+};
+
 const INITIAL_QUIZ_SESSION = readQuizSession();
