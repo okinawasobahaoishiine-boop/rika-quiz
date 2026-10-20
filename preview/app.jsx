@@ -1671,7 +1671,7 @@ function ScienceApp() {
             <article><h2>密度 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画・テスト公開" : "漫画・公開中"}</span></h2><p>質量・体積から計算・浮沈・気体まで、全9ページ。</p><Btn onClick={() => setScr("density-explanation")}>密度の解説を読む</Btn></article>
             <article><h2>有機物と無機物 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画・テスト公開" : "漫画・公開中"}</span></h2><p>白い粉の比較・砂糖の加熱と燃焼・分類と例外を全5ページで解説。</p><Btn onClick={() => setScr("organic-explanation")}>有機物と無機物の解説を読む</Btn></article>
             <article><h2>気体の性質と集め方 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画・テスト公開" : "漫画・公開中"}</span></h2><p>酸素・窒素・二酸化炭素・水素・アンモニア。特徴と実験を全10ページで解説。</p><Btn onClick={() => setScr("gases-explanation")}>気体の解説を読む</Btn></article>
-            <article><h2>状態変化と温度 <span className="explanation-state">導入2枚・テスト公開</span></h2><p>状態変化・白い湯気と霧・質量と体積の導入。融点・沸点・温度グラフは準備中です。</p><Btn onClick={() => setScr("states-explanation")}>状態変化の導入を読む</Btn></article>
+            <article><h2>状態変化と温度 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "導入2枚・テスト公開" : "導入2枚・公開中"}</span></h2><p>状態変化・白い湯気と霧・質量と体積の導入。融点・沸点・温度グラフは準備中です。</p><Btn onClick={() => setScr("states-explanation")}>状態変化の導入を読む</Btn></article>
             {["溶けるしくみ", "純粋な物質と混合物", "溶解度と再結晶", "混合物の分け方"].map((title) => (
               <article key={title}>
                 <h2>{title} <span className="explanation-state is-planned">制作準備中</span></h2>
