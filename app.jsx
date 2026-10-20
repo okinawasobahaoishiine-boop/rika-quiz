@@ -1029,15 +1029,15 @@ const ScienceNavigation = React.createContext(null);
 
 function syncLessonLocation(screen) {
   LESSON_RESTORE_PENDING=false;
-  const topics={"density-explanation":"density","organic-explanation":"organic-inorganic","gases-explanation":"gases","metal-explanation":"metal-nonmetal"};
+  const topics={"states-explanation":"states-temperature","density-explanation":"density","organic-explanation":"organic-inorganic","gases-explanation":"gases","metal-explanation":"metal-nonmetal"};
   const url=new URL(location.href);
   if(topics[screen])url.searchParams.set("explanation",topics[screen]);else url.searchParams.delete("explanation");
-  if(/^(#density-|#organic-|#gases-|#metal-)/.test(url.hash))url.hash="";
+  if(/^(#density-|#organic-|#gases-|#states-|#metal-)/.test(url.hash))url.hash="";
   history.replaceState({...history.state,lessonReader:null},"",url.pathname+url.search+url.hash);
 }
 
 function App() {
-  const initialScreen = INITIAL_QUIZ_SESSION?.screen || ({"metal-nonmetal":"metal-explanation",density:"density-explanation","organic-inorganic":"organic-explanation",gases:"gases-explanation"}[new URLSearchParams(window.location.search).get("explanation")] || "home");
+  const initialScreen = INITIAL_QUIZ_SESSION?.screen || ({"states-temperature":"states-explanation","metal-nonmetal":"metal-explanation",density:"density-explanation","organic-inorganic":"organic-explanation",gases:"gases-explanation"}[new URLSearchParams(window.location.search).get("explanation")] || "home");
   const [scr, updateScreen] = useState(initialScreen);
   const navigation = React.useRef({ current: initialScreen, trail: INITIAL_QUIZ_SESSION ? ["home", "questions"] : [] });
   const setScr = (next) => {
@@ -1145,7 +1145,7 @@ function ScienceApp() {
     sessionId.current = Date.now(); testAttemptId.current = randomId(); setAttemptMessage(""); setSelected("");
   };
   useEffect(() => {
-    if (!["density-explanation","organic-explanation","gases-explanation"].includes(scr)) window.scrollTo({ top: 0, behavior: "instant" });
+    if (!["density-explanation","organic-explanation","gases-explanation","states-explanation"].includes(scr)) window.scrollTo({ top: 0, behavior: "instant" });
   }, [scr]);
   const syncProfile = async (user, displayName, schoolGrade) => {
     if (!sb || !user || !displayName || !schoolGrade) return;
@@ -1577,7 +1577,7 @@ function ScienceApp() {
       setScr("ready");
     };
 
-  if (scr === "profile" || (!profileSaved && !["explanations", "metal-explanation", "density-explanation", "organic-explanation", "gases-explanation", "explanation-updates"].includes(scr)))
+  if (scr === "profile" || (!profileSaved && !["explanations", "metal-explanation", "density-explanation", "organic-explanation", "gases-explanation", "states-explanation", "explanation-updates"].includes(scr)))
     return (
       <Main>
         <C>
@@ -1621,6 +1621,8 @@ function ScienceApp() {
         </C>
       </Main>
     );
+  if (scr === "states-explanation")
+    return <Main><C><LessonReader topic="states-temperature"><StatesTemperatureExplanation /></LessonReader></C></Main>;
   if (scr === "gases-explanation")
     return <Main><C><LessonReader topic="gases"><GasesExplanation /></LessonReader></C></Main>;
   if (scr === "organic-explanation")
@@ -1637,6 +1639,7 @@ function ScienceApp() {
           <button className="lesson-topic-entry" onClick={() => setScr("metal-explanation")}><span><strong>金属と非金属</strong><small>図解付きページ／金属光沢・電気・熱・展性と延性</small></span><span aria-hidden="true">→</span></button>
           <button className="lesson-topic-entry" onClick={() => setScr("density-explanation")}><span><strong>密度</strong><small>表と図のまとめ＋漫画9ページ／質量・体積・計算・浮沈</small></span><span aria-hidden="true">→</span></button>
           <button className="lesson-topic-entry" onClick={() => setScr("organic-explanation")}><span><strong>有機物と無機物</strong><small>表と図のまとめ＋漫画5ページ／加熱・燃焼・分類</small></span><span aria-hidden="true">→</span></button>
+          <button className="lesson-topic-entry" onClick={() => setScr("states-explanation")}><span><strong>状態変化と温度</strong><small>導入のみ／状態変化の図・まとめ＋漫画2ページ（融点・沸点・温度グラフは準備中）</small></span><span aria-hidden="true">→</span></button>
           <button className="lesson-topic-entry" onClick={() => setScr("gases-explanation")}><span><strong>気体の性質と集め方</strong><small>表と図のまとめ＋漫画10ページ／5種類の特徴・実験・集め方</small></span><span aria-hidden="true">→</span></button>
           <p className="text-sm text-slate-600">ほかのテーマは順次制作します。</p>
         </C>
@@ -1668,7 +1671,8 @@ function ScienceApp() {
             <article><h2>密度 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画・テスト公開" : "漫画・公開中"}</span></h2><p>質量・体積から計算・浮沈・気体まで、全9ページ。</p><Btn onClick={() => setScr("density-explanation")}>密度の解説を読む</Btn></article>
             <article><h2>有機物と無機物 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画・テスト公開" : "漫画・公開中"}</span></h2><p>白い粉の比較・砂糖の加熱と燃焼・分類と例外を全5ページで解説。</p><Btn onClick={() => setScr("organic-explanation")}>有機物と無機物の解説を読む</Btn></article>
             <article><h2>気体の性質と集め方 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画・テスト公開" : "漫画・公開中"}</span></h2><p>酸素・窒素・二酸化炭素・水素・アンモニア。特徴と実験を全10ページで解説。</p><Btn onClick={() => setScr("gases-explanation")}>気体の解説を読む</Btn></article>
-            {["溶けるしくみ", "純粋な物質と混合物", "溶解度と再結晶", "状態変化と温度", "混合物の分け方"].map((title) => (
+            <article><h2>状態変化と温度 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "導入2枚・テスト公開" : "導入2枚・公開中"}</span></h2><p>状態変化・白い湯気と霧・質量と体積の導入。融点・沸点・温度グラフは準備中です。</p><Btn onClick={() => setScr("states-explanation")}>状態変化の導入を読む</Btn></article>
+            {["溶けるしくみ", "純粋な物質と混合物", "溶解度と再結晶", "混合物の分け方"].map((title) => (
               <article key={title}>
                 <h2>{title} <span className="explanation-state is-planned">制作準備中</span></h2>
                 <p className="text-sm muted">シナリオ初稿作成済み／漫画はこれから制作します。</p>
@@ -1704,7 +1708,7 @@ function ScienceApp() {
               </button>
               <button className="home-entry home-entry-explanation" onClick={() => setScr("explanations")}>
                 <span className="home-entry-icon" aria-hidden="true">📖</span>
-                <span><strong>解説を読む</strong><small>密度・有機物・気体のまとめと漫画、金属の図解<br />文章と図で理解を深める</small></span>
+                <span><strong>解説を読む</strong><small>密度・有機物・気体・状態変化の導入、金属の図解<br />文章と図で理解を深める</small></span>
                 <span aria-hidden="true">→</span>
               </button>
               <button className="home-entry home-entry-records" onClick={() => setScr("records")}>
@@ -1725,6 +1729,7 @@ function ScienceApp() {
           </section>
           <section className="home-explanation-updates" aria-labelledby="home-updates-heading">
             <div className="home-updates-heading"><h2 id="home-updates-heading">解説の更新情報</h2><button onClick={() => setScr("explanation-updates")}>一覧を見る →</button></div>
+            <button className="home-update-item" onClick={() => setScr("states-explanation")}><strong>状態変化と温度 <span className="explanation-state">導入漫画2ページを追加</span></strong><span>10月20日・中1 化学／まとめの図・湯気と白い霧・質量と体積</span></button>
             <button className="home-update-item" onClick={() => setScr("gases-explanation")}><strong>気体の性質と集め方 <span className="explanation-state">漫画10ページを追加</span></strong><span>10月19日・中1 化学／アンモニア噴水・目次・拡大表示付き</span></button>
             <button className="home-update-item" onClick={() => setScr("organic-explanation")}><strong>有機物と無機物 <span className="explanation-state">漫画5ページを追加</span></strong><span>10月17日・中1 化学／結晶修正版・目次・拡大表示付き</span></button>
             <button className="home-update-item" onClick={() => setScr("density-explanation")}><strong>密度 <span className="explanation-state">漫画9ページを追加</span></strong><span>10月16日・中1 化学／目次・拡大表示付き</span></button>
@@ -2040,6 +2045,7 @@ function ScienceApp() {
                   正しい答え：<b className="text-green-700"><ScienceText>{a.answer}</ScienceText></b>
                 </div>
                 {!a.correct && <p className="text-sm"><ScienceText>{a.explanation}</ScienceText></p>}
+                {a.grade === "中1" && a.field === "化学" && STATES_INTRO_QUESTION_SECTIONS[a.level+"-"+a.no] && <Btn onClick={() => {setScr("states-explanation");const url=new URL(location.href);url.hash="states-summary-"+STATES_INTRO_QUESTION_SECTIONS[a.level+"-"+a.no];history.replaceState(history.state,"",url.pathname+url.search+url.hash);}}>状態変化の導入解説で確かめる</Btn>}
                 {a.grade === "中1" && a.field === "化学" && ((a.level === "A" && a.no >= 6 && a.no <= 13) || (a.level === "B" && a.no >= 6 && a.no <= 16)) && <Btn onClick={() => setScr("gases-explanation")}>気体の解説で確かめる</Btn>}
                 {a.grade === "中1" && a.field === "化学" && a.level === "A" && a.no === 3 && <Btn onClick={() => setScr("density-explanation")}>密度の解説で確かめる</Btn>}
                 {a.grade === "中1" && a.field === "化学" && ((a.level === "A" && [4,5].includes(a.no)) || (a.level === "B" && a.no === 1)) && <Btn onClick={() => setScr("organic-explanation")}>有機物と無機物の解説で確かめる</Btn>}
@@ -2107,7 +2113,7 @@ function Main({ children, className = "" }) {
       <nav className="science-bottom-nav" aria-label="画面下の移動ボタン">
         {SCIENCE_IS_PREVIEW && <p className="science-preview-nav-label">テスト版・本番の記録には反映されません</p>}
         <div className="science-bottom-nav-inner">
-          <Btn kind="main" onClick={navigation.goBack} disabled={navigation.scr === "home"}>{["density-explanation","organic-explanation","gases-explanation"].includes(navigation.scr) ? (navigation.previousScreen==="result"?"← 結果へ":navigation.previousScreen==="explanations"?"← 解説一覧へ":navigation.previousScreen==="explanation-updates"?"← 更新情報へ":"← ホームへ") : "← 戻る"}</Btn>
+          <Btn kind="main" onClick={navigation.goBack} disabled={navigation.scr === "home"}>{["density-explanation","organic-explanation","gases-explanation","states-explanation"].includes(navigation.scr) ? (navigation.previousScreen==="result"?"← 結果へ":navigation.previousScreen==="explanations"?"← 解説一覧へ":navigation.previousScreen==="explanation-updates"?"← 更新情報へ":"← ホームへ") : "← 戻る"}</Btn>
           <Btn onClick={navigation.goHome} disabled={navigation.scr === "home"}>理科ホーム</Btn>
         </div>
       </nav>

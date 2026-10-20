@@ -4,6 +4,7 @@ let LESSON_RESTORE_PENDING = performance.getEntriesByType("navigation")[0]?.type
 const lessonRead = (store, key, fallback) => { try { return JSON.parse(store.getItem(scienceStorageKey(key))) || fallback; } catch { return fallback; } };
 const lessonWrite = (store, key, value) => { try { store.setItem(scienceStorageKey(key), JSON.stringify(value)); return true; } catch { return false; } };
 const LESSON_TOPICS = {
+ "states-temperature": {title:"状態変化と温度",prefix:"states",pages:STATES_COMIC_PAGES,Summary:StatesTemperatureSummary,description:"導入：状態変化・水蒸気と湯気・質量と体積（漫画2ページ）。融点・沸点・温度グラフは準備中です。",sections:[["changes","6方向の状態変化"],["sublimation","昇華・白い霧"],["steam","水蒸気と湯気"],["mass-volume","質量と体積"]]},
  density: {title:"密度", prefix:"density", pages:DENSITY_COMIC_PAGES, sections:[["meaning","密度・質量・重さ"],["calculate","密度の計算"],["measure","体積の測り方"],["float","浮く・沈む"],["gas","気体の密度"]]},
  "organic-inorganic": {title:"有機物と無機物",prefix:"organic",pages:ORGANIC_COMIC_PAGES,sections:[["classification","有機物と無機物"],["heating","砂糖の加熱"],["combustion","燃焼でできる物質"],["exceptions","分類の例外"],["mistakes","間違えやすいこと"]]},
  gases: {title:"気体の性質と集め方",prefix:"gases",pages:GASES_COMIC_PAGES,sections:[["compare","5種類を比較"],["oxygen","酸素"],["nitrogen","窒素"],["carbon-dioxide","二酸化炭素"],["hydrogen","水素"],["ammonia","アンモニア"],["collect","集め方の選び方"]]}
@@ -162,7 +163,7 @@ function LessonReader({topic,children}) {
   navigate({mode:"comic",target:config.prefix+"-page-"+page,restore:false,returnTo:{id,title}});
  };
  const backSummary=()=>navigate({mode:"summary",target:null,restore:true,returnTo:null});
- const Summary=topic==="density"?DensitySummary:topic==="gases"?GasesSummary:OrganicSummary;
+ const Summary=config.Summary || (topic==="density"?DensitySummary:topic==="gases"?GasesSummary:OrganicSummary);
  const resume=resumePoints.current[view.mode];
  const jumpTo=id=>{
   const el=document.getElementById(id);if(!el)return;
@@ -171,7 +172,7 @@ function LessonReader({topic,children}) {
   history.replaceState(history.state,"",location.pathname+location.search+"#"+id);
  };
  return <article ref={root} className={"lesson-reader reader-"+config.prefix}>
-  <header className="reader-heading"><p>中学1年・化学 ／ 身のまわりの物質</p><h1>{config.title}</h1></header>
+  <header className="reader-heading"><p>中学1年・化学 ／ 身のまわりの物質</p><h1>{config.title}</h1>{config.description&&<p className="reader-scope">{config.description}</p>}</header>
   <div ref={bar} className="reader-toolbar">
    <div className="reader-tabs" role="tablist" aria-label="解説の表示方法">{[["summary","まとめ"],["comic","漫画"]].map(([mode,label])=><button key={mode} id={config.prefix+"-tab-"+mode} type="button" role="tab" aria-selected={view.mode===mode} aria-controls={config.prefix+"-panel-"+mode} tabIndex={view.mode===mode?0:-1} onClick={()=>select(mode)} onKeyDown={event=>{if(["ArrowLeft","ArrowRight","Home","End"].includes(event.key)){event.preventDefault();const next=event.key==="Home"?"summary":event.key==="End"?"comic":mode==="summary"?"comic":"summary";select(next);document.getElementById(config.prefix+"-tab-"+next)?.focus({preventScroll:true});}}}>{label}</button>)}</div>
    {view.mode==="comic"&&view.returnTo&&<button className="reader-return" onClick={backSummary}>← まとめの「{view.returnTo.title}」に戻る</button>}
