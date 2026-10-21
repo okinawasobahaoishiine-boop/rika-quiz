@@ -346,3 +346,5 @@ html, body, #root { background-color:#f1f6f8; opacity:1; }
 
 /* State-change introductory summary: pale backgrounds and horizontal labels. */
 .reader-scope{line-height:1.7;color:#475569;font-size:.92rem}.states-figure{margin:16px 0;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:8px}.states-figure svg{display:block;width:100%;height:auto}.states-figure figcaption{font-size:.85rem;line-height:1.7;margin-top:8px}.states-heat{color:#b73333;margin-right:16px}.states-cool{color:#226fc0}.states-figure:first-of-type{margin-inline:-8px;width:calc(100% + 16px);box-sizing:border-box}.states-triangle svg text{font-family:inherit}.states-lesson{background:#fff}
+
+.states-heating-figure svg{width:100%;height:auto;display:block}.states-phase-icon{width:72px;max-width:100%;height:62px;display:block;margin:0 auto 4px}.states-phase-table small{font-weight:400}.states-phase-table td,.states-phase-table th{overflow-wrap:anywhere}

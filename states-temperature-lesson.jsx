@@ -1,9 +1,11 @@
-// Adopted introductory pages only. Full melting/boiling-point lessons remain unpublished.
+// Adopted pages: introductory pair, straight heating curve, evaporation versus boiling.
 const STATES_COMIC_PAGES = [
  ["state-change-triangle-01-v4.png","ひと目でわかる！ 物質の状態変化"],
- ["state-change-mass-volume-02.png","体積が変わっても、質量は同じ"]
+ ["state-change-mass-volume-02.png","体積が変わっても、質量は同じ"],
+ ["state-change-heating-curve-03-v2.png","水の状態変化と温度"],
+ ["state-change-evaporation-boiling-04.png","蒸発と沸騰の違い"]
 ];
-const STATES_INTRO_QUESTION_SECTIONS = {"A-24":"changes","B-21":"changes","B-22":"changes","B-24":"mass-volume","B-25":"mass-volume"};
+const STATES_INTRO_QUESTION_SECTIONS = {"A-27":"evaporation","A-28":"evaporation","A-25":"melting","A-26":"boiling","B-29":"heating","A-24":"changes","B-21":"changes","B-22":"changes","B-24":"mass-volume","B-25":"mass-volume"};
 function StatesTriangle() {
  return <figure className="states-figure">
   <svg className="states-diagram" viewBox="0 0 640 580" role="img" aria-labelledby="states-triangle-title states-triangle-desc">
@@ -56,6 +58,35 @@ function StatesDryIceDiagram() {
   <figcaption>白い霧と、見えない二酸化炭素の気体は別。図の破線は説明記号で、気体の見た目ではありません。</figcaption>
  </figure>;
 }
+
+function StatesHeatingGraph() {
+ return <figure className="states-figure states-heating-figure">
+  <svg className="states-heating-graph" viewBox="0 0 640 420" role="img" aria-labelledby="states-heat-title states-heat-desc">
+   <title id="states-heat-title">純粋な水・約1気圧の加熱グラフ（模式図）</title>
+   <desc id="states-heat-desc">横軸は加熱時間、縦軸は温度。A固体は上昇、B固体と液体は約0℃で水平、C液体は上昇、D液体と気体は約100℃で水平、E気体は再び上昇。一本の折れ線の5区間。</desc>
+   <defs><marker id="states-axis-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#344b59"/></marker></defs>
+   <path d="M92 350V28 M92 350H616" fill="none" stroke="#344b59" strokeWidth="3" markerEnd="url(#states-axis-arrow)"/>
+   <g stroke="#a3b6c1" strokeDasharray="7 7"><path d="M92 250H610"/><path d="M92 100H610"/></g>
+   <g fontSize="28" fill="#183440"><text x="5" y="27">温度</text><text x="5" y="59">（℃）</text><text x="7" y="260">約0</text><text x="0" y="110">約100</text><text x="430" y="399">加熱時間 →</text></g>
+   <g fill="#e7f3fa"><rect x="180" y="233" width="110" height="34"/><rect x="410" y="83" width="100" height="34"/></g>
+   <polyline data-heating-curve="A-B-C-D-E" points="92,330 180,250 290,250 410,100 510,100 598,35" fill="none" stroke="#dc354c" strokeWidth="6" strokeLinejoin="miter" strokeLinecap="butt"/>
+   <g fontSize="32" fontWeight="800" fill="#183440" textAnchor="middle"><text x="127" y="278">A</text><text x="235" y="222">B</text><text x="340" y="156">C</text><text x="460" y="72">D</text><text x="559" y="35">E</text></g>
+  </svg>
+  <figcaption><strong>純粋な水・約1気圧の模式図</strong>。時間の長さや傾きは実測値ではありません。気体になった後の加熱も含めた図で、実験手順ではありません。</figcaption>
+ </figure>;
+}
+function StatesPhaseIcon({phase}) {
+ const liquid=["B","C","D"].includes(phase);
+ return <svg className="states-phase-icon" viewBox="0 0 100 86" aria-hidden="true">
+  {liquid&&<path d="M18 46H82V76H18Z" fill="#e0f4ff"/>}
+  <path d="M16 12V78H84V12 M16 12H84" fill="none" stroke="#88aabd" strokeWidth="2" strokeDasharray={phase==="E"?"5 4":undefined}/>
+  {["A","B"].includes(phase)&&<g fill="#e5f4ff" stroke="#729db3" strokeWidth="2"><path d={phase==="B"?"M29 30H51V57H29Z M53 33H74V58H53Z":"M26 47H48V73H26Z M52 44H75V73H52Z"}/></g>}
+  {liquid&&<path d="M18 46H82" fill="none" stroke="#4babc9" strokeWidth="2"/>}
+  {phase==="D"&&<g fill="white" stroke="#4babc9"><circle cx="38" cy="58" r="6"/><circle cx="63" cy="65" r="5"/><circle cx="54" cy="48" r="4"/></g>}
+  {phase==="E"&&<text x="50" y="46" textAnchor="middle" fontSize="13" fill="#42667a">見えない</text>}
+ </svg>;
+}
+
 function StatesTemperatureSummary({openComic}) {
  return <>
   <LessonSummarySection id="states-summary-changes" title="三角形で状態変化を整理" page={1} openComic={openComic}>
@@ -83,14 +114,49 @@ function StatesTemperatureSummary({openComic}) {
    <p className="reader-key">物質が外へ出入りしなければ、状態変化で<strong>質量は変わりません。</strong>体積は変わります。</p>
    <p>氷が水になると、体積は小さくなります。逆に、水が凍って氷になると体積は大きくなります。すべての物質が水と同じ変わり方をするわけではありません。</p>
   </LessonSummarySection>
+
+  <LessonSummarySection id="states-summary-melting" title="融点：固体が液体になる温度" page={3} openComic={openComic}>
+   <p className="reader-key">融点は、固体が液体になる温度。純粋な水では約1気圧で<strong>約0℃</strong>です。</p>
+   <p>グラフのBでは氷が融けている途中で、<strong>固体＋液体（氷と水）</strong>が共存します。加熱しても、融解している間は温度が一定です。</p>
+  </LessonSummarySection>
+  <LessonSummarySection id="states-summary-boiling" title="沸点：液体が沸騰して気体になる温度" page={3} openComic={openComic}>
+   <p className="reader-key">沸点は、液体が沸騰して気体になる温度。純粋な水では約1気圧で<strong>約100℃</strong>です。</p>
+   <p>グラフのDでは沸騰している途中で、<strong>液体＋気体（水と水蒸気）</strong>が共存します。泡の中は水蒸気です。加熱しても、沸騰している間は温度が一定です。</p>
+  </LessonSummarySection>
+  <LessonSummarySection id="states-summary-heating" title="一本の加熱グラフで5つの状態を読む" page={3} openComic={openComic}>
+   <StatesHeatingGraph/>
+   <table className="states-phase-table"><caption>グラフA〜Eと、対応する5つの状態</caption><thead><tr><th>区間</th><th>物質の状態</th><th>水の例</th></tr></thead><tbody>{[
+    ["A","融点より低い","固体","氷"],
+    ["B","融点で融解中","固体＋液体","氷と水（約0℃）"],
+    ["C","融点と沸点の間","液体","水"],
+    ["D","沸点で沸騰中","液体＋気体","水と水蒸気（約100℃）"],
+    ["E","全部が気体になり、さらに加熱","気体","水蒸気"]
+   ].map(([phase,range,state,example])=><tr key={phase} data-phase={phase}><th>{phase}<br/><small>{range}</small></th><td><StatesPhaseIcon phase={phase}/>{state}</td><td>{example}</td></tr>)}</tbody></table>
+   <p className="reader-caption">Bの氷は水に浮いています。Dの泡は水蒸気。Eの破線は、目に見えない水蒸気を表す説明記号です。</p>
+   <p className="reader-key">純粋な物質は、一定の圧力で状態変化している間、温度が一定です。融点・沸点に達した瞬間に、全部が次の状態になるわけではありません。</p>
+   <p>変化の途中には2つの状態が共存します。温度だけで、それぞれの状態の割合は決まりません。</p>
+   <p>同じ物質・同じ圧力なら、質量や体積が変わっても融点・沸点は変わりません。混合物や圧力の異なる場合は、同じ条件で考えないようにしましょう。</p>
+  </LessonSummarySection>
+
+  <LessonSummarySection id="states-summary-evaporation" title="蒸発と沸騰の違い" page={4} openComic={openComic}>
+   <p className="reader-key">蒸発も沸騰も、<strong>液体が気体になる変化（気化）</strong>です。違いは「どこで気体になるか」に注目しましょう。</p>
+   <table className="states-evaporation-table"><caption>蒸発と沸騰を比べよう</caption><thead><tr><th>比べること</th><th>蒸発</th><th>沸騰</th></tr></thead><tbody>
+    <tr><th>起こる場所</th><td>液体の表面</td><td>液体の表面と内部</td></tr>
+    <tr><th>温度</th><td>沸点より低くても起こる</td><td>沸点で起こる</td></tr>
+    <tr><th>身近な例</th><td>洗濯物が乾く</td><td>鍋の水がぐつぐつする</td></tr>
+   </tbody></table>
+   <p>水の沸点は、<strong>約1気圧で約100℃</strong>です。水以外の液体や、圧力が異なる場合にも100℃と決めつけないようにしましょう。</p>
+   <p className="reader-key">沸騰の泡の中は<strong>水蒸気（気体）</strong>です。<strong>水蒸気は目に見えません。</strong>白い湯気は小さな水滴で、水蒸気そのものではありません。</p>
+   <p>蒸発は「沸点より低いときだけ」ではありません。沸騰中も、液体の表面から気化しています。</p>
+  </LessonSummarySection>
  </>;
 }
 function StatesTemperatureExplanation() {
  return <article className="metal-lesson density-lesson states-lesson">
-  <section id="states-toc" className="lesson-toc"><h2>漫画の目次</h2><nav aria-label="状態変化の導入漫画の目次">{STATES_COMIC_PAGES.map(([,title],i)=><a key={title} href={"#states-page-"+(i+1)}>{title}</a>)}</nav></section>
+  <section id="states-toc" className="lesson-toc"><h2>漫画の目次</h2><nav aria-label="状態変化と温度の漫画の目次">{STATES_COMIC_PAGES.map(([,title],i)=><a key={title} href={"#states-page-"+(i+1)}>{title}</a>)}</nav></section>
   <div className="lesson-sections">{STATES_COMIC_PAGES.map(([file,title],i)=><section key={file} id={"states-page-"+(i+1)} className="lesson-section" aria-labelledby={"states-heading-"+(i+1)}>
-   <h2 id={"states-heading-"+(i+1)} tabIndex={-1}><span className="reader-page-number">{i+1} / 2</span>{title}</h2>
-   <a href={"assets/states-temperature/"+file} target="_blank" rel="noopener" aria-label={title+"の漫画を拡大（別タブ）"}><img className="density-comic states-comic" src={"assets/states-temperature/"+file} width="1024" height="1536" loading={i?"lazy":"eager"} decoding="async" alt={"状態変化の導入漫画："+title}/></a>
+   <h2 id={"states-heading-"+(i+1)} tabIndex={-1}><span className="reader-page-number">{i+1} / {STATES_COMIC_PAGES.length}</span>{title}</h2>
+   <a href={"assets/states-temperature/"+file} target="_blank" rel="noopener" aria-label={title+"の漫画を拡大（別タブ）"}><img className="density-comic states-comic" src={"assets/states-temperature/"+file} width="1024" height="1536" loading={i?"lazy":"eager"} decoding="async" alt={"状態変化と温度の漫画："+title}/></a>
   </section>)}</div>
  </article>;
 }
