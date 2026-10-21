@@ -1,10 +1,11 @@
-// Adopted pages only: two introductory comics and the straight heating-curve revision.
+// Adopted pages: introductory pair, straight heating curve, evaporation versus boiling.
 const STATES_COMIC_PAGES = [
  ["state-change-triangle-01-v4.png","ひと目でわかる！ 物質の状態変化"],
  ["state-change-mass-volume-02.png","体積が変わっても、質量は同じ"],
- ["state-change-heating-curve-03-v2.png","水の状態変化と温度"]
+ ["state-change-heating-curve-03-v2.png","水の状態変化と温度"],
+ ["state-change-evaporation-boiling-04.png","蒸発と沸騰の違い"]
 ];
-const STATES_INTRO_QUESTION_SECTIONS = {"A-25":"melting","A-26":"boiling","B-29":"heating","A-24":"changes","B-21":"changes","B-22":"changes","B-24":"mass-volume","B-25":"mass-volume"};
+const STATES_INTRO_QUESTION_SECTIONS = {"A-27":"evaporation","A-28":"evaporation","A-25":"melting","A-26":"boiling","B-29":"heating","A-24":"changes","B-21":"changes","B-22":"changes","B-24":"mass-volume","B-25":"mass-volume"};
 function StatesTriangle() {
  return <figure className="states-figure">
   <svg className="states-diagram" viewBox="0 0 640 580" role="img" aria-labelledby="states-triangle-title states-triangle-desc">
@@ -135,6 +136,18 @@ function StatesTemperatureSummary({openComic}) {
    <p className="reader-key">純粋な物質は、一定の圧力で状態変化している間、温度が一定です。融点・沸点に達した瞬間に、全部が次の状態になるわけではありません。</p>
    <p>変化の途中には2つの状態が共存します。温度だけで、それぞれの状態の割合は決まりません。</p>
    <p>同じ物質・同じ圧力なら、質量や体積が変わっても融点・沸点は変わりません。混合物や圧力の異なる場合は、同じ条件で考えないようにしましょう。</p>
+  </LessonSummarySection>
+
+  <LessonSummarySection id="states-summary-evaporation" title="蒸発と沸騰の違い" page={4} openComic={openComic}>
+   <p className="reader-key">蒸発も沸騰も、<strong>液体が気体になる変化（気化）</strong>です。違いは「どこで気体になるか」に注目しましょう。</p>
+   <table className="states-evaporation-table"><caption>蒸発と沸騰を比べよう</caption><thead><tr><th>比べること</th><th>蒸発</th><th>沸騰</th></tr></thead><tbody>
+    <tr><th>起こる場所</th><td>液体の表面</td><td>液体の表面と内部</td></tr>
+    <tr><th>温度</th><td>沸点より低くても起こる</td><td>沸点で起こる</td></tr>
+    <tr><th>身近な例</th><td>洗濯物が乾く</td><td>鍋の水がぐつぐつする</td></tr>
+   </tbody></table>
+   <p>水の沸点は、<strong>約1気圧で約100℃</strong>です。水以外の液体や、圧力が異なる場合にも100℃と決めつけないようにしましょう。</p>
+   <p className="reader-key">沸騰の泡の中は<strong>水蒸気（気体）</strong>です。<strong>水蒸気は目に見えません。</strong>白い湯気は小さな水滴で、水蒸気そのものではありません。</p>
+   <p>蒸発は「沸点より低いときだけ」ではありません。沸騰中も、液体の表面から気化しています。</p>
   </LessonSummarySection>
  </>;
 }

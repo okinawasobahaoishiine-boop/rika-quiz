@@ -1639,7 +1639,7 @@ function ScienceApp() {
           <button className="lesson-topic-entry" onClick={() => setScr("metal-explanation")}><span><strong>金属と非金属</strong><small>図解付きページ／金属光沢・電気・熱・展性と延性</small></span><span aria-hidden="true">→</span></button>
           <button className="lesson-topic-entry" onClick={() => setScr("density-explanation")}><span><strong>密度</strong><small>表と図のまとめ＋漫画9ページ／質量・体積・計算・浮沈</small></span><span aria-hidden="true">→</span></button>
           <button className="lesson-topic-entry" onClick={() => setScr("organic-explanation")}><span><strong>有機物と無機物</strong><small>表と図のまとめ＋漫画5ページ／加熱・燃焼・分類</small></span><span aria-hidden="true">→</span></button>
-          <button className="lesson-topic-entry" onClick={() => setScr("states-explanation")}><span><strong>状態変化と温度</strong><small>図と表のまとめ＋漫画3ページ／水の融点・沸点・一本の加熱グラフを追加</small></span><span aria-hidden="true">→</span></button>
+          <button className="lesson-topic-entry" onClick={() => setScr("states-explanation")}><span><strong>状態変化と温度</strong><small>図と表のまとめ＋漫画4ページ／加熱グラフ・蒸発と沸騰の比較</small></span><span aria-hidden="true">→</span></button>
           <button className="lesson-topic-entry" onClick={() => setScr("gases-explanation")}><span><strong>気体の性質と集め方</strong><small>表と図のまとめ＋漫画10ページ／5種類の特徴・実験・集め方</small></span><span aria-hidden="true">→</span></button>
           <p className="text-sm text-slate-600">ほかのテーマは順次制作します。</p>
         </C>
@@ -1671,7 +1671,7 @@ function ScienceApp() {
             <article><h2>密度 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画・テスト公開" : "漫画・公開中"}</span></h2><p>質量・体積から計算・浮沈・気体まで、全9ページ。</p><Btn onClick={() => setScr("density-explanation")}>密度の解説を読む</Btn></article>
             <article><h2>有機物と無機物 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画・テスト公開" : "漫画・公開中"}</span></h2><p>白い粉の比較・砂糖の加熱と燃焼・分類と例外を全5ページで解説。</p><Btn onClick={() => setScr("organic-explanation")}>有機物と無機物の解説を読む</Btn></article>
             <article><h2>気体の性質と集め方 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画・テスト公開" : "漫画・公開中"}</span></h2><p>酸素・窒素・二酸化炭素・水素・アンモニア。特徴と実験を全10ページで解説。</p><Btn onClick={() => setScr("gases-explanation")}>気体の解説を読む</Btn></article>
-            <article><h2>状態変化と温度 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画3枚・テスト公開" : "漫画3枚・公開中"}</span></h2><p>導入2枚に「水の状態変化と温度」を追加。純粋な水・約1気圧のグラフと5つの状態。蒸発と沸騰の比較などは準備中です。</p><Btn onClick={() => setScr("states-explanation")}>状態変化と温度を読む</Btn></article>
+            <article><h2>状態変化と温度 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画4枚・テスト公開" : "漫画4枚・公開中"}</span></h2><p>導入2枚・水の加熱グラフに「蒸発と沸騰の違い」を追加。表面と内部・温度・身近な例を比較できます。その他の解説は順次追加します。</p><Btn onClick={() => setScr("states-explanation")}>状態変化と温度を読む</Btn></article>
             {["溶けるしくみ", "純粋な物質と混合物", "溶解度と再結晶", "混合物の分け方"].map((title) => (
               <article key={title}>
                 <h2>{title} <span className="explanation-state is-planned">制作準備中</span></h2>
@@ -1729,7 +1729,7 @@ function ScienceApp() {
           </section>
           <section className="home-explanation-updates" aria-labelledby="home-updates-heading">
             <div className="home-updates-heading"><h2 id="home-updates-heading">解説の更新情報</h2><button onClick={() => setScr("explanation-updates")}>一覧を見る →</button></div>
-            <button className="home-update-item" onClick={() => setScr("states-explanation")}><strong>状態変化と温度 <span className="explanation-state">水の温度グラフを追加</span></strong><span>10月21日・中1 化学／漫画3ページ・一本の加熱グラフと5つの状態</span></button>
+            <button className="home-update-item" onClick={() => setScr("states-explanation")}><strong>状態変化と温度 <span className="explanation-state">蒸発と沸騰の漫画を追加</span></strong><span>10月21日・中1 化学／漫画4ページ・蒸発と沸騰の比較表を追加</span></button>
             <button className="home-update-item" onClick={() => setScr("gases-explanation")}><strong>気体の性質と集め方 <span className="explanation-state">漫画10ページを追加</span></strong><span>10月19日・中1 化学／アンモニア噴水・目次・拡大表示付き</span></button>
             <button className="home-update-item" onClick={() => setScr("organic-explanation")}><strong>有機物と無機物 <span className="explanation-state">漫画5ページを追加</span></strong><span>10月17日・中1 化学／結晶修正版・目次・拡大表示付き</span></button>
             <button className="home-update-item" onClick={() => setScr("density-explanation")}><strong>密度 <span className="explanation-state">漫画9ページを追加</span></strong><span>10月16日・中1 化学／目次・拡大表示付き</span></button>
