@@ -4,6 +4,7 @@ let LESSON_RESTORE_PENDING = performance.getEntriesByType("navigation")[0]?.type
 const lessonRead = (store, key, fallback) => { try { return JSON.parse(store.getItem(scienceStorageKey(key))) || fallback; } catch { return fallback; } };
 const lessonWrite = (store, key, value) => { try { store.setItem(scienceStorageKey(key), JSON.stringify(value)); return true; } catch { return false; } };
 const LESSON_TOPICS = {
+ dissolving:{title:"溶けるしくみ",prefix:"dissolving",pages:DISSOLVING_COMIC_PAGES,Summary:DissolvingSummary,description:"溶質・溶媒・溶液と粒子モデル（漫画1ページ）。質量・濃度、融解との比較は準備中です。",sections:[["solute","溶質"],["solvent","溶媒・覚えるヒント"],["solution","溶液"],["aqueous","水溶液"],["particles","粒子の広がり"]]},
  "states-temperature": {title:"状態変化と温度",prefix:"states",pages:STATES_COMIC_PAGES,Summary:StatesTemperatureSummary,description:"状態変化・質量と体積・水の融点と沸点・蒸発と沸騰（漫画4ページ）。その他の解説は順次追加します。",sections:[["changes","6方向の状態変化"],["sublimation","昇華・白い霧"],["steam","水蒸気と湯気"],["mass-volume","質量と体積"],["melting","融点"],["boiling","沸点"],["heating","加熱グラフと5つの状態"],["evaporation","蒸発と沸騰の違い"]]},
  density: {title:"密度", prefix:"density", pages:DENSITY_COMIC_PAGES, sections:[["meaning","密度・質量・重さ"],["calculate","密度の計算"],["measure","体積の測り方"],["float","浮く・沈む"],["gas","気体の密度"]]},
  "organic-inorganic": {title:"有機物と無機物",prefix:"organic",pages:ORGANIC_COMIC_PAGES,sections:[["classification","有機物と無機物"],["heating","砂糖の加熱"],["combustion","燃焼でできる物質"],["exceptions","分類の例外"],["mistakes","間違えやすいこと"]]},
