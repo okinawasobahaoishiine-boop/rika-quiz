@@ -3,7 +3,8 @@ const STATES_COMIC_PAGES = [
  ["state-change-triangle-01-v4.png","ひと目でわかる！ 物質の状態変化"],
  ["state-change-mass-volume-02.png","体積が変わっても、質量は同じ"],
  ["state-change-heating-curve-03-v2.png","水の状態変化と温度"],
- ["state-change-evaporation-boiling-04.png","蒸発と沸騰の違い"]
+ ["state-change-evaporation-boiling-04.png","蒸発と沸騰の違い"],
+ ["state-change-particle-model-05.png","固体・液体・気体：粒子の並び方と動き方",1225,1284]
 ];
 const STATES_INTRO_QUESTION_SECTIONS = {"A-27":"evaporation","A-28":"evaporation","A-25":"melting","A-26":"boiling","B-29":"heating","A-24":"changes","B-21":"changes","B-22":"changes","B-24":"mass-volume","B-25":"mass-volume"};
 function StatesTriangle() {
@@ -154,9 +155,9 @@ function StatesTemperatureSummary({openComic}) {
 function StatesTemperatureExplanation() {
  return <article className="metal-lesson density-lesson states-lesson">
   <section id="states-toc" className="lesson-toc"><h2>漫画の目次</h2><nav aria-label="状態変化と温度の漫画の目次">{STATES_COMIC_PAGES.map(([,title],i)=><a key={title} href={"#states-page-"+(i+1)}>{title}</a>)}</nav></section>
-  <div className="lesson-sections">{STATES_COMIC_PAGES.map(([file,title],i)=><section key={file} id={"states-page-"+(i+1)} className="lesson-section" aria-labelledby={"states-heading-"+(i+1)}>
+  <div className="lesson-sections">{STATES_COMIC_PAGES.map(([file,title,width=1024,height=1536],i)=><section key={file} id={"states-page-"+(i+1)} className="lesson-section" aria-labelledby={"states-heading-"+(i+1)}>
    <h2 id={"states-heading-"+(i+1)} tabIndex={-1}><span className="reader-page-number">{i+1} / {STATES_COMIC_PAGES.length}</span>{title}</h2>
-   <a href={"assets/states-temperature/"+file} target="_blank" rel="noopener" aria-label={title+"の漫画を拡大（別タブ）"}><img className="density-comic states-comic" src={"assets/states-temperature/"+file} width="1024" height="1536" loading={i?"lazy":"eager"} decoding="async" alt={"状態変化と温度の漫画："+title}/></a>
+   <a href={"assets/states-temperature/"+file} target="_blank" rel="noopener" aria-label={title+"の漫画を拡大（別タブ）"}><img className="density-comic states-comic" src={"assets/states-temperature/"+file} width={width} height={height} style={{aspectRatio:"auto "+width+" / "+height}} loading={i?"lazy":"eager"} decoding="async" alt={"状態変化と温度の漫画："+title}/></a>
   </section>)}</div>
  </article>;
 }

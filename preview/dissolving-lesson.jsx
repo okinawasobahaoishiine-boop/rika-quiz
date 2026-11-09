@@ -1,5 +1,5 @@
 // Adopted terminology comic only. Mass, concentration and melting comparison remain unpublished.
-const DISSOLVING_COMIC_PAGES = [["dissolving-solute-solvent-solution-01.png","溶質・溶媒・溶液"]];
+const DISSOLVING_COMIC_PAGES = [["dissolving-solute-solvent-solution-01.png","溶質・溶媒・溶液"],["dissolving-melting-comparison-02.png","氷が融ける・砂糖が溶ける",1086,1448],["dissolving-mass-percent-03.png","質量パーセント濃度",1199,1312]];
 const DISSOLVING_QUESTION_SECTIONS = {"A-15":"solute","A-16":"solvent","A-17":"solution","A-18":"aqueous"};
 function DissolvingParticles() {
  return <figure className="dissolving-figure">
@@ -42,11 +42,11 @@ function DissolvingSummary({openComic}) {
  </>;
 }
 function DissolvingExplanation() {
- return <article className="metal-lesson density-lesson dissolving-lesson">
-  <section id="dissolving-toc" className="lesson-toc"><h2>漫画の目次</h2><nav aria-label="溶けるしくみの漫画の目次"><a href="#dissolving-page-1">溶質・溶媒・溶液</a></nav></section>
-  <section id="dissolving-page-1" className="lesson-section" aria-labelledby="dissolving-heading-1">
-   <h2 id="dissolving-heading-1" tabIndex={-1}><span className="reader-page-number">1 / 1</span>溶質・溶媒・溶液</h2>
-   <a href="assets/dissolving/dissolving-solute-solvent-solution-01.png" target="_blank" rel="noopener" aria-label="溶質・溶媒・溶液の漫画を拡大（別タブ）"><img className="density-comic dissolving-comic" src="assets/dissolving/dissolving-solute-solvent-solution-01.png" width="1024" height="1536" loading="eager" decoding="async" alt="溶けるしくみの漫画：溶質・溶媒・溶液。砂糖・水・砂糖水全体と粒子の広がりを説明。"/></a>
-  </section>
+ return <article className="metal-lesson density-lesson">
+  <section id="dissolving-toc" className="lesson-toc"><h2>漫画の目次</h2><nav aria-label="溶けるしくみの漫画の目次">{DISSOLVING_COMIC_PAGES.map(([,heading],i)=><a key={heading} href={"#dissolving-page-"+(i+1)}>{heading}</a>)}</nav></section>
+  <div className="lesson-sections">{DISSOLVING_COMIC_PAGES.map(([file,heading,width=1024,height=1536],i)=><section key={file} id={"dissolving-page-"+(i+1)} className="lesson-section" aria-labelledby={"dissolving-heading-"+(i+1)}>
+   <h2 id={"dissolving-heading-"+(i+1)} tabIndex={-1}><span className="reader-page-number">{i+1} / {DISSOLVING_COMIC_PAGES.length}</span>{heading}</h2>
+   <a href={"assets/dissolving/"+file} target="_blank" rel="noopener" aria-label={heading+"の漫画を拡大（別タブ）"}><img className="density-comic dissolving-comic" src={"assets/dissolving/"+file} width={width} height={height} style={{aspectRatio:"auto "+width+" / "+height}} loading={i?"lazy":"eager"} decoding="async" alt={heading+"の漫画"}/></a>
+  </section>)}</div>
  </article>;
 }

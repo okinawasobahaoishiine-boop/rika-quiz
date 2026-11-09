@@ -1,5 +1,5 @@
 // Adopted overview page only. The original seven-page scenario remains incomplete.
-const SOLUBILITY_COMIC_PAGES = [["solubility-recrystallization-01.png","溶解度と再結晶"]];
+const SOLUBILITY_COMIC_PAGES = [["solubility-recrystallization-01.png","溶解度と再結晶"],["solubility-crystal-comparison-02.png","冷やすと、どちらも結晶が出やすい？",1226,1283],["solubility-recrystallization-50g-03.png","再結晶：水が50 gなら？",1241,1268]];
 const SOLUBILITY_QUESTION_SECTIONS = {"A-21":"saturated","A-22":"definition","A-23":"recrystallization"};
 function SolubilityResidueDiagram() {
  return <figure className="solubility-figure">
@@ -66,11 +66,11 @@ function SolubilitySummary({openComic}) {
  </>;
 }
 function SolubilityExplanation() {
- return <article className="metal-lesson density-lesson solubility-lesson">
-  <section id="solubility-toc" className="lesson-toc"><h2>漫画の目次</h2><nav aria-label="溶解度と再結晶の漫画の目次"><a href="#solubility-page-1">溶解度と再結晶</a></nav></section>
-  <section id="solubility-page-1" className="lesson-section" aria-labelledby="solubility-heading-1">
-   <h2 id="solubility-heading-1" tabIndex={-1}><span className="reader-page-number">1 / 1</span>溶解度と再結晶</h2>
-   <a href="assets/solubility/solubility-recrystallization-01.png" target="_blank" rel="noopener" aria-label="溶解度と再結晶の漫画を拡大（別タブ）"><img className="density-comic solubility-comic" src="assets/solubility/solubility-recrystallization-01.png" width="1024" height="1536" loading="eager" decoding="async" alt="溶解度と再結晶の漫画。水100グラムを使い、溶け残り、溶解度曲線、冷却で出る結晶を説明。"/></a>
-  </section>
+ return <article className="metal-lesson density-lesson">
+  <section id="solubility-toc" className="lesson-toc"><h2>漫画の目次</h2><nav aria-label="溶解度と再結晶の漫画の目次">{SOLUBILITY_COMIC_PAGES.map(([,heading],i)=><a key={heading} href={"#solubility-page-"+(i+1)}>{heading}</a>)}</nav></section>
+  <div className="lesson-sections">{SOLUBILITY_COMIC_PAGES.map(([file,heading,width=1024,height=1536],i)=><section key={file} id={"solubility-page-"+(i+1)} className="lesson-section" aria-labelledby={"solubility-heading-"+(i+1)}>
+   <h2 id={"solubility-heading-"+(i+1)} tabIndex={-1}><span className="reader-page-number">{i+1} / {SOLUBILITY_COMIC_PAGES.length}</span>{heading}</h2>
+   <a href={"assets/solubility/"+file} target="_blank" rel="noopener" aria-label={heading+"の漫画を拡大（別タブ）"}><img className="density-comic solubility-comic" src={"assets/solubility/"+file} width={width} height={height} style={{aspectRatio:"auto "+width+" / "+height}} loading={i?"lazy":"eager"} decoding="async" alt={heading+"の漫画"}/></a>
+  </section>)}</div>
  </article>;
 }

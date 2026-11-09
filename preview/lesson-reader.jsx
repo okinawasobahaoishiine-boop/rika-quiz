@@ -4,9 +4,10 @@ let LESSON_RESTORE_PENDING = performance.getEntriesByType("navigation")[0]?.type
 const lessonRead = (store, key, fallback) => { try { return JSON.parse(store.getItem(scienceStorageKey(key))) || fallback; } catch { return fallback; } };
 const lessonWrite = (store, key, value) => { try { store.setItem(scienceStorageKey(key), JSON.stringify(value)); return true; } catch { return false; } };
 const LESSON_TOPICS = {
- "solubility-crystallization":{title:"溶解度と再結晶",prefix:"solubility",pages:SOLUBILITY_COMIC_PAGES,Summary:SolubilitySummary,description:"溶解度・飽和水溶液と溶け残り・溶解度曲線・再結晶の概説（漫画1ページ）。その他の解説は順次追加します。",sections:[["definition","溶解度"],["saturated","飽和水溶液・溶け残り"],["curve","溶解度曲線"],["recrystallization","再結晶"]]},
- dissolving:{title:"溶けるしくみ",prefix:"dissolving",pages:DISSOLVING_COMIC_PAGES,Summary:DissolvingSummary,description:"溶質・溶媒・溶液と粒子モデル（漫画1ページ）。質量・濃度、融解との比較は準備中です。",sections:[["solute","溶質"],["solvent","溶媒・覚えるヒント"],["solution","溶液"],["aqueous","水溶液"],["particles","粒子の広がり"]]},
- "states-temperature": {title:"状態変化と温度",prefix:"states",pages:STATES_COMIC_PAGES,Summary:StatesTemperatureSummary,description:"状態変化・質量と体積・水の融点と沸点・蒸発と沸騰（漫画4ページ）。その他の解説は順次追加します。",sections:[["changes","6方向の状態変化"],["sublimation","昇華・白い霧"],["steam","水蒸気と湯気"],["mass-volume","質量と体積"],["melting","融点"],["boiling","沸点"],["heating","加熱グラフと5つの状態"],["evaporation","蒸発と沸騰の違い"]]},
+ "pure-mixtures": {title:"純粋な物質と混合物",prefix:"pure-mixtures",pages:PURE_MIXTURES_COMIC_PAGES,comicFirst:true,sections:[]},
+ "solubility-crystallization":{title:"溶解度と再結晶",prefix:"solubility",pages:SOLUBILITY_COMIC_PAGES,Summary:SolubilitySummary,description:"溶解度・飽和水溶液と溶け残り・溶解度曲線・再結晶の概説（漫画3ページ）。その他の解説は順次追加します。",sections:[["definition","溶解度"],["saturated","飽和水溶液・溶け残り"],["curve","溶解度曲線"],["recrystallization","再結晶"]]},
+ dissolving:{title:"溶けるしくみ",prefix:"dissolving",pages:DISSOLVING_COMIC_PAGES,Summary:DissolvingSummary,description:"用語・粒子モデルのまとめと漫画3ページ。",sections:[["solute","溶質"],["solvent","溶媒・覚えるヒント"],["solution","溶液"],["aqueous","水溶液"],["particles","粒子の広がり"]]},
+ "states-temperature": {title:"状態変化と温度",prefix:"states",pages:STATES_COMIC_PAGES,Summary:StatesTemperatureSummary,description:"状態変化・質量と体積・水の融点と沸点・蒸発と沸騰（漫画5ページ）。その他の解説は順次追加します。",sections:[["changes","6方向の状態変化"],["sublimation","昇華・白い霧"],["steam","水蒸気と湯気"],["mass-volume","質量と体積"],["melting","融点"],["boiling","沸点"],["heating","加熱グラフと5つの状態"],["evaporation","蒸発と沸騰の違い"]]},
  density: {title:"密度", prefix:"density", pages:DENSITY_COMIC_PAGES, sections:[["meaning","密度・質量・重さ"],["calculate","密度の計算"],["measure","体積の測り方"],["float","浮く・沈む"],["gas","気体の密度"]]},
  "organic-inorganic": {title:"有機物と無機物",prefix:"organic",pages:ORGANIC_COMIC_PAGES,sections:[["classification","有機物と無機物"],["heating","砂糖の加熱"],["combustion","燃焼でできる物質"],["exceptions","分類の例外"],["mistakes","間違えやすいこと"]]},
  gases: {title:"気体の性質と集め方",prefix:"gases",pages:GASES_COMIC_PAGES,sections:[["compare","5種類を比較"],["oxygen","酸素"],["nitrogen","窒素"],["carbon-dioxide","二酸化炭素"],["hydrogen","水素"],["ammonia","アンモニア"],["collect","集め方の選び方"]]}
@@ -108,11 +109,11 @@ function LessonReader({topic,children}) {
   const snapshot=lessonRead(sessionStorage,sessionKey,null);
   const reload=LESSON_RESTORE_PENDING;LESSON_RESTORE_PENDING=false;
   const restoring=reload&&snapshot?.hash===location.hash;
-  const mode=restoring?snapshot.mode:comic?"comic":summary?"summary":lessonRead(localStorage,prefKey,"summary");
+  const mode=restoring?snapshot.mode:comic?"comic":summary?"summary":lessonRead(localStorage,prefKey,config.comicFirst?"comic":"summary");
   positions.current=LESSON_MEMORY.get(topic)?.positions||snapshot?.positions||{};
   const explicit=(comic||summary)&&!(reload&&snapshot?.hash===location.hash);
   resumePoints.current={...positions.current};
-  return {mode:mode==="comic"?"comic":"summary",target:explicit?(hash===config.prefix+"-summary"?config.prefix+"-summary-"+config.sections[0][0]:hash):null,reload:reload&&!explicit,returnTo:reload?snapshot?.returnTo:null};
+  return {mode:mode==="comic"?"comic":"summary",target:explicit?(hash===config.prefix+"-summary"?config.prefix+"-summary-"+(config.sections[0]?.[0]||""):hash):null,reload:reload&&!explicit,returnTo:reload?snapshot?.returnTo:null};
  });
  const [view,setView]=React.useState({mode:initial.mode,target:initial.target,restore:initial.reload,returnTo:initial.returnTo||null,revision:0});
  const current=React.useRef(view);current.current=view;
@@ -181,10 +182,10 @@ function LessonReader({topic,children}) {
   </div>
   {storageNotice&&<p role="status">このブラウザーでは表示設定を保存できません。今回は切り替えて読むことができます。</p>}
   <div className="reader-tools">
-   <label>項目へ移動 <select aria-label="項目へ移動" value="" onChange={event=>jumpTo(event.target.value)}><option value="">選んで移動</option>{(view.mode==="summary"?config.sections.map(([id,title])=>[config.prefix+"-summary-"+id,title]):config.pages.map(([,title],i)=>[config.prefix+"-page-"+(i+1),(i+1)+" / "+config.pages.length+" "+title])).map(([id,title])=><option key={id} value={id}>{title}</option>)}</select></label>
+   {(view.mode==="comic"||config.sections.length>0)&&<label>項目へ移動 <select aria-label="項目へ移動" value="" onChange={event=>jumpTo(event.target.value)}><option value="">選んで移動</option>{(view.mode==="summary"?config.sections.map(([id,title])=>[config.prefix+"-summary-"+id,title]):config.pages.map(([,title],i)=>[config.prefix+"-page-"+(i+1),(i+1)+" / "+config.pages.length+" "+title])).map(([id,title])=><option key={id} value={id}>{title}</option>)}</select></label>}
    {resume&&<button className="reader-text-link" onClick={()=>{positions.current[view.mode]=resume;setView(v=>({...v,target:null,restore:true,revision:v.revision+1}));}}>続きから読む</button>}
   </div>
-  <div role="tabpanel" id={config.prefix+"-panel-summary"} aria-labelledby={config.prefix+"-tab-summary"} hidden={view.mode!=="summary"} ref={el=>panels.current.summary=el}><Summary openComic={openComic}/></div>
+  <div role="tabpanel" id={config.prefix+"-panel-summary"} aria-labelledby={config.prefix+"-tab-summary"} hidden={view.mode!=="summary"} ref={el=>panels.current.summary=el}>{config.comicFirst?<p className="reader-key">このテーマのまとめは準備中です。漫画タブから読めます。</p>:<Summary openComic={openComic}/>}</div>
   <div role="tabpanel" id={config.prefix+"-panel-comic"} aria-labelledby={config.prefix+"-tab-comic"} hidden={view.mode!=="comic"} className="reader-comic-panel" ref={el=>panels.current.comic=el}>
    <p className="reader-comic-hint">全{config.pages.length}ページ。漫画は右から左に読みます。画像をタップすると別タブで拡大できます。</p>{children}
    <div className="reader-comic-end">{view.returnTo?<button className="reader-return" onClick={backSummary}>← まとめの「{view.returnTo.title}」に戻る</button>:<button className="reader-return" onClick={()=>select("summary")}>まとめを見る</button>}</div>

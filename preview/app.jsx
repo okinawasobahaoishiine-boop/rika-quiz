@@ -1029,15 +1029,15 @@ const ScienceNavigation = React.createContext(null);
 
 function syncLessonLocation(screen) {
   LESSON_RESTORE_PENDING=false;
-  const topics={"solubility-explanation":"solubility-crystallization","dissolving-explanation":"dissolving","states-explanation":"states-temperature","density-explanation":"density","organic-explanation":"organic-inorganic","gases-explanation":"gases","metal-explanation":"metal-nonmetal"};
+  const topics={"pure-mixtures-explanation":"pure-mixtures","solubility-explanation":"solubility-crystallization","dissolving-explanation":"dissolving","states-explanation":"states-temperature","density-explanation":"density","organic-explanation":"organic-inorganic","gases-explanation":"gases","metal-explanation":"metal-nonmetal"};
   const url=new URL(location.href);
   if(topics[screen])url.searchParams.set("explanation",topics[screen]);else url.searchParams.delete("explanation");
-  if(/^(#density-|#organic-|#gases-|#states-|#dissolving-|#solubility-|#metal-)/.test(url.hash))url.hash="";
+  if(/^(#density-|#organic-|#gases-|#states-|#dissolving-|#solubility-|#pure-mixtures-|#metal-)/.test(url.hash))url.hash="";
   history.replaceState({...history.state,lessonReader:null},"",url.pathname+url.search+url.hash);
 }
 
 function App() {
-  const initialScreen = INITIAL_QUIZ_SESSION?.screen || ({"solubility-crystallization":"solubility-explanation","dissolving":"dissolving-explanation","states-temperature":"states-explanation","metal-nonmetal":"metal-explanation",density:"density-explanation","organic-inorganic":"organic-explanation",gases:"gases-explanation"}[new URLSearchParams(window.location.search).get("explanation")] || "home");
+  const initialScreen = INITIAL_QUIZ_SESSION?.screen || ({"pure-mixtures":"pure-mixtures-explanation","solubility-crystallization":"solubility-explanation","dissolving":"dissolving-explanation","states-temperature":"states-explanation","metal-nonmetal":"metal-explanation",density:"density-explanation","organic-inorganic":"organic-explanation",gases:"gases-explanation"}[new URLSearchParams(window.location.search).get("explanation")] || "home");
   const [scr, updateScreen] = useState(initialScreen);
   const navigation = React.useRef({ current: initialScreen, trail: INITIAL_QUIZ_SESSION ? ["home", "questions"] : [] });
   const setScr = (next) => {
@@ -1145,7 +1145,7 @@ function ScienceApp() {
     sessionId.current = Date.now(); testAttemptId.current = randomId(); setAttemptMessage(""); setSelected("");
   };
   useEffect(() => {
-    if (!["density-explanation","organic-explanation","gases-explanation","states-explanation","dissolving-explanation","solubility-explanation"].includes(scr)) window.scrollTo({ top: 0, behavior: "instant" });
+    if (!["density-explanation","organic-explanation","gases-explanation","states-explanation","dissolving-explanation","solubility-explanation","pure-mixtures-explanation"].includes(scr)) window.scrollTo({ top: 0, behavior: "instant" });
   }, [scr]);
   const syncProfile = async (user, displayName, schoolGrade) => {
     if (!sb || !user || !displayName || !schoolGrade) return;
@@ -1577,7 +1577,7 @@ function ScienceApp() {
       setScr("ready");
     };
 
-  if (scr === "profile" || (!profileSaved && !["explanations", "metal-explanation", "density-explanation", "organic-explanation", "gases-explanation", "states-explanation", "dissolving-explanation", "solubility-explanation", "explanation-updates"].includes(scr)))
+  if (scr === "profile" || (!profileSaved && !["explanations", "metal-explanation", "density-explanation", "organic-explanation", "gases-explanation", "states-explanation", "dissolving-explanation", "solubility-explanation", "pure-mixtures-explanation", "explanation-updates"].includes(scr)))
     return (
       <Main>
         <C>
@@ -1621,6 +1621,8 @@ function ScienceApp() {
         </C>
       </Main>
     );
+  if (scr === "pure-mixtures-explanation")
+    return <Main><C><LessonReader topic="pure-mixtures"><PureMixturesExplanation /></LessonReader></C></Main>;
   if (scr === "solubility-explanation")
     return <Main><C><LessonReader topic="solubility-crystallization"><SolubilityExplanation /></LessonReader></C></Main>;
   if (scr === "dissolving-explanation")
@@ -1643,9 +1645,10 @@ function ScienceApp() {
           <button className="lesson-topic-entry" onClick={() => setScr("metal-explanation")}><span><strong>金属と非金属</strong><small>図解付きページ／金属光沢・電気・熱・展性と延性</small></span><span aria-hidden="true">→</span></button>
           <button className="lesson-topic-entry" onClick={() => setScr("density-explanation")}><span><strong>密度</strong><small>表と図のまとめ＋漫画9ページ／質量・体積・計算・浮沈</small></span><span aria-hidden="true">→</span></button>
           <button className="lesson-topic-entry" onClick={() => setScr("organic-explanation")}><span><strong>有機物と無機物</strong><small>表と図のまとめ＋漫画5ページ／加熱・燃焼・分類</small></span><span aria-hidden="true">→</span></button>
-          <button className="lesson-topic-entry" onClick={() => setScr("solubility-explanation")}><span><strong>溶解度と再結晶</strong><small>概説のまとめ＋漫画1ページ／水100 g・溶け残り・冷却で出る結晶</small></span><span aria-hidden="true">→</span></button>
-          <button className="lesson-topic-entry" onClick={() => setScr("dissolving-explanation")}><span><strong>溶けるしくみ</strong><small>用語・粒子モデルのまとめ＋漫画1ページ／質量・濃度などは準備中</small></span><span aria-hidden="true">→</span></button>
-          <button className="lesson-topic-entry" onClick={() => setScr("states-explanation")}><span><strong>状態変化と温度</strong><small>図と表のまとめ＋漫画4ページ／加熱グラフ・蒸発と沸騰の比較</small></span><span aria-hidden="true">→</span></button>
+          <button className="lesson-topic-entry" onClick={() => setScr("pure-mixtures-explanation")}><span><strong>純粋な物質と混合物</strong><small>漫画2ページ／水と食塩水・空気と酸素</small></span><span aria-hidden="true">→</span></button>
+          <button className="lesson-topic-entry" onClick={() => setScr("solubility-explanation")}><span><strong>溶解度と再結晶</strong><small>概説のまとめ＋漫画3ページ／水100 g・溶け残り・冷却で出る結晶</small></span><span aria-hidden="true">→</span></button>
+          <button className="lesson-topic-entry" onClick={() => setScr("dissolving-explanation")}><span><strong>溶けるしくみ</strong><small>用語・粒子モデルのまとめ＋漫画3ページ</small></span><span aria-hidden="true">→</span></button>
+          <button className="lesson-topic-entry" onClick={() => setScr("states-explanation")}><span><strong>状態変化と温度</strong><small>図と表のまとめ＋漫画5ページ／加熱グラフ・蒸発と沸騰の比較</small></span><span aria-hidden="true">→</span></button>
           <button className="lesson-topic-entry" onClick={() => setScr("gases-explanation")}><span><strong>気体の性質と集め方</strong><small>表と図のまとめ＋漫画10ページ／5種類の特徴・実験・集め方</small></span><span aria-hidden="true">→</span></button>
           <p className="text-sm text-slate-600">ほかのテーマは順次制作します。</p>
         </C>
@@ -1677,10 +1680,11 @@ function ScienceApp() {
             <article><h2>密度 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画・テスト公開" : "漫画・公開中"}</span></h2><p>質量・体積から計算・浮沈・気体まで、全9ページ。</p><Btn onClick={() => setScr("density-explanation")}>密度の解説を読む</Btn></article>
             <article><h2>有機物と無機物 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画・テスト公開" : "漫画・公開中"}</span></h2><p>白い粉の比較・砂糖の加熱と燃焼・分類と例外を全5ページで解説。</p><Btn onClick={() => setScr("organic-explanation")}>有機物と無機物の解説を読む</Btn></article>
             <article><h2>気体の性質と集め方 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画・テスト公開" : "漫画・公開中"}</span></h2><p>酸素・窒素・二酸化炭素・水素・アンモニア。特徴と実験を全10ページで解説。</p><Btn onClick={() => setScr("gases-explanation")}>気体の解説を読む</Btn></article>
-            <article><h2>状態変化と温度 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画4枚・テスト公開" : "漫画4枚・公開中"}</span></h2><p>導入2枚・水の加熱グラフに「蒸発と沸騰の違い」を追加。表面と内部・温度・身近な例を比較できます。その他の解説は順次追加します。</p><Btn onClick={() => setScr("states-explanation")}>状態変化と温度を読む</Btn></article>
-            <article><h2>溶けるしくみ <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "用語1枚・テスト公開" : "用語1枚・公開中"}</span></h2><p>溶質・溶媒・溶液、水溶液、粒子の広がりを表と図で解説。質量・濃度、融解との比較は準備中です。</p><Btn onClick={() => setScr("dissolving-explanation")}>溶けるしくみの解説を読む</Btn></article>
-            <article><h2>溶解度と再結晶 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "概説1枚・テスト公開" : "概説1枚・公開中"}</span></h2><p>溶解度から飽和水溶液・溶け残り、曲線、再結晶へ。水100 gの2つの例を表と図で解説。その他の解説は順次追加します。</p><Btn onClick={() => setScr("solubility-explanation")}>溶解度と再結晶の解説を読む</Btn></article>
-            {["純粋な物質と混合物", "混合物の分け方"].map((title) => (
+            <article><h2>状態変化と温度 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画5枚・テスト公開" : "漫画5枚・公開中"}</span></h2><p>導入2枚・水の加熱グラフに「蒸発と沸騰の違い」を追加。表面と内部・温度・身近な例を比較できます。その他の解説は順次追加します。</p><Btn onClick={() => setScr("states-explanation")}>状態変化と温度を読む</Btn></article>
+            <article><h2>溶けるしくみ <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画3枚・テスト公開" : "漫画3枚・公開中"}</span></h2><p>溶質・溶媒・溶液、水溶液、粒子の広がりを表と図で解説。融解との比較と質量パーセント濃度は漫画で読めます。</p><Btn onClick={() => setScr("dissolving-explanation")}>溶けるしくみの解説を読む</Btn></article>
+            <article><h2>溶解度と再結晶 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画3枚・テスト公開" : "漫画3枚・公開中"}</span></h2><p>溶解度から飽和水溶液・溶け残り、曲線、再結晶へ。水100 gの2つの例を表と図で解説。その他の解説は順次追加します。</p><Btn onClick={() => setScr("solubility-explanation")}>溶解度と再結晶の解説を読む</Btn></article>
+            <article><h2>純粋な物質と混合物 <span className="explanation-state">{SCIENCE_IS_PREVIEW ? "漫画2枚・テスト公開" : "漫画2枚・公開中"}</span></h2><p>水と食塩水・空気と酸素を漫画で比べます。まとめは準備中です。</p><Btn onClick={() => setScr("pure-mixtures-explanation")}>純粋な物質と混合物の漫画を読む</Btn></article>
+            {["混合物の分け方"].map((title) => (
               <article key={title}>
                 <h2>{title} <span className="explanation-state is-planned">制作準備中</span></h2>
                 <p className="text-sm muted">シナリオ初稿作成済み／漫画はこれから制作します。</p>
@@ -2125,7 +2129,7 @@ function Main({ children, className = "" }) {
       <nav className="science-bottom-nav" aria-label="画面下の移動ボタン">
         {SCIENCE_IS_PREVIEW && <p className="science-preview-nav-label">テスト版・本番の記録には反映されません</p>}
         <div className="science-bottom-nav-inner">
-          <Btn kind="main" onClick={navigation.goBack} disabled={navigation.scr === "home"}>{["density-explanation","organic-explanation","gases-explanation","states-explanation","dissolving-explanation","solubility-explanation"].includes(navigation.scr) ? (navigation.previousScreen==="result"?"← 結果へ":navigation.previousScreen==="explanations"?"← 解説一覧へ":navigation.previousScreen==="explanation-updates"?"← 更新情報へ":"← ホームへ") : "← 戻る"}</Btn>
+          <Btn kind="main" onClick={navigation.goBack} disabled={navigation.scr === "home"}>{["density-explanation","organic-explanation","gases-explanation","states-explanation","dissolving-explanation","solubility-explanation","pure-mixtures-explanation"].includes(navigation.scr) ? (navigation.previousScreen==="result"?"← 結果へ":navigation.previousScreen==="explanations"?"← 解説一覧へ":navigation.previousScreen==="explanation-updates"?"← 更新情報へ":"← ホームへ") : "← 戻る"}</Btn>
           <Btn onClick={navigation.goHome} disabled={navigation.scr === "home"}>理科ホーム</Btn>
         </div>
       </nav>
